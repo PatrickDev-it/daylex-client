@@ -1,0 +1,282 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-09T20:32:13.235233+00:00",
+  "title": "Design System: Daylex homepage",
+  "extensions": {
+    "colorMeta": {
+      "black": {
+        "role": "neutral",
+        "displayName": "Black field",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "ground": {
+        "role": "neutral",
+        "displayName": "Near-black ground",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "sheet": {
+        "role": "neutral",
+        "displayName": "Document graphite",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "layer": {
+        "role": "neutral",
+        "displayName": "Layer graphite",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Primary ink",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Supporting ink",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "quiet": {
+        "role": "neutral",
+        "displayName": "Quiet graphite",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "cyan": {
+        "role": "primary",
+        "displayName": "Control cyan",
+        "tonalRamp": [
+          "oklch(15% 0.015 198)",
+          "oklch(27% 0.05 198)",
+          "oklch(39% 0.088 198)",
+          "oklch(51% 0.11 198)",
+          "oklch(63% 0.11 198)",
+          "oklch(75% 0.083 198)",
+          "oklch(87% 0.044 198)",
+          "oklch(95% 0.015 198)"
+        ]
+      },
+      "mint": {
+        "role": "secondary",
+        "displayName": "Revision mint",
+        "tonalRamp": [
+          "oklch(15% 0.015 150)",
+          "oklch(27% 0.027 150)",
+          "oklch(39% 0.048 150)",
+          "oklch(51% 0.06 150)",
+          "oklch(63% 0.06 150)",
+          "oklch(75% 0.045 150)",
+          "oklch(87% 0.024 150)",
+          "oklch(95% 0.015 150)"
+        ]
+      },
+      "green": {
+        "role": "primary",
+        "displayName": "Action green",
+        "tonalRamp": [
+          "oklch(15% 0.015 150)",
+          "oklch(27% 0.063 150)",
+          "oklch(39% 0.112 150)",
+          "oklch(51% 0.14 150)",
+          "oklch(63% 0.14 150)",
+          "oklch(75% 0.105 150)",
+          "oklch(87% 0.056 150)",
+          "oklch(95% 0.015 150)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Opening statement; compact 95% stretch and responsive sizes."
+      },
+      "document": {
+        "displayName": "Document wording",
+        "purpose": "Readable example text controlled by the visitor."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(.16,1,.3,1)",
+        "purpose": "Revision animation and primary-action press transition."
+      },
+      {
+        "name": "control-transition",
+        "value": "0.2s",
+        "purpose": "Hover and press feedback only."
+      },
+      {
+        "name": "revision",
+        "value": "0.38s",
+        "purpose": "User-triggered text revision, from translateY(8px)/opacity .5 to rest. Disabled for reduced motion; no entrance or scroll animations."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "single-column",
+        "value": "1250px"
+      },
+      {
+        "name": "phone",
+        "value": "600px"
+      },
+      {
+        "name": "compact-phone",
+        "value": "360px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The square download action, with mint hover and a visible focus ring.",
+      "html": "<a class=\"ds-primary\" href=\"#download\">Scarica Daylex <svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 4v14m-5-5 5 5 5-5M5 21h14\"/></svg></a>",
+      "css": ".ds-primary{font-family:Archivo,sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:30px;min-height:54px;box-sizing:border-box;padding:14px 22px;background:var(--green,#15803d);color:var(--ink,#f3f3f3);font-size:16px;font-weight:550;text-decoration:none;border-radius:0;transition:transform .2s cubic-bezier(.16,1,.3,1),background .2s}.ds-primary svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.ds-primary:hover{background:var(--mint,#dff4e2);color:var(--black,#000)}.ds-primary:focus-visible{outline:3px solid var(--cyan,#00aeb3);outline-offset:5px;}.ds-primary:active{transform:translateY(2px)}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}}"
+    },
+    {
+      "name": "Device route",
+      "kind": "button",
+      "refersTo": "download-link",
+      "description": "A direct platform route with monochrome OS symbol and supporting text.",
+      "html": "<a class=\"ds-download\" href=\"#download\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2 4.5 10.5 3.3v8H2zm10-1.4L22 1.7v9.6H12zM2 12.7h8.5v8L2 19.5zm10 0h10v9.6L12 20.9z\"/></svg><span><strong>Windows 11</strong><small>Scarica l’app</small></span></a>",
+      "css": ".ds-download{font-family:Archivo,sans-serif;display:flex;align-items:center;gap:12px;min-height:84px;box-sizing:border-box;padding:12px 14px;background:var(--sheet,#171717);color:var(--ink,#f3f3f3);text-decoration:none;transition:background .2s,transform .2s}.ds-download svg{width:22px;height:22px;fill:currentColor;flex:none}.ds-download strong{display:block;font-size:16px;font-weight:550;line-height:1.35;letter-spacing:-.025em}.ds-download small{display:block;font-size:14px;line-height:1.4;color:var(--muted,#b5b5b5);margin-top:4px}.ds-download:hover{background:var(--layer,#242424);transform:translateY(-2px)}.ds-download:focus-visible{outline:3px solid var(--cyan,#00aeb3);outline-offset:5px;outline-offset:-3px}@media(prefers-reduced-motion:reduce){.ds-download{transition:none}}"
+    },
+    {
+      "name": "Revision controls",
+      "kind": "custom",
+      "refersTo": "revision-control",
+      "description": "Three human-selected stages; selected styling uses graphite and mint. This preview shows the states without application scripting.",
+      "html": "<div class=\"ds-stages\" role=\"group\" aria-label=\"Esplora l’esempio di revisione\"><button aria-pressed=\"false\">La bozza</button><button aria-pressed=\"true\">Con l’IA</button><button aria-pressed=\"false\">La tua revisione</button></div>",
+      "css": ".ds-stages{display:flex;gap:3px;background:var(--sheet,#171717);padding:12px}.ds-stages button{font-family:Archivo,sans-serif;border:0;border-radius:0;background:transparent;color:var(--muted,#b5b5b5);padding:11px 13px;min-height:44px;font-size:14px;line-height:1.55;cursor:pointer;transition:background .2s,color .2s}.ds-stages button:hover{color:var(--ink,#f3f3f3);background:var(--layer,#242424)}.ds-stages button[aria-pressed=true]{background:var(--layer,#242424);color:var(--mint,#dff4e2)}.ds-stages button:focus-visible{outline:3px solid var(--cyan,#00aeb3);outline-offset:5px;outline-offset:-3px}@media(prefers-reduced-motion:reduce){.ds-stages button{transition:none}}"
+    },
+    {
+      "name": "Folio sheet",
+      "kind": "card",
+      "refersTo": "folio-sheet",
+      "description": "Opposed square steps and readable illustrative document wording.",
+      "html": "<article class=\"ds-folio\"><h2>Oggetto dell’incarico</h2><p>L’incarico comprende <mark>l’analisi della documentazione</mark> e la redazione di una relazione conclusiva.</p><small>Esempio guidato di revisione.</small></article>",
+      "css": ".ds-folio{font-family:Archivo,sans-serif;padding:28px;background:var(--sheet,#171717);color:var(--ink,#f3f3f3);clip-path:polygon(0 0,calc(100% - var(--cut,24px)) 0,calc(100% - var(--cut,24px)) var(--cut,24px),100% var(--cut,24px),100% 100%,var(--cut,24px) 100%,var(--cut,24px) calc(100% - var(--cut,24px)),0 calc(100% - var(--cut,24px)));max-width:520px}.ds-folio h2{font-size:22px;font-weight:550;line-height:1.25;letter-spacing:-.025em;margin:0}.ds-folio p{font-size:22px;line-height:1.5;letter-spacing:-.02em;margin:24px 0 20px;max-width:29ch}.ds-folio mark{background:transparent;color:var(--mint,#dff4e2)}.ds-folio small{font-size:14px;line-height:1.5;color:var(--muted,#b5b5b5)}@media(max-width:600px){.ds-folio{--cut:18px}}"
+    },
+    {
+      "name": "Navigation links",
+      "kind": "nav",
+      "refersTo": "navigation-link",
+      "description": "Quiet text navigation with mint hover and cyan keyboard focus.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Navigazione principale\"><a href=\"#daylex-in-uso\">Il tuo spazio di lavoro</a><a href=\"assistenza.html\">Assistenza</a><a href=\"/app/\">Apri nel browser</a></nav>",
+      "css": ".ds-nav{font-family:Archivo,sans-serif;display:flex;flex-wrap:wrap;align-items:center;gap:32px;background:var(--black,#000);color:var(--ink,#f3f3f3);padding:12px;font-size:14px;line-height:1.55}.ds-nav a{display:inline-flex;align-items:center;min-height:44px;color:inherit;text-decoration:none}.ds-nav a:hover{color:var(--mint,#dff4e2)}.ds-nav a:focus-visible{outline:3px solid var(--cyan,#00aeb3);outline-offset:5px;}"
+    },
+    {
+      "name": "Daylex wordmark",
+      "kind": "custom",
+      "description": "Archivo lettering beside the opposed rectilinear mark.",
+      "html": "<a class=\"ds-wordmark\" href=\"/\" aria-label=\"Daylex, pagina iniziale\"><svg viewBox=\"0 0 40 40\" aria-hidden=\"true\"><path d=\"M4 4h22v6H10v20H4zM14 14h22v22H14v-6h16V20H14z\"/></svg><span>Daylex</span></a>",
+      "css": ".ds-wordmark{font-family:Archivo,sans-serif;display:inline-flex;align-items:center;gap:12px;min-height:44px;font-size:22px;font-weight:650;letter-spacing:-.035em;line-height:1.55;color:var(--ink,#f3f3f3);background:var(--black,#000);text-decoration:none;padding:12px}.ds-wordmark svg{width:34px;height:34px;fill:currentColor;stroke:none}.ds-wordmark:focus-visible{outline:3px solid var(--cyan,#00aeb3);outline-offset:5px;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Open Case Folio",
+    "overview": "Authority, precision and calm come from a black field, compact Archivo lettering and opposed square steps. A professional document remains the central material; the AI contribution sits alongside a legible text that the person can review and control.\n\nThe visual identity is specific to the public homepage. This document replaces the former homepage guidance; assistance and technical pages retain their legacy styles, while the native app and PWA interface remain unchanged. Source authority is the final cascade in `site/home.css`, with `site/index.html`, `site/home.js` and `site/home-mark.svg`; `PRODUCT.md` supplies durable product constraints and `HOME_BRAND.md` retains the surface brief.",
+    "keyCharacteristics": [
+      "Dominant black and near-black grounds with rare, meaningful accents.",
+      "Dense sans-serif lettering, generous section intervals and legible document text.",
+      "Repeated opposed orthogonal steps, with flat tonal layering.",
+      "Human-triggered revision, honest examples and a real workspace capture."
+    ],
+    "rules": [
+      {
+        "name": "The Rare Accent Rule",
+        "body": "Keep black and near-black dominant; reserve the three owner-defined accents for actions and meaningful states. Do not expand them into decorative section backgrounds.",
+        "section": "colors"
+      },
+      {
+        "name": "The Document First Rule",
+        "body": "Keep working text readable beside the AI contribution; do not turn text into particles, decorative glyphs or automatic spectacle.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Material Rule",
+        "body": "Use tone, alignment and the stepped silhouette to distinguish layers; do not add shadows or decorative glow.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do preserve the dominant black/near-black field and reserve accents for meaningful roles.",
+      "Do repeat the opposed square folio steps consistently across the mark, sheet, download band and closing panel.",
+      "Do keep all six direct device routes visible and functional without JavaScript.",
+      "Do label illustrative text as an example and use actual product evidence with accurate captions.",
+      "Do retain visible keyboard focus, readable text and reduced-motion behavior.",
+      "Do keep this identity scoped to the homepage; preserve legacy support pages and app/PWA interfaces."
+    ],
+    "donts": [
+      "Don't add colorful section fills, gradients, glass, shadows, pill controls or decorative feature-card grids.",
+      "Don't introduce entrance animations, scroll reveals, automatic revision loops or particle text.",
+      "Don't invent testimonials, adoption metrics, certifications or proof of brand recognition.",
+      "Don't turn the background field's diagonal cut into the reusable folio silhouette.",
+      "Don't hide downloads behind JavaScript, tabs or a carousel, or remove the existing release hooks."
+    ]
+  }
+}

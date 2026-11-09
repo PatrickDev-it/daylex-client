@@ -22,7 +22,7 @@ Windows, macOS and Linux downloads are published automatically. A companion brow
 
 ## Brand Commitments
 
-The owner explicitly requests a substantial redesign: black and charcoal surfaces, pale blue/cyan and green accents, strong visual hierarchy, progressive disclosure and purposeful animation, inspired by the supplied TikTok Apps & Agents screenshot. Retain Daylex's name, not TikTok's symbols. Address end users with plain Italian. Keep API terminology, hashes, compiler dependencies and build metadata in technical documentation.
+The current task replaces the homepage's identity, exclusively. The owner explicitly fixes #000 and #0c0c0c as the dominant grounds, with #00aeb3, #dff4e2 and #15803d used sparingly for accents and meaningful states. Recognition must come from composition, lettering and a consistent visual gesture rather than colorful surfaces. Authority, precision, calm and human control are the desired perceptions. The supplied TikTok SVG informs neutral tonal contrast, not logos or playful puzzle artwork. Retain Daylex's name. Address end users with plain Italian; keep API terminology, hashes, compiler dependencies and build metadata in technical documentation. The app, PWA and support pages are outside this visual redesign.
 
 The owner requests a refined, futuristic, premium first impression and no speculative FAQ section. Windows 10 and 11 use the same qualified installer but have separate entry points. iPhone/iPad use the existing PWA, not an unsigned native iOS package. Browser installation must request user confirmation; use a native prompt where supported and an explicit guide elsewhere.
 

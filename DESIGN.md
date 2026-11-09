@@ -1,44 +1,214 @@
-# Public website
+---
+name: Daylex homepage
+description: A professional open folio for document work under human control.
+colors:
+  black: "#000"
+  ground: "#0c0c0c"
+  sheet: "#171717"
+  layer: "#242424"
+  ink: "#f3f3f3"
+  muted: "#b5b5b5"
+  quiet: "#8d8d8d"
+  cyan: "#00aeb3"
+  mint: "#dff4e2"
+  green: "#15803d"
+typography:
+  display:
+    fontFamily: "Archivo, sans-serif"
+    fontSize: "clamp(60px, 5.4vw, 80px)"
+    fontWeight: 550
+    lineHeight: 1.04
+    letterSpacing: "-0.035em"
+  headline:
+    fontFamily: "Archivo, sans-serif"
+    fontSize: "44px"
+    fontWeight: 550
+    lineHeight: 1.08
+    letterSpacing: "-0.035em"
+  title:
+    fontFamily: "Archivo, sans-serif"
+    fontSize: "22px"
+    fontWeight: 550
+    lineHeight: 1.25
+    letterSpacing: "-0.035em"
+  body:
+    fontFamily: "Archivo, sans-serif"
+    fontSize: "16px"
+    fontWeight: 400
+    lineHeight: 1.55
+  document:
+    fontFamily: "Archivo, sans-serif"
+    fontSize: "22px"
+    fontWeight: 400
+    lineHeight: 1.5
+    letterSpacing: "-0.02em"
+  caption:
+    fontFamily: "Archivo, sans-serif"
+    fontSize: "14px"
+    fontWeight: 400
+    lineHeight: 1.5
+  wordmark:
+    fontFamily: "Archivo, sans-serif"
+    fontSize: "22px"
+    fontWeight: 650
+    lineHeight: 1.55
+    letterSpacing: "-0.035em"
+rounded:
+  square: "0px"
+spacing:
+  compact: "8px"
+  icon: "12px"
+  small: "16px"
+  inset-small: "20px"
+  inset: "24px"
+  inset-large: "28px"
+  group: "32px"
+  grid-small: "36px"
+  section-small: "44px"
+  panel: "64px"
+  grid-large: "80px"
+  section: "120px"
+components:
+  button-primary:
+    backgroundColor: "{colors.green}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.square}"
+    padding: "14px 22px"
+  button-primary-hover:
+    backgroundColor: "{colors.mint}"
+    textColor: "{colors.black}"
+  download-link:
+    backgroundColor: "{colors.sheet}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.square}"
+    padding: "12px 14px"
+  download-link-hover:
+    backgroundColor: "{colors.layer}"
+  revision-control:
+    backgroundColor: "transparent"
+    textColor: "{colors.muted}"
+    rounded: "{rounded.square}"
+    padding: "11px 13px"
+  revision-control-selected:
+    backgroundColor: "{colors.layer}"
+    textColor: "{colors.mint}"
+  folio-sheet:
+    backgroundColor: "{colors.sheet}"
+    textColor: "{colors.ink}"
+    padding: "28px"
+  navigation-link:
+    textColor: "{colors.ink}"
+  navigation-link-hover:
+    textColor: "{colors.mint}"
+---
 
-Scope: `site/`. The application's existing interface is not rebranded by this work.
+# Design System: Daylex homepage
 
-The user's black/charcoal, cyan and green reference is the visual authority. Primary conversion: desktop download. Build directly in the existing static HTML/CSS/JS stack, using the supplied reference and real product evidence; no invented screenshots, sales metrics or testimonials.
+## Overview
 
-## Direction
+**Creative North Star: "The Open Case Folio"**
 
-A premium download gateway: a large white/cyan statement on near-black, immediately paired with six platform choices. Green emphasizes the two Windows installers; charcoal and subdued cyan distinguish desktop and web entry points. OS marks sit to the left of each label. On mobile the same six choices fit the opening viewport, before product detail. All download choices are visible without JavaScript; no carousel, hidden tabs or FAQ.
+Authority, precision and calm come from a black field, compact Archivo lettering and opposed square steps. A professional document remains the central material; the AI contribution sits alongside a legible text that the person can review and control.
 
-The real workspace capture follows the download gateway. Supporting content stays concise. The PWA installation route at `/app/installa.html` shares the app's manifest identity and existing service-worker scope, with a native install prompt when offered by the browser and device-specific fallback instructions.
+The visual identity is specific to the public homepage. This document replaces the former homepage guidance; assistance and technical pages retain their legacy styles, while the native app and PWA interface remain unchanged. Source authority is the final cascade in `site/home.css`, with `site/index.html`, `site/home.js` and `site/home-mark.svg`; `PRODUCT.md` supplies durable product constraints and `HOME_BRAND.md` retains the surface brief.
 
-## Tokens
+**Key Characteristics:**
+- Dominant black and near-black grounds with rare, meaningful accents.
+- Dense sans-serif lettering, generous section intervals and legible document text.
+- Repeated opposed orthogonal steps, with flat tonal layering.
+- Human-triggered revision, honest examples and a real workspace capture.
 
-- Ground: #0b0d0e; supporting surface: #181c1e; raised surface: #252b2e.
-- Ink: #f5f7f7; supporting ink: #b9c3c7.
-- Action: #adf3cb with #10271a text. Cyan field: #c4edf2 with #11282d text.
-- Inter, served locally. Display 62–84px on desktop, 44px on phones; two-line headline. Body 17–19px. Sentence case, no eyebrow labels.
-- 1280px maximum content frame; symmetric 64px desktop / 24px phone gutters. Meaningful section gaps; different compositions for demonstration, workflow, download and help.
-- Rounded controls, quiet rectangular product surfaces. No decorative gradients, stock photography, floating glass navigation or icon-card grids.
+## Colors
 
-## Motion
+Neutral black and graphite carry the composition; color identifies an action, focus or a meaningful revision state.
 
-Content arrives once on scroll; the main statement has a short entrance. Download controls are visible immediately and respond to pointer/focus, without delaying the primary action. Reduced motion keeps the page still and fully functional.
+### Primary
+- **Action green** (`green`): the principal download action.
+- **Control cyan** (`cyan`): keyboard focus outlines and the AI margin symbol.
 
-## Language
+### Secondary
+- **Revision mint** (`mint`): selected revision controls, marked wording, action/link hover, text selection and the favicon mark. It is a local emphasis, never a large section fill.
 
-Public copy: `codice di attivazione`, `referente dello studio`, `scarica`, `apri nel browser`. Keep API keys, SHA-256, architectures, build numbers and runtime dependencies in `tecnica.html`. `assistenza.html` contains plain-language setup and OS confirmation guidance. Never imply public signup or automatic synchronization.
+### Neutral
+- **Black field** (`black`): the page and opening ground; dark text on mint.
+- **Near-black ground** (`ground`): opening tonal field, download band and closing panel.
+- **Document graphite** (`sheet`): the document sheet and download controls.
+- **Layer graphite** (`layer`): the folio backing and interactive hover/selection surfaces.
+- **Primary ink** (`ink`): headings, primary body copy and default action text.
+- **Supporting ink** (`muted`): captions, device details, help links and unselected controls.
+- **Quiet graphite** (`quiet`): the decorative folio mark, not body text.
 
-## Release integration
+**The Rare Accent Rule.** Keep black and near-black dominant; reserve the three owner-defined accents for actions and meaningful states. Do not expand them into decorative section backgrounds.
 
-`data-site-version="3"` refreshes every `data-download` link, including both Windows entry points, while preserving icons and labels. Desktop releases update home download links and technical metadata together. Public pages remain usable without JavaScript. Never replace the PWA or remove historical installers during a site deployment.
+## Typography
 
+Archivo is served locally from `site/fonts/Archivo.ttf` with a sans-serif fallback. One family supplies the hierarchy; the wordmark's heavier weight and the display's compact spacing create authority without a second display face.
 
-## Verification and scoped choices
+The frontmatter records the desktop type roles. The display uses a 95% font stretch. At widths up to 1250px the display becomes 58px and the headline 40px; up to 600px they become 40px and 36px. At up to 360px the display becomes 36px, the title/document size and wordmark become 20px. The mobile closing headline is 32px.
 
-Browser checks cover 1440, 768, 390 and 320px, keyboard selection, direct platform links,
-native PWA prompt states, reduced motion, and the no-JavaScript fallback. Delivery tests cover future release
-rendering and preservation of the previous technical page.
-The host OS requests reduced motion in the inspection browser; normal-motion inspection explicitly
-emulates no-preference, while keeping the separate reduced-motion pass. One real workspace capture replaces stock imagery and video; the opening visual priority is the download selection. Inter preserves continuity with the product. The full-width cyan section's inner frame has
-symmetric gutters; automatic padding and text-ink margin warnings do not indicate clipped content.
+Document text uses a 29ch desktop measure, expanding to 34ch at the intermediate layout. Body descriptions stay around 34–40ch. Captions and navigation are subordinate but readable; mobile device details and revision controls use 13px. All headings and controls use sentence case. The folio title uses slightly looser tracking than section headings (-0.025em).
 
-The platform grid is a deliberate exception to generic icon-card avoidance: the owner explicitly requests OS icons and immediately visible choices. These are direct download controls, not decorative feature cards. The footer wordmark is branding; the preceding conversion button is not an eyebrow label. Nine one-time content entrances are sufficient; controls remain visible immediately.
+**The Document First Rule.** Keep working text readable beside the AI contribution; do not turn text into particles, decorative glyphs or automatic spectacle.
+
+## Layout
+
+The desktop content frame has a 1344px maximum width with 48px side gutters. The opening uses two columns (1.04fr / 1fr), an 80px column gap and a download band spanning both columns. The six direct device choices form one row. The masthead is 84px tall; the workspace and closing sections are separated by 120px intervals.
+
+At up to 1250px the frame uses 32px gutters, the opening becomes one column and the download band precedes the folio. Device choices form three columns, the duplicate hero action is hidden, and section intervals reduce to 90px. At up to 600px gutters are 20px, device choices form two columns, the example follows them, workflow copy stacks and the footer wraps. At up to 360px gutters reduce to 16px. Preserve these explicit responsive order changes rather than hiding device routes behind a selector.
+
+The real workspace image spans the frame in grayscale with no enclosing panel, padding or clipping. Its caption remains below. Supporting workflow copy uses three text columns on desktop, separated by space rather than cards.
+
+## Elevation & Depth
+
+There are no box shadows, gradients, blur or glass surfaces. Depth comes from the slight offset between graphite folio layers and the contrast between black, near-black and sheet surfaces. The product screenshot remains unframed. Interactive download links lift by 2px on hover; this is a control response, not ambient elevation.
+
+**The Flat Material Rule.** Use tone, alignment and the stepped silhouette to distinguish layers; do not add shadows or decorative glow.
+
+## Shapes
+
+Controls are square. The reusable signature is a pair of opposed orthogonal steps at the upper-right and lower-left corners, 24px on desktop and 18px at up to 600px. The final shared clipping rule applies to the backing sheet, front sheet, download band and closing panel; earlier diagonal cuts on the closing panel are overridden.
+
+The Daylex mark repeats opposed rectilinear strokes. Its navigation form uses current text color; the favicon uses mint on black. The opening's broad background field has a separate diagonal entry cut; it does not replace the orthogonal folio signature. The actual workspace screenshot has no cut corners.
+
+## Components
+
+### Primary action
+
+A square, compact green action with a 54px minimum height, 30px text/icon gap and frontmatter padding. Hover changes to mint with black text; active press moves down 2px. State transitions last 0.2s; the transform uses the shared easing. The cyan keyboard outline is 3px with a 5px offset. The mobile opening relies on the visible device band; the closing action remains available.
+
+### Device routes
+
+Six neutral, rectangular links combine a recognizable monochrome OS symbol, device name and supporting line. Minimum height is 84px on desktop, 76px in the intermediate layout and 78px on phones. Hover changes sheet to layer and lifts the control by 2px; focus uses an inset outline offset of -3px to remain visible within the clipped band. These are navigation/download controls, not a generic feature-card pattern.
+
+Keep all six routes as direct HTML anchors usable without JavaScript. Release integration retains `data-site-version="3"` and the four `data-download` anchors: Windows 11, Windows 10, macOS and Linux. Both Windows routes target the same installer. The iPhone/iPad and PWA routes retain the existing installation guide; the native app and PWA are outside this redesign.
+
+### Revision folio
+
+The sheet uses the stepped geometry, a muted backing layer, a short document title, readable document wording, a cyan AI-margin symbol and muted explanation. Mint marks the changed phrase only in the AI stage. Its three real buttons use `aria-pressed`, with a graphite/mint selected state and a cyan inset focus outline. An explicit caption identifies an illustrative guided example; it is not presented as a live AI response.
+
+JavaScript reveals the controls and changes between the initial draft, AI suggestion and human revision. A polite status region announces the selected text. Without JavaScript the labeled example remains readable and the inactive controls remain hidden. The only content animation is the user-triggered 0.38s revision: text moves from 8px below at 0.5 opacity to its resting position. There are no generic entrance animations, scroll reveals, auto-cycling states or continuous animation. Reduced motion disables animations and transitions and changes smooth anchor scrolling to immediate scrolling.
+
+### Navigation and wordmark
+
+The masthead balances the compact Daylex mark/name against quiet text links with a 44px minimum interaction height. Hover uses mint. The workspace shortcut disappears at the intermediate breakpoint; phone navigation preserves the browser route. Full support, technical and installation links remain in the footer. The skip link becomes visible on keyboard focus, with mint background and black text.
+
+### Workspace evidence and closing
+
+Use the actual application capture in grayscale with an accurate caption and alt text. Keep the three workflow statements as open text groups. The closing panel repeats the folio steps and pairs a headline with one primary action; it does not introduce another visual system.
+
+## Do's and Don'ts
+
+### Do:
+- **Do** preserve the dominant black/near-black field and reserve accents for meaningful roles.
+- **Do** repeat the opposed square folio steps consistently across the mark, sheet, download band and closing panel.
+- **Do** keep all six direct device routes visible and functional without JavaScript.
+- **Do** label illustrative text as an example and use actual product evidence with accurate captions.
+- **Do** retain visible keyboard focus, readable text and reduced-motion behavior.
+- **Do** keep this identity scoped to the homepage; preserve legacy support pages and app/PWA interfaces.
+
+### Don't:
+- **Don't** add colorful section fills, gradients, glass, shadows, pill controls or decorative feature-card grids.
+- **Don't** introduce entrance animations, scroll reveals, automatic revision loops or particle text.
+- **Don't** invent testimonials, adoption metrics, certifications or proof of brand recognition.
+- **Don't** turn the background field's diagonal cut into the reusable folio silhouette.
+- **Don't** hide downloads behind JavaScript, tabs or a carousel, or remove the existing release hooks.
