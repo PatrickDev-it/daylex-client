@@ -109,6 +109,7 @@ if (downloadList && !reducedMotion.matches && 'IntersectionObserver' in window) 
     observer.disconnect();
     if (reducedMotion.matches) return;
     downloadList.querySelectorAll('.download-link').forEach((link, index) => {
+      if (link.matches(':focus, :hover')) return;
       const animation = link.animate([
         {opacity: 0, translate: '0 12px'},
         {opacity: 1, translate: '0 0'}
