@@ -50,3 +50,5 @@ These are observable interface changes, not proof of improved conversion or redu
 Five viewports (1440, 1366, 768, 390, 320px) keep all six device routes above 739px, with no horizontal overflow. Browser checks verified native download events and completed harmless fixture transfers from a real local HTTP endpoint; retry and manual OS switching preserve their selected targets. OS-specific help, focus transfer, one-action demo progression/replay, modified-click preservation and no-JavaScript fallbacks passed. Intercepted production fixtures verify routing/UI only; they cannot prove native installer completion.
 
 Tradeoff: the optional example now requires two deliberate advances to see the human final version, rather than direct selection among three stages; the sequence makes order explicit without delaying the primary download. A fresh first-use study is still required to validate comprehension and conversion.
+
+Device order confirmed by the owner: Windows 11, Windows 10, macOS, iPhone/iPad, Linux, App web. Keep the two Apple routes adjacent and PWA last.
