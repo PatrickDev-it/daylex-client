@@ -21,6 +21,8 @@ build = int(os.environ['WEB_BUILD'])
 source = root / 'app/build/web'
 assets = {file.relative_to(source).as_posix(): hashlib.sha256(file.read_bytes()).hexdigest()
           for file in sorted(source.rglob('*')) if file.is_file()}
+cached = json.loads(re.search(r'^const ASSETS = (.*);$', (source / 'service-worker.js').read_text(), re.M)[1])
+assert cached and all(assets.get(name) == sha for name, sha in cached.items()), 'Service worker references missing or changed assets'
 archive = directory / f'daylex-web-b{build}.zip'
 with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED) as bundle:
     for name in assets: bundle.write(source / name, arcname=name)

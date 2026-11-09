@@ -17,6 +17,9 @@ pdfjs = root / 'web-tools/node_modules/pdfjs-dist'
 for name in ('pdf.min.mjs', 'pdf.worker.min.mjs'):
     shutil.copy2(pdfjs / 'build' / name, vendor / name)
 shutil.copy2(pdfjs / 'LICENSE', vendor / 'LICENSE')
+# Flutter's incremental marker is not a public asset. GitHub artifact uploads
+# omit hidden files, so including it would prevent service-worker installation.
+(out / '.last_build_id').unlink(missing_ok=True)
 assets = sorted(file.relative_to(out).as_posix() for file in out.rglob('*')
                 if file.is_file() and file.name not in ('service-worker.js', 'flutter_service_worker.js'))
 version = hashlib.sha256(b''.join(hashlib.sha256((out / name).read_bytes()).digest() for name in assets)).hexdigest()[:20]
