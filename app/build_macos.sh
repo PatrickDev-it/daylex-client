@@ -19,6 +19,8 @@ development=false
 if [[ "${1:-}" == "--development" ]]; then development=true; fi
 sign_identity="${DAYLEX_SIGN_IDENTITY:-}"
 notary_profile="${DAYLEX_NOTARY_PROFILE:-}"
+notary_flags=(--keychain-profile "$notary_profile")
+if [[ -n "${DAYLEX_NOTARY_KEYCHAIN:-}" ]]; then notary_flags+=(--keychain "$DAYLEX_NOTARY_KEYCHAIN"); fi
 if [[ "$development" == false ]]; then
   [[ "$sign_identity" == "Developer ID Application:"* && -n "$notary_profile" ]] || {
     echo "Distribuzione: configura DAYLEX_SIGN_IDENTITY e DAYLEX_NOTARY_PROFILE (profilo notarytool nel Portachiavi)."
@@ -125,7 +127,7 @@ trap cleanup_build EXIT
 if [[ "$development" == false ]]; then
   step "notarizzazione app"
   ditto -c -k --keepParent "$built" "dist/notarization.zip"
-  xcrun notarytool submit "dist/notarization.zip" --keychain-profile "$notary_profile" --wait
+  xcrun notarytool submit "dist/notarization.zip" "${notary_flags[@]}" --wait
   xcrun stapler staple "$built"
   xcrun stapler validate "$built"
   spctl --assess --type execute --verbose=2 "$built"
@@ -136,7 +138,7 @@ ln -s /Applications dist/dmg/Applications
 hdiutil create -quiet -volname "$app" -srcfolder dist/dmg -ov -format UDZO "dist/${app}.dmg"
 if [[ "$development" == false ]]; then
   codesign --force --sign "$sign_identity" --timestamp "dist/${app}.dmg"
-  xcrun notarytool submit "dist/${app}.dmg" --keychain-profile "$notary_profile" --wait
+  xcrun notarytool submit "dist/${app}.dmg" "${notary_flags[@]}" --wait
   xcrun stapler staple "dist/${app}.dmg"
   xcrun stapler validate "dist/${app}.dmg"
 fi

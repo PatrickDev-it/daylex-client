@@ -182,7 +182,8 @@ $ErrorActionPreference = 'Stop'
 # A parent PowerShell 7 can pass incompatible module paths to Windows PowerShell 5.
 $env:PSModulePath = Join-Path $PSHOME 'Modules'
 function Note([string]$m) { Add-Content -LiteralPath $Log -Value "$(Get-Date -Format o) installer: $m" }
-$copy = @('/MIR', '/R:5', '/W:1', '/NFL', '/NDL', '/NJH', '/NJS', '/NP')
+# Inno Setup owns these files; an in-app update must preserve its uninstaller.
+$copy = @('/MIR', '/R:5', '/W:1', '/NFL', '/NDL', '/NJH', '/NJS', '/NP', '/XF', 'unins*.exe', 'unins*.dat', 'unins*.msg')
 try {
   Note "waiting for the app ($AppPid) to quit"
   if ($ReadyFile) { [IO.File]::WriteAllText($ReadyFile, 'ready') }

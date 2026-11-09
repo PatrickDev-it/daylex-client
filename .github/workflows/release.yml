@@ -103,6 +103,7 @@ jobs:
         env:
           DAYLEX_SIGN_IDENTITY: ${{ steps.apple.outputs.identity }}
           DAYLEX_NOTARY_PROFILE: ${{ steps.apple.outputs.profile }}
+          DAYLEX_NOTARY_KEYCHAIN: ${{ runner.temp }}/daylex-signing.keychain-db
         run: |
           if [[ '${{ steps.apple.outputs.ready }}' == true ]]; then
             bash build_macos.sh
@@ -116,7 +117,9 @@ jobs:
       - name: Packaged Windows startup
         if: runner.os == 'Windows'
         shell: pwsh
-        run: ./scripts/windows-smoke.ps1 -Archive (Get-ChildItem app/dist/daylex-windows-*.zip).FullName
+        run: |
+          ./scripts/windows-smoke.ps1 -Archive (Get-ChildItem app/dist/daylex-windows-*.zip).FullName -Installer (Get-ChildItem app/dist/Daylex-Setup-*.exe).FullName
+          ./scripts/test-windows-updater.ps1
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: desktop-${{ matrix.platform }}

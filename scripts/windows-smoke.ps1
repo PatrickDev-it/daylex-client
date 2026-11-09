@@ -1,9 +1,14 @@
-param([Parameter(Mandatory=$true)][string]$Archive, [switch]$RequireWindows11)
+param([Parameter(Mandatory=$true)][string]$Archive, [string]$Installer, [switch]$RequireWindows11)
 $ErrorActionPreference = 'Stop'
 $os = Get-CimInstance Win32_OperatingSystem
 if ($RequireWindows11 -and ($os.Caption -notmatch 'Windows 11' -or [int]$os.BuildNumber -lt 22000)) { throw 'Runner is not Windows 11' }
 $target = Join-Path $env:RUNNER_TEMP ('Daylex QA ' + [guid]::NewGuid().ToString('N'))
-Expand-Archive -LiteralPath $Archive -DestinationPath $target
+if ($Installer) {
+  $setup = Start-Process -FilePath $Installer -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/SP-',('/DIR="' + $target + '"')) -WindowStyle Hidden -Wait -PassThru
+  if ($setup.ExitCode -ne 0) { throw 'Installer failed' }
+} else {
+  Expand-Archive -LiteralPath $Archive -DestinationPath $target
+}
 $exe = Join-Path $target 'paper_agent.exe'
 $runtimeNames = @('msvcp140.dll','vcruntime140.dll','vcruntime140_1.dll')
 foreach ($name in $runtimeNames) {
