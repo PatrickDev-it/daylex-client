@@ -6,7 +6,7 @@
 
 web
 
-This record concerns the public presentation website, not the visual system of the Flutter client.
+This record covers the public website, installation guide, PWA and Flutter desktop client.
 
 ## Users
 
@@ -22,7 +22,7 @@ Windows, macOS and Linux downloads are published automatically. A companion brow
 
 ## Brand Commitments
 
-The current task replaces the homepage's identity, exclusively. The owner explicitly fixes #000 and #0c0c0c as the dominant grounds, with #00aeb3, #dff4e2 and #15803d used sparingly for accents and meaningful states. Recognition must come from composition, lettering and a consistent visual gesture rather than colorful surfaces. Authority, precision, calm and human control are the desired perceptions. The supplied TikTok SVG informs neutral tonal contrast, not logos or playful puzzle artwork. Retain Daylex's name. Address end users with plain Italian; keep API terminology, hashes, compiler dependencies and build metadata in technical documentation. The app, PWA and support pages are outside this visual redesign.
+The approved homepage identity now extends across the website and application. The owner explicitly fixes #000 and #0c0c0c as the dominant grounds, with #00aeb3, #dff4e2 and #15803d used sparingly for accents and meaningful states. Recognition must come from composition, lettering and a consistent visual gesture rather than colorful surfaces. Authority, precision, calm and human control are the desired perceptions. The supplied TikTok SVG informs neutral tonal contrast, not logos or playful puzzle artwork. Retain Daylex's name. Address end users with plain Italian; keep API terminology, hashes, compiler dependencies and build metadata in technical documentation. Use the same identity for app, PWA and support pages, with operational density in the workspace and reading hierarchy in documentation.
 
 The owner requests a refined, futuristic, premium first impression and no speculative FAQ section. Windows 10 and 11 use the same qualified installer but have separate entry points. iPhone/iPad use the existing PWA, not an unsigned native iOS package. Browser installation must request user confirmation; use a native prompt where supported and an explicit guide elsewhere.
 
@@ -33,7 +33,7 @@ The working application, real public releases, the client's actual document temp
 ## Product Principles
 
 - Lead with what the visitor can accomplish.
-- Present Windows 11, Windows 10, macOS, Linux, iPhone/iPad and PWA immediately, with recognizable OS icons.
+- Present Windows 11, Windows 10, macOS, iPhone/iPad, Linux and PWA immediately, with recognizable OS icons.
 - Explain setup in ordinary language; retain truthful installation help.
 - Keep release automation, existing downloads and the browser app working.
 - Use movement to explain the document workflow; respect reduced motion.

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "generatedAt": "2026-11-09T21:58:54.959282+00:00",
-  "title": "Design System: Daylex homepage",
+  "title": "Design System: Daylex",
   "extensions": {
     "colorMeta": {
       "black": {
@@ -244,7 +244,7 @@
   ],
   "narrative": {
     "northStar": "The Open Case Folio",
-    "overview": "Authority, precision and calm come from a black field, compact Archivo lettering and opposed square steps. A professional document remains the central material; the AI contribution sits alongside a legible text that the person can review and control.\n\nThe visual identity is specific to the public homepage. This document replaces the former homepage guidance; assistance and technical pages retain their legacy styles, while the native app and PWA interface remain unchanged. Source authority is the final cascade in `site/home.css`, with `site/index.html`, `site/home.js` and `site/home-mark.svg`; `PRODUCT.md` supplies durable product constraints and `HOME_BRAND.md` retains the surface brief.",
+    "overview": "Authority, precision and calm come from a black field, compact Archivo lettering and opposed square steps. A professional document remains the central material; the AI contribution sits alongside a legible text that the person can review and control.\n\nThe approved homepage identity extends across the public website, support and technical documentation, PWA installation and chrome, and Flutter desktop/web workspace. Source authority is `site/home.css`, `site/style.css`, `app/web/install.css`, `app/web/web.css` and `app/lib/core/theme/app_theme.dart`. The opposed folio mark is shared across web and native launch icons. PRODUCT.md supplies durable product constraints; HOME_BRAND.md retains the homepage surface brief.",
     "keyCharacteristics": [
       "Dominant black and near-black grounds with rare, meaningful accents.",
       "Dense sans-serif lettering, generous section intervals and legible document text.",
@@ -274,7 +274,7 @@
       "Do keep all six direct device routes visible and functional without JavaScript.",
       "Do label illustrative text as an example and use actual product evidence with accurate captions.",
       "Do retain visible keyboard focus, readable text and reduced-motion behavior.",
-      "Do keep this identity scoped to the homepage; preserve legacy support pages and app/PWA interfaces."
+      "Do carry the same identity across website and app while adapting density to reading and operational tasks."
     ],
     "donts": [
       "Don't add colorful section fills, gradients, glass, shadows, pill controls or decorative feature-card grids.",

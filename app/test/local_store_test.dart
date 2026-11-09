@@ -430,7 +430,7 @@ void main() {
     File('${dir.path}/preferences.json')
         .writeAsBytesSync([0x7b, 0xff, 0xfe, 0x7d]);
     final container = launch();
-    expect(container.read(uiProvider).themeMode, ThemeMode.system);
+    expect(container.read(uiProvider).themeMode, ThemeMode.dark);
     expect(container.read(localStoreProvider)!.readOnly, isFalse);
     expect(
       dir.listSync().where((f) => f.path.contains('preferences.json.corrupt-')),
@@ -490,7 +490,7 @@ void main() {
     test('preferences with $what open on the defaults', () {
       File('${dir.path}/preferences.json').writeAsStringSync(text);
       final ui = launch().read(uiProvider);
-      expect(ui.themeMode, ThemeMode.system);
+      expect(ui.themeMode, ThemeMode.dark);
       expect(ui.locale, UiState.defaultLocale);
     });
   }

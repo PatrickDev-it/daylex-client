@@ -44,13 +44,24 @@ flutter:
   # The strings are in lib/l10n/*.arb; `flutter gen-l10n` (run by pub get) writes AppLocalizations next to them.
   generate: true
 
-  # Inter is used both by the app UI and embedded in exported PDFs.
+  # Archivo aligns the UI with the website; Inter remains embedded in exported PDFs.
   # The file names also let google_fonts (used by the chat package) resolve
   # Inter locally instead of downloading it at runtime.
   assets:
     - assets/fonts/
+    - assets/branding/
 
   fonts:
+    - family: Archivo
+      fonts:
+        - asset: assets/fonts/Archivo-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Archivo-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Archivo-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Archivo-Bold.ttf
+          weight: 700
     - family: Inter
       fonts:
         - asset: assets/fonts/Inter-Regular.ttf

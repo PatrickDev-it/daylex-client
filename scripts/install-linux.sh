@@ -16,6 +16,7 @@ Type=Application
 Name=Daylex
 Exec="$target/paper_agent"
 Path=$target
+Icon=$target/data/flutter_assets/assets/branding/daylex.png
 Terminal=false
 Categories=Office;
 EOF

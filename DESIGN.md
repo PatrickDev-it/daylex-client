@@ -1,5 +1,5 @@
 ---
-name: Daylex homepage
+name: Daylex
 description: A professional open folio for document work under human control.
 colors:
   black: "#000"
@@ -104,7 +104,7 @@ components:
     textColor: "{colors.mint}"
 ---
 
-# Design System: Daylex homepage
+# Design System: Daylex
 
 ## Overview
 
@@ -112,7 +112,7 @@ components:
 
 Authority, precision and calm come from a black field, compact Archivo lettering and opposed square steps. A professional document remains the central material; the AI contribution sits alongside a legible text that the person can review and control.
 
-The visual identity is specific to the public homepage. This document replaces the former homepage guidance; assistance and technical pages retain their legacy styles, while the native app and PWA interface remain unchanged. Source authority is the final cascade in `site/home.css`, with `site/index.html`, `site/home.js` and `site/home-mark.svg`; `PRODUCT.md` supplies durable product constraints and `HOME_BRAND.md` retains the surface brief.
+The approved homepage identity extends across the public website, support and technical documentation, PWA installation and chrome, and Flutter desktop/web workspace. Source authority is `site/home.css`, `site/style.css`, `app/web/install.css`, `app/web/web.css` and `app/lib/core/theme/app_theme.dart`. The opposed folio mark is shared across web and native launch icons. PRODUCT.md supplies durable product constraints; HOME_BRAND.md retains the homepage surface brief.
 
 **Key Characteristics:**
 - Dominant black and near-black grounds with rare, meaningful accents.
@@ -182,7 +182,7 @@ A rounded, compact green action with a 54px minimum height, 14px text/icon gap a
 
 Six neutral, rectangular links combine a recognizable colored OS symbol, device name and supporting line. Minimum height is 84px on desktop, 76px in the intermediate layout and 78px on phones. At rest all controls stay colored: detected recommendations are fully opaque on layer, alternatives at 84% opacity on sheet. Hover applies brightness 1.16 / contrast 1.06 at full opacity to that control, while every sibling becomes grayscale at 74% opacity on sheet, without any hover border or outline; focus uses an inset outline offset of -3px to remain visible within the clipped band. These are navigation/download controls, not a generic feature-card pattern.
 
-Keep all six routes as direct HTML anchors usable without JavaScript. Release integration retains `data-site-version="3"` and the four `data-download` anchors: Windows 11, Windows 10, macOS and Linux. Both Windows routes target the same installer. The iPhone/iPad and PWA routes retain the existing installation guide; the native app and PWA are outside this redesign.
+Keep all six routes as direct HTML anchors usable without JavaScript. Release integration retains `data-site-version="3"` and the four `data-download` anchors: Windows 11, Windows 10, macOS and Linux. Both Windows routes target the same installer. The iPhone/iPad and PWA routes retain the existing installation guide; the native app and PWA share the same identity.
 
 ### Revision folio
 
@@ -206,7 +206,7 @@ Use the actual application capture in grayscale with an accurate caption and alt
 - **Do** keep all six direct device routes visible and functional without JavaScript.
 - **Do** label illustrative text as an example and use actual product evidence with accurate captions.
 - **Do** retain visible keyboard focus, readable text and reduced-motion behavior.
-- **Do** keep this identity scoped to the homepage; preserve legacy support pages and app/PWA interfaces.
+- **Do** carry the same identity across website and app while adapting density to reading and operational tasks.
 
 ### Don't:
 - **Don't** add colorful section fills, gradients, glass, shadows, pill controls or decorative feature-card grids.
@@ -214,3 +214,18 @@ Use the actual application capture in grayscale with an accurate caption and alt
 - **Don't** invent testimonials, adoption metrics, certifications or proof of brand recognition.
 - **Don't** turn the background field's diagonal cut into the reusable folio silhouette.
 - **Don't** hide downloads behind JavaScript, tabs or a carousel, or remove the existing release hooks.
+
+
+## Application and documentation rollout
+
+Experience principles: recognize the next action, keep primary actions distinct, preserve user control and settings, and reveal technical detail in the relevant documentation. This rollout changes presentation, not authentication, document storage or release protocols.
+
+The Flutter workspace uses Archivo at operational sizes (13–14px body, 18–28px titles); documentation uses a comfortable 16px reading size. Fonts are bundled locally. Inter remains available for exported PDF documents and package fallbacks. White document paper and user-selected document accents are content, not application chrome.
+
+Dark is the default for new users. Explicit light/dark/system preferences remain respected. Dark grounds are #000, #0c0c0c and #171717; text is #f3f3f3, #b5b5b5 and #8d8d8d. Light mode uses neutral white/gray grounds with #0c0c0c primary text and #595959 supporting text. Small cyan links darken to #087e82 on light surfaces for contrast.
+
+Primary filled actions use #15803d with white text, changing to #dff4e2 with black text on hover. Cyan identifies focus and source/AI assistance. Real warnings and destructive errors retain semantic amber/red; these never become decorative section colors. Controls use 12px corners, content containers 14px, compact controls 8px. Dense toolbars keep their established dimensions and keyboard behavior.
+
+Assistance and technical pages use the same wordmark, Archivo, grounds and actions as the homepage. Installation and PWA chrome share these tokens. Native launch icons use the opposed folio on black; `scripts/brand-assets.py` deterministically rasterizes the existing vector geometry. No stock or generated imagery is introduced.
+
+The homepage's requested OS hover behavior and one-time stagger remain local to that selection row. The operational app does not add entrance animations. Preserve reduced motion, visible keyboard focus and text scaling.

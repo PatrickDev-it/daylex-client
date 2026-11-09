@@ -29,9 +29,9 @@ const _answer =
 
 void main() {
   setUpAll(() async {
-    final font = FontLoader('Inter');
+    final font = FontLoader('Archivo');
     for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      font.addFont(rootBundle.load('assets/fonts/Inter-$weight.ttf'));
+      font.addFont(rootBundle.load('assets/fonts/Archivo-$weight.ttf'));
     }
     await font.load();
     final icons = FontLoader('packages/lucide_icons_flutter/Lucide')

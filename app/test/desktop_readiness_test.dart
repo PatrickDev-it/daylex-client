@@ -65,35 +65,38 @@ void main() {
     ('workspace', const AppShell()),
   ]) {
     for (final scale in [1.0, 2.0]) {
-      testWidgets('${screen.$1} at 800px with text scale $scale', (
-        tester,
-      ) async {
-        await tester.binding.setSurfaceSize(const Size(800, 700));
-        addTearDown(() => tester.binding.setSurfaceSize(null));
-        await loadAppFonts();
-        await tester.pumpWidget(
-          ProviderScope(
-            child: testApp(
-              MediaQuery(
-                data: MediaQueryData(
-                  size: const Size(800, 700),
-                  textScaler: TextScaler.linear(scale),
-                  disableAnimations: true,
+      for (final dark in [false, true]) {
+        testWidgets('${screen.$1} at 800px with text scale $scale dark=$dark', (
+          tester,
+        ) async {
+          await tester.binding.setSurfaceSize(const Size(800, 700));
+          addTearDown(() => tester.binding.setSurfaceSize(null));
+          await loadAppFonts();
+          await tester.pumpWidget(
+            ProviderScope(
+              child: testApp(
+                MediaQuery(
+                  data: MediaQueryData(
+                    size: const Size(800, 700),
+                    textScaler: TextScaler.linear(scale),
+                    disableAnimations: true,
+                  ),
+                  child: Scaffold(body: screen.$2),
                 ),
-                child: Scaffold(body: screen.$2),
+                dark: dark,
               ),
             ),
-          ),
-        );
-        await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
-        await expectLater(
-          find.byType(MaterialApp),
-          matchesGoldenFile(
-            'goldens/readiness/${screen.$1}-${scale.toInt()}.png',
-          ),
-        );
-      });
+          );
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          await expectLater(
+            find.byType(MaterialApp),
+            matchesGoldenFile(
+              'goldens/readiness/${screen.$1}-${scale.toInt()}${dark ? '-dark' : ''}.png',
+            ),
+          );
+        });
+      }
     }
   }
 }

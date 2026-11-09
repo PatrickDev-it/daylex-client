@@ -236,7 +236,7 @@ class _SuggestionCard extends StatelessWidget {
     return ConstrainedBox(
       constraints: const BoxConstraints(minHeight: 112),
       child: SizedBox(
-        width: 170,
+        width: 170 * MediaQuery.textScalerOf(context).scale(13) / 13,
         child: Material(
           color: Colors.transparent,
           child: InkWell(
@@ -256,8 +256,6 @@ class _SuggestionCard extends StatelessWidget {
                   Text(
                     prompt,
                     style: text.bodySmall?.copyWith(color: tokens.textFaint),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),

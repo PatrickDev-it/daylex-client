@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" data-theme="dark">
 <head>
   <base href="$FLUTTER_BASE_HREF">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="Daylex: documenti, chat e PDF nel browser, per PC e tablet.">
-  <meta name="theme-color" content="#f9fafb">
+  <meta name="theme-color" content="#000000">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Daylex">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -16,7 +16,7 @@
 </head>
 <body>
   <header id="web-controls" hidden aria-label="Archivio e aggiornamenti">
-    <a href="/" class="brand">Daylex</a>
+    <a href="/" class="brand"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 4h22v6H10v20H4zM14 14h22v22H14v-6h16V20H14z"/></svg><span>Daylex</span></a>
     <span id="web-message" role="status">Archivio locale a questo browser · WhatsApp disponibile nell’app desktop</span>
     <button id="backup" type="button">Scarica archivio</button>
     <label class="file-button">Importa archivio<input id="restore" type="file" accept=".json,application/json"></label>

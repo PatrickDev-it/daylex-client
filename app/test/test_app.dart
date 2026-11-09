@@ -7,9 +7,9 @@ import 'package:paper_agent/l10n/l10n.dart';
 final itL10n = lookupAppLocalizations(const Locale('it'));
 
 Future<void> loadAppFonts() async {
-  final font = FontLoader('Inter');
+  final font = FontLoader('Archivo');
   for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-    font.addFont(rootBundle.load('assets/fonts/Inter-$weight.ttf'));
+    font.addFont(rootBundle.load('assets/fonts/Archivo-$weight.ttf'));
   }
   await font.load();
   final icons = FontLoader('packages/lucide_icons_flutter/Lucide')
@@ -20,11 +20,14 @@ Future<void> loadAppFonts() async {
 }
 
 /// A bare app around [home] with the app's theme and its strings (Italian, as it starts), for widget tests.
-Widget testApp(Widget home, {Locale locale = const Locale('it')}) =>
-    MaterialApp(
-      theme: AppTheme.light(),
-      locale: locale,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      home: home,
-    );
+Widget testApp(
+  Widget home, {
+  Locale locale = const Locale('it'),
+  bool dark = false,
+}) => MaterialApp(
+  theme: dark ? AppTheme.dark() : AppTheme.light(),
+  locale: locale,
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
+  home: home,
+);

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../core/theme/app_theme.dart';
+import '../../core/theme/daylex_mark.dart';
 import '../../features/workspace/chat_thread.dart';
 import '../../features/workspace/ui_state.dart';
 import '../../features/workspace/workspace_state.dart';
@@ -60,7 +61,6 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
   Widget build(BuildContext context) {
     final tokens = AppTokens.of(context);
     final text = Theme.of(context).textTheme;
-    final scheme = Theme.of(context).colorScheme;
     final l = context.l10n;
     final ws = ref.watch(workspaceProvider);
     final ui = ref.watch(uiProvider);
@@ -79,15 +79,7 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
               padding: const EdgeInsets.only(left: 14, right: 6),
               child: Row(
                 children: [
-                  Container(
-                    width: 22,
-                    height: 22,
-                    decoration: BoxDecoration(
-                      color: scheme.primary,
-                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                    ),
-                    child: Icon(LucideIcons.fileText, size: 13, color: scheme.onPrimary),
-                  ),
+                  const DaylexMark(size: 26),
                   const SizedBox(width: 9),
                   Expanded(child: Text(l.appTitle, style: text.titleSmall)),
                   ToolbarButton(
@@ -110,7 +102,9 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
                   icon: LucideIcons.squarePen,
                   label: l.newChat,
                   shortcut: AppShortcut.newChat,
-                  active: ui.section == AppSection.chat && ws.activeThreadId == null,
+                  active:
+                      ui.section == AppSection.chat &&
+                      ws.activeThreadId == null,
                   onTap: () => actions.newChat(),
                 ),
                 NavRow(
@@ -132,7 +126,9 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
                   icon: LucideIcons.library,
                   label: l.tabLibrary,
                   shortcut: AppShortcut.libraryTab,
-                  onTap: ws.activeThread == null ? null : () => actions.openTab(PanelTab.library),
+                  onTap: ws.activeThread == null
+                      ? null
+                      : () => actions.openTab(PanelTab.library),
                 ),
               ],
             ),
@@ -160,7 +156,10 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
             child: Row(
               children: [
                 Expanded(
-                  child: Text(l.sidebarProjects, style: text.labelSmall?.copyWith(color: tokens.textFaint)),
+                  child: Text(
+                    l.sidebarProjects,
+                    style: text.labelSmall?.copyWith(color: tokens.textFaint),
+                  ),
                 ),
                 ToolbarButton(
                   icon: LucideIcons.folderPlus,
@@ -179,12 +178,22 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
                   ...() {
                     final all = ws
                         .threadsIn(project.id)
-                        .where((t) => query.isEmpty || t.title.toLowerCase().contains(query))
+                        .where(
+                          (t) =>
+                              query.isEmpty ||
+                              t.title.toLowerCase().contains(query),
+                        )
                         .toList();
-                    if (query.isNotEmpty && all.isEmpty) return const <Widget>[];
-                    final collapsed = _collapsed.contains(project.id) && query.isEmpty;
-                    final expanded = _expanded.contains(project.id) || query.isNotEmpty;
-                    final shown = expanded ? all : all.take(_visibleChats).toList();
+                    if (query.isNotEmpty && all.isEmpty) {
+                      return const <Widget>[];
+                    }
+                    final collapsed =
+                        _collapsed.contains(project.id) && query.isEmpty;
+                    final expanded =
+                        _expanded.contains(project.id) || query.isNotEmpty;
+                    final shown = expanded
+                        ? all
+                        : all.take(_visibleChats).toList();
                     // Keep the active chat visible even past the limit.
                     final active = ws.activeThread;
                     if (active != null &&
@@ -198,17 +207,29 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
                         name: project.name,
                         collapsed: collapsed,
                         onTap: () => setState(() {
-                          collapsed ? _collapsed.remove(project.id) : _collapsed.add(project.id);
+                          collapsed
+                              ? _collapsed.remove(project.id)
+                              : _collapsed.add(project.id);
                         }),
                         onNewChat: () => actions.newChat(projectId: project.id),
                       ),
                       if (!collapsed) ...[
                         for (final t in shown)
-                          ChatRow(thread: t, active: ui.section == AppSection.chat && t.id == ws.activeThreadId),
+                          ChatRow(
+                            thread: t,
+                            active:
+                                ui.section == AppSection.chat &&
+                                t.id == ws.activeThreadId,
+                          ),
                         if (all.isEmpty)
                           Padding(
                             padding: const EdgeInsets.fromLTRB(34, 4, 8, 6),
-                            child: Text(l.sidebarNoChats, style: text.bodySmall?.copyWith(color: tokens.textFaint)),
+                            child: Text(
+                              l.sidebarNoChats,
+                              style: text.bodySmall?.copyWith(
+                                color: tokens.textFaint,
+                              ),
+                            ),
                           ),
                         if (all.length > _visibleChats && query.isEmpty)
                           Padding(
@@ -220,9 +241,15 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
                                 foregroundColor: tokens.textFaint,
                               ),
                               onPressed: () => setState(() {
-                                expanded ? _expanded.remove(project.id) : _expanded.add(project.id);
+                                expanded
+                                    ? _expanded.remove(project.id)
+                                    : _expanded.add(project.id);
                               }),
-                              child: Text(expanded ? l.sidebarShowLess : l.sidebarShowMore),
+                              child: Text(
+                                expanded
+                                    ? l.sidebarShowLess
+                                    : l.sidebarShowMore,
+                              ),
                             ),
                           ),
                       ],
@@ -245,7 +272,8 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
                   tooltip: l.settings,
                   selected: ui.section == AppSection.settings,
                   size: _actionSize,
-                  onPressed: () => ref.read(uiProvider.notifier).show(AppSection.settings),
+                  onPressed: () =>
+                      ref.read(uiProvider.notifier).show(AppSection.settings),
                 ),
               ],
             ),

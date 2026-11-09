@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
+import 'core/theme/app_theme.dart';
 import 'core/platform/sandbox_migration.dart';
 import 'core/platform/instance_lock.dart';
 import 'core/platform/user_dirs.dart';
@@ -17,11 +18,14 @@ InstanceLock? _instanceLock;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
-    if (!kIsWeb) _instanceLock ??= InstanceLock.acquire(Directory(appDataDir()));
+    if (!kIsWeb) {
+      _instanceLock ??= InstanceLock.acquire(Directory(appDataDir()));
+    }
   } on FileSystemException {
     final l = lookupAppLocalizations(const Locale('it'));
     runApp(
       MaterialApp(
+        theme: AppTheme.dark(),
         home: Scaffold(
           body: Center(
             child: Padding(

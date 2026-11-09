@@ -9,6 +9,7 @@ import '../../features/access/service_status.dart';
 import '../../features/agent/agent_controller.dart';
 import '../../features/agent/data/http_agent_client.dart';
 import '../../l10n/l10n.dart';
+import '../../core/theme/daylex_mark.dart';
 
 class AccessGate extends ConsumerWidget {
   const AccessGate({required this.child, super.key});
@@ -155,13 +156,21 @@ class _AccessFormState extends ConsumerState<AccessForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(l.accessTitle, style: Theme.of(context).textTheme.headlineSmall),
+          Row(
+            children: [
+              const DaylexMark(size: 34),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  l.accessTitle,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
           Text(kIsWeb ? l.webAccessHelp : l.accessHelp),
-          if (kIsWeb) ...[
-            const SizedBox(height: 12),
-            Text(l.webSessionHelp),
-          ],
+          if (kIsWeb) ...[const SizedBox(height: 12), Text(l.webSessionHelp)],
           const SizedBox(height: 24),
           TextField(
             controller: _key,

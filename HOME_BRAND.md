@@ -1,6 +1,6 @@
 # Daylex home — brand refoundation
 
-Scope: only the public homepage at daylex.it. Persuade. The app, PWA, assistance and technical pages retain their existing appearance and behavior.
+Surface: the public homepage at daylex.it. Mode: Persuade. The owner has now authorized extending this approved identity across support/documentation (Read) and the PWA/native workspace (Operate), as recorded in DESIGN.md.
 
 ## Perception audit
 The incumbent black/cyan/mint page reads as a generic software download directory. Six equally rounded controls dominate; the colored second headline line and oversized lowercase dotted wordmark provide no proprietary cue. A hidden-logo crop could belong to another productivity product. Preserve product truth and conversion, not that visual vocabulary.

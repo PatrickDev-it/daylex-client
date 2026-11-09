@@ -14,7 +14,7 @@ enum EditorMode { preview, edit }
 class UiState {
   const UiState({
     this.section = AppSection.chat,
-    this.themeMode = ThemeMode.system,
+    this.themeMode = ThemeMode.dark,
     this.locale = defaultLocale,
     this.editorMode = EditorMode.preview,
     this.panelOpen = true,
@@ -77,7 +77,7 @@ class UiNotifier extends Notifier<UiState> {
     final saved = ref.read(localStoreProvider)?.readPreferences() ?? const {};
     return UiState(
       themeMode:
-          ThemeMode.values.asNameMap()[saved['themeMode']] ?? ThemeMode.system,
+          ThemeMode.values.asNameMap()[saved['themeMode']] ?? ThemeMode.dark,
       locale: UiState.defaultLocale,
     );
   }

@@ -40,33 +40,33 @@ class AppTokens extends ThemeExtension<AppTokens> {
       Theme.of(context).extension<AppTokens>()!;
 
   static const light = AppTokens(
-    canvas: Color(0xFFF1F3F6),
-    panel: Color(0xFFF9FAFB),
-    border: Color(0xFFE6E8EC),
-    borderStrong: Color(0xFFD5D9E0),
-    hover: Color(0xFFF1F3F7),
-    textMuted: Color(0xFF5F6B7A),
-    textFaint: Color(0xFF637080),
-    sourceLink: Color(0xFF087BA8),
-    success: Color(0xFF237F4A),
+    canvas: Color(0xFFF3F3F3),
+    panel: Color(0xFFF7F7F7),
+    border: Color(0xFFDEDEDE),
+    borderStrong: Color(0xFFC4C4C4),
+    hover: Color(0xFFE9E9E9),
+    textMuted: Color(0xFF595959),
+    textFaint: Color(0xFF666666),
+    sourceLink: Color(0xFF087E82),
+    success: Color(0xFF15803D),
     warning: Color(0xFF9B5B08),
     danger: Color(0xFFDC2626),
-    codeBackground: Color(0xFFF7F8FA),
+    codeBackground: Color(0xFFF3F3F3),
   );
 
   static const dark = AppTokens(
-    canvas: Color(0xFF090A0A),
-    panel: Color(0xFF191A1A),
-    border: Color(0xFF282A2A),
-    borderStrong: Color(0xFF3A3C3B),
-    hover: Color(0xFF232525),
-    textMuted: Color(0xFFA4A8A7),
-    textFaint: Color(0xFF969C99),
-    sourceLink: Color(0xFF65C8F0),
-    success: Color(0xFF34D399),
+    canvas: Color(0xFF000000),
+    panel: Color(0xFF0C0C0C),
+    border: Color(0xFF242424),
+    borderStrong: Color(0xFF3C3C3C),
+    hover: Color(0xFF171717),
+    textMuted: Color(0xFFB5B5B5),
+    textFaint: Color(0xFF8D8D8D),
+    sourceLink: Color(0xFF00AEB3),
+    success: Color(0xFFDFF4E2),
     warning: Color(0xFFE7A94B),
     danger: Color(0xFFF87171),
-    codeBackground: Color(0xFF101111),
+    codeBackground: Color(0xFF171717),
   );
 
   @override
@@ -153,17 +153,20 @@ class AppTheme {
   AppTheme._();
 
   /// Theme accents. Document accents remain independently user-selectable.
-  static const _lightAccent = Color(0xFF315DD5);
-  static const _darkAccent = Color(0xFFD6B15D);
+  static const _lightAccent = Color(0xFF15803D);
+  static const _darkAccent = Color(0xFF00AEB3);
+  static const actionGreen = Color(0xFF15803D);
+  static const mint = Color(0xFFDFF4E2);
+  static const cyan = Color(0xFF00AEB3);
 
   static const radiusXs = 4.0;
   static const radiusIndicator = 2.0;
-  static const radiusSm = 6.0;
+  static const radiusSm = 8.0;
 
   /// Content width of the small confirm and prompt dialogs.
   static const dialogWidth = 360.0;
-  static const radius = 8.0;
-  static const radiusLg = 12.0;
+  static const radius = 12.0;
+  static const radiusLg = 14.0;
   static const radiusXl = 16.0;
 
   /// Fully rounded at the heights pills, chips and round buttons have.
@@ -221,10 +224,10 @@ class AppTheme {
     final isDark = brightness == Brightness.dark;
     final tokens = isDark ? AppTokens.dark : AppTokens.light;
     final accent = isDark ? _darkAccent : _lightAccent;
-    final surface = isDark ? const Color(0xFF090A0A) : Colors.white;
+    final surface = isDark ? const Color(0xFF000000) : Colors.white;
     final onSurface = isDark
-        ? const Color(0xFFE7E8E6)
-        : const Color(0xFF111827);
+        ? const Color(0xFFF3F3F3)
+        : const Color(0xFF0C0C0C);
 
     final scheme =
         ColorScheme.fromSeed(
@@ -232,7 +235,18 @@ class AppTheme {
           brightness: brightness,
         ).copyWith(
           primary: accent,
-          onPrimary: isDark ? const Color(0xFF1C1912) : Colors.white,
+          onPrimary: isDark ? Colors.black : Colors.white,
+          primaryContainer: isDark ? tokens.hover : mint,
+          onPrimaryContainer: isDark ? mint : const Color(0xFF0C0C0C),
+          secondary: isDark ? mint : actionGreen,
+          onSecondary: isDark ? Colors.black : Colors.white,
+          secondaryContainer: tokens.hover,
+          onSecondaryContainer: onSurface,
+          tertiary: accent,
+          onTertiary: isDark ? Colors.black : Colors.white,
+          tertiaryContainer: tokens.hover,
+          onTertiaryContainer: onSurface,
+          surfaceTint: Colors.transparent,
           surface: surface,
           onSurface: onSurface,
           onSurfaceVariant: tokens.textMuted,
@@ -241,6 +255,17 @@ class AppTheme {
           surfaceContainerLowest: surface,
           surfaceContainerLow: tokens.panel,
           surfaceContainer: tokens.hover,
+          surfaceContainerHigh: isDark
+              ? const Color(0xFF242424)
+              : const Color(0xFFE9E9E9),
+          surfaceContainerHighest: isDark
+              ? const Color(0xFF303030)
+              : const Color(0xFFDEDEDE),
+          inverseSurface: isDark
+              ? const Color(0xFFF3F3F3)
+              : const Color(0xFF171717),
+          onInverseSurface: isDark ? const Color(0xFF0C0C0C) : Colors.white,
+          inversePrimary: isDark ? actionGreen : cyan,
           error: tokens.danger,
         );
 
@@ -248,13 +273,13 @@ class AppTheme {
       useMaterial3: true,
       brightness: brightness,
       colorScheme: scheme,
-      fontFamily: 'Inter',
+      fontFamily: 'Archivo',
       visualDensity: VisualDensity.compact,
     );
 
     TextStyle t(double size, FontWeight weight, {Color? color, double? h}) =>
         TextStyle(
-          fontFamily: 'Inter',
+          fontFamily: 'Archivo',
           fontSize: size,
           fontWeight: weight,
           color: color ?? onSurface,
@@ -310,6 +335,12 @@ class AppTheme {
       ),
       splashFactory: NoSplash.splashFactory,
       hoverColor: tokens.hover,
+      focusColor: accent.withValues(alpha: tintStrong),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: accent,
+        selectionColor: accent.withValues(alpha: .25),
+        selectionHandleColor: accent,
+      ),
       highlightColor: Colors.transparent,
       extensions: [tokens, appText],
       iconTheme: IconThemeData(size: 16, color: tokens.textMuted),
@@ -326,12 +357,28 @@ class AppTheme {
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
-        style: FilledButton.styleFrom(
-          shape: shape,
-          padding: buttonPadding,
-          textStyle: t(13, FontWeight.w500),
-          minimumSize: _buttonMinSize,
-        ),
+        style:
+            FilledButton.styleFrom(
+              shape: shape,
+              padding: buttonPadding,
+              textStyle: t(13, FontWeight.w500),
+              minimumSize: _buttonMinSize,
+            ).copyWith(
+              backgroundColor: WidgetStateProperty.resolveWith(
+                (states) => states.contains(WidgetState.disabled)
+                    ? tokens.hover
+                    : states.contains(WidgetState.hovered)
+                    ? mint
+                    : actionGreen,
+              ),
+              foregroundColor: WidgetStateProperty.resolveWith(
+                (states) => states.contains(WidgetState.disabled)
+                    ? tokens.textFaint
+                    : states.contains(WidgetState.hovered)
+                    ? const Color(0xFF0C0C0C)
+                    : Colors.white,
+              ),
+            ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(

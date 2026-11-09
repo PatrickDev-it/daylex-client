@@ -77,7 +77,7 @@ async function start() {
   });
   function syncTheme() {
     try {
-      const theme = JSON.parse(window.daylex?.read('data/preferences.json') || '{}').themeMode || 'system';
+      const theme = JSON.parse(window.daylex?.read('data/preferences.json') || '{}').themeMode || 'dark';
       document.documentElement.dataset.theme = theme === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme;
     } catch (_) { /* The app reports any damaged preferences. */ }
   }
