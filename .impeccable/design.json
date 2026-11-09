@@ -216,7 +216,7 @@
       "refersTo": "revision-control",
       "description": "One next-step action for the optional draft, AI proposal and final human revision sequence; final state offers replay.",
       "html": "<div class=\"ds-stages\"><button type=\"button\">Vedi la proposta dell’IA</button></div>",
-      "css": ".ds-stages{display:flex;gap:3px;background:var(--sheet,#171717);padding:12px}.ds-stages button{font-family:Archivo,sans-serif;border:0;border-radius:0;background:var(--layer,#242424);color:var(--mint,#dff4e2);padding:11px 14px;min-height:44px;font-size:14px;line-height:1.55;cursor:pointer;transition:background .2s,color .2s}.ds-stages button:hover{color:var(--black,#000);background:var(--mint,#dff4e2)}.ds-stages button:focus-visible{outline:3px solid var(--cyan,#00aeb3);outline-offset:5px;outline-offset:-3px}@media(prefers-reduced-motion:reduce){.ds-stages button{transition:none}}"
+      "css": ".ds-stages{display:flex;gap:3px;background:var(--sheet,#171717);padding:12px}.ds-stages button{font-family:Archivo,sans-serif;border:0;border-radius:7px;background:var(--layer,#242424);color:var(--mint,#dff4e2);padding:11px 14px;min-height:44px;font-size:14px;line-height:1.55;cursor:pointer;transition:background .2s,color .2s}.ds-stages button:hover{color:var(--black,#000);background:var(--mint,#dff4e2)}.ds-stages button:focus-visible{outline:3px solid var(--cyan,#00aeb3);outline-offset:5px;outline-offset:-3px}@media(prefers-reduced-motion:reduce){.ds-stages button{transition:none}}"
     },
     {
       "name": "Folio sheet",
