@@ -1,0 +1,17 @@
+**/build/
+**/.dart_tool/
+**/ephemeral/
+**/node_modules/
+**/__pycache__/
+**/.idea/
+**/*.iml
+**/*.log
+**/.pytest_cache/
+**/dist/
+**/*.pem
+**/*.p12
+**/*.pfx
+**/.env
+release-input/
+delivery.tar
+site-preview/

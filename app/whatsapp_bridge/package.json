@@ -1,0 +1,14 @@
+{
+  "name": "daylex-whatsapp-bridge",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Local WhatsApp Web companion for the Daylex desktop client",
+  "main": "bridge.js",
+  "dependencies": {
+    "whatsapp-web.js": "1.34.2"
+  },
+  "overrides": {
+    "ws": "8.21.0",
+    "tar-fs": "2.1.4"
+  }
+}

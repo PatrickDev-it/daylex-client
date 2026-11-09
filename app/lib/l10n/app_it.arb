@@ -1,0 +1,1702 @@
+{
+  "@@locale": "it",
+  "appTitle": "Daylex",
+  "@appTitle": {
+    "description": "The product name"
+  },
+  "languageItalian": "Italiano",
+  "languageEnglish": "Inglese",
+  "cancel": "Annulla",
+  "@cancel": {
+    "description": "Button that dismisses a dialog"
+  },
+  "delete": "Elimina",
+  "@delete": {
+    "description": "Button that deletes something"
+  },
+  "close": "Chiudi",
+  "rename": "Rinomina",
+  "save": "Salva",
+  "untitledDocument": "Documento senza titolo",
+  "untitledProject": "Progetto senza nome",
+  "firstProject": "Generale",
+  "@firstProject": {
+    "description": "Name of the empty project a first launch opens on"
+  },
+  "newChat": "Nuova conversazione",
+  "newDocument": "Nuovo documento",
+  "exportPdf": "Esporta PDF",
+  "settings": "Impostazioni",
+  "whatsappTitle": "WhatsApp",
+  "whatsappConnect": "Collega WhatsApp",
+  "whatsappConnected": "Collegato",
+  "whatsappWaiting": "In attesa del collegamento",
+  "whatsappScanQr": "Scansiona il QR da WhatsApp > Dispositivi collegati",
+  "whatsappUnavailable": "WhatsApp non disponibile",
+  "whatsappHelp": "Messaggi di testo e appuntamenti tramite l'agente, con sessione salvata su questo computer.",
+  "whatsappCheckStatus": "Verifico WhatsApp",
+  "whatsappSearchContact": "Cerco un contatto WhatsApp",
+  "whatsappSendText": "Invio un messaggio WhatsApp",
+  "pageCount": "{count, plural, =1{1 pagina} other{{count} pagine}}",
+  "@pageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "wordCount": "{count, plural, =1{1 parola} other{{count} parole}}",
+  "@wordCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pageNumber": "Pagina {page}",
+  "@pageNumber": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      }
+    }
+  },
+  "timeNow": "adesso",
+  "@timeNow": {
+    "description": "Relative time under a minute"
+  },
+  "timeMinutesAgo": "{minutes} min fa",
+  "@timeMinutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "timeHoursAgo": "{hours} h fa",
+  "@timeHoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "timeDaysAgo": "{days, plural, =1{ieri} other{{days} giorni fa}}",
+  "@timeDaysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "timeYesterdayAt": "ieri {time}",
+  "@timeYesterdayAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "monthsShort": "gen feb mar apr mag giu lug ago set ott nov dic",
+  "@monthsShort": {
+    "description": "The twelve month abbreviations, separated by one space"
+  },
+  "dateThisYear": "{day} {month}",
+  "@dateThisYear": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "dateOtherYear": "{day} {month} {year}",
+  "@dateOtherYear": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "month": {
+        "type": "String"
+      },
+      "year": {
+        "type": "String",
+        "description": "Four digits, no grouping"
+      }
+    }
+  },
+  "dateAt": "{date}, {time}",
+  "@dateAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "docStatusDraft": "Bozza",
+  "docStatusReview": "In revisione",
+  "docStatusApproved": "Approvato",
+  "layoutCover": "Copertina",
+  "layoutStandard": "Classica",
+  "layoutTwoColumn": "Due colonne",
+  "layoutPremium": "Curata",
+  "blockHeading": "Titolo",
+  "blockParagraph": "Paragrafo",
+  "blockBullets": "Elenco puntato",
+  "blockTable": "Tabella",
+  "blockMetrics": "Indicatori",
+  "blockQuote": "Citazione",
+  "blockCallout": "Riquadro",
+  "blockImage": "Immagine",
+  "opAddPage": "Aggiungi pagina",
+  "@opAddPage": {
+    "description": "A step in the document history"
+  },
+  "opDeletePage": "Elimina pagina {page}",
+  "@opDeletePage": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      }
+    }
+  },
+  "opMovePage": "Sposta pagina {page}",
+  "@opMovePage": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      }
+    }
+  },
+  "opUpdatePage": "Aggiorna pagina {page}",
+  "@opUpdatePage": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      }
+    }
+  },
+  "opReplace": "Sostituisci «{find}»",
+  "@opReplace": {
+    "placeholders": {
+      "find": {
+        "type": "String"
+      }
+    }
+  },
+  "opInsertBlock": "Inserisci {kind}",
+  "@opInsertBlock": {
+    "description": "kind is a block kind, lowercase",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "opEditBlock": "Modifica {kind}",
+  "@opEditBlock": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "opRemoveBlock": "Rimuovi blocco",
+  "opMoveBlock": "Sposta blocco",
+  "opChangeTheme": "Cambia tema",
+  "opUpdateDetails": "Aggiorna dettagli",
+  "shortcutNewChat": "Nuova conversazione",
+  "shortcutNewDocument": "Nuovo documento",
+  "shortcutFocusPrompt": "Scrivi un messaggio",
+  "shortcutStopAgent": "Ferma l'agente",
+  "shortcutExport": "Esporta PDF",
+  "shortcutUndo": "Annulla la modifica",
+  "shortcutRedo": "Ripeti la modifica",
+  "shortcutPreview": "Anteprima del documento",
+  "shortcutEdit": "Modifica del documento",
+  "shortcutPreviousPage": "Pagina precedente",
+  "shortcutNextPage": "Pagina successiva",
+  "shortcutZoomIn": "Ingrandisci",
+  "shortcutZoomOut": "Riduci",
+  "shortcutZoomReset": "Dimensione al 100%",
+  "shortcutLibraryTab": "Libreria",
+  "shortcutReviewTab": "Revisione delle modifiche",
+  "shortcutLogTab": "Registro dell'agente",
+  "shortcutCloseTab": "Chiudi il scheda",
+  "shortcutToggleSidebar": "Mostra o nascondi la barra laterale",
+  "shortcutTogglePanel": "Mostra o nascondi il pannello laterale",
+  "shortcutToggleTheme": "Tema chiaro o scuro",
+  "tabPreview": "Anteprima",
+  "@tabPreview": {
+    "description": "Side-panel tab"
+  },
+  "tabReview": "Revisione",
+  "tabReviewCount": "Revisione · {count}",
+  "@tabReviewCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tabLibrary": "Libreria",
+  "tabLog": "Diagnostica",
+  "tabDocument": "Documento",
+  "@tabDocument": {
+    "description": "A preview tab whose document is gone"
+  },
+  "deleteTitle": "Eliminare «{title}»?",
+  "@deleteTitle": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteChatMessage": "Vengono eliminati anche i suoi messaggi e i documenti letti nel suo fascicolo. L'operazione non si può annullare.",
+  "deleteDocumentMessage": "Viene eliminata anche la sua cronologia delle versioni. L'operazione non si può annullare.",
+  "documentCreated": "Creato «{title}»",
+  "@documentCreated": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "documentDeleted": "Eliminato «{title}»",
+  "@documentDeleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "exportNoDocument": "Apri un documento per esportarlo.",
+  "exportedTo": "Esportato in {path}",
+  "@exportedTo": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "exportFailed": "Esportazione non riuscita: {error}",
+  "@exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "undid": "Annullato: {label}",
+  "@undid": {
+    "description": "Toast after undo; label is the history step",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "redid": "Ripristinato: {label}",
+  "@redid": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "templatePickerHint": "Parti da un modello, oppure chiedi all'agente di scriverne uno per te.",
+  "gotIt": "Ho capito",
+  "toggleDarkMode": "Tema chiaro o scuro",
+  "reviewChanges": "Rivedi le modifiche",
+  "agentMockOffline": "Agente simulato · senza connessione",
+  "@agentMockOffline": {
+    "description": "The agent client is the local rule-based mock, not the real model."
+  },
+  "agentNotConnected": "Agente non collegato",
+  "sidebarHide": "Nascondi la barra laterale",
+  "sidebarSearchChats": "Cerca nelle conversazioni",
+  "sidebarFilterChats": "Filtra le conversazioni",
+  "sidebarProjects": "Progetti",
+  "sidebarNewProject": "Nuovo progetto",
+  "sidebarNewProjectHint": "es. Rossi S.r.l.",
+  "sidebarCreate": "Crea",
+  "sidebarNoChats": "Nessuna conversazione",
+  "sidebarShowMore": "Mostra altre",
+  "sidebarShowLess": "Mostra meno",
+  "sidebarChatsRunning": "{count, plural, =1{1 conversazione in corso} other{{count} conversazioni in corso}}",
+  "@sidebarChatsRunning": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sidebarAgentReady": "Agente pronto",
+  "settingsAppearance": "Aspetto",
+  "settingsTheme": "Tema",
+  "settingsThemeSystem": "Sistema",
+  "settingsThemeLight": "Chiaro",
+  "settingsThemeDark": "Scuro",
+  "settingsLanguage": "Lingua",
+  "settingsAgent": "Agente",
+  "settingsBackend": "Servizio",
+  "settingsBackendMockHelp": "Le risposte arrivano da una simulazione locale, non dall'agente: servono solo a provare l'app.",
+  "settingsBackendServerHelp": "L'agente gira su un servizio ospitato in proprio.",
+  "settingsAccessKey": "Chiave di accesso",
+  "settingsAccessKeyMissing": "La chiave personale che hai ricevuto per usare l'agente: si inserisce una volta sola.",
+  "settingsAccessKeySet": "Chiave inserita. Se ne hai ricevuta una nuova, sostituiscila.",
+  "settingsAccessKeyEnter": "Inserisci",
+  "settingsAccessKeyReplace": "Sostituisci",
+  "settingsAccessKeyHint": "Incolla qui la chiave (inizia con dlx_)",
+  "settingsAccessKeyChecking": "Verifico la chiave…",
+  "settingsAccessKeySaved": "Chiave salvata: l'agente è collegato.",
+  "settingsResetConnection": "Connessione Daylex",
+  "settingsResetConnectionAction": "Ripristina",
+  "settingsResetConnectionHelp": "Usa il servizio predefinito dell'app mantenendo la chiave di accesso.",
+  "settingsResetConnectionDone": "Connessione ripristinata. La chiave di accesso è stata mantenuta.",
+  "serverAddressEnvironmentOverride": "L'indirizzo del servizio è impostato dall'ambiente PAPERAGENT_URL: chiedi all'amministratore di aggiornarlo.",
+  "settingsAccessKeyUnverified": "Chiave salvata, ma per ora non posso verificarla. {reason}",
+  "@settingsAccessKeyUnverified": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsTools": "Strumenti",
+  "settingsToolCount": "{count, plural, =1{1 strumento sul documento} other{{count} strumenti sul documento}}",
+  "@settingsToolCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsToolsHelp": "{count, plural, =0{L'agente modifica il documento con strumenti dedicati.} =1{L'agente modifica il documento con strumenti dedicati; {tools} chiede prima la tua approvazione.} other{L'agente modifica il documento con strumenti dedicati; {tools} chiedono prima la tua approvazione.}}",
+  "@settingsToolsHelp": {
+    "description": "count = how many tools need approval; tools = their names, comma-separated.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "tools": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsUiComponents": "Componenti nella conversazione",
+  "settingsUiComponentCount": "{count, plural, =1{1 componente} other{{count} componenti}}",
+  "@settingsUiComponentCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsUiComponentsHelp": "Cosa l'agente può mostrare nella conversazione: {names}.",
+  "@settingsUiComponentsHelp": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsShortcuts": "Scorciatoie da tastiera",
+  "panelHide": "Nascondi il pannello laterale",
+  "panelOpenTab": "Apri un scheda",
+  "panelNothingOpenTitle": "Ancora niente di aperto",
+  "panelNothingOpenMessage": "Inizia una conversazione. Il documento su cui lavora compare qui in anteprima, accanto alla revisione di ogni modifica dell'agente.",
+  "panelNoTabsTitle": "Nessun scheda aperto",
+  "panelNoTabsMessage": "Apri l'anteprima di un documento, rivedi cosa ha cambiato l'agente o segui le sue chiamate agli strumenti.",
+  "logEventCount": "{count, plural, =1{1 evento} other{{count} eventi}}",
+  "@logEventCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "logCopy": "Copia il registro",
+  "logEmptyTitle": "Ancora nessun evento",
+  "logEmptyMessage": "Qui compaiono le richieste, gli aggiornamenti di stato e le chiamate agli strumenti di questa conversazione.",
+  "libraryThisProject": "Questo progetto",
+  "libraryNoDocuments": "Ancora nessun documento.",
+  "libraryOtherProjects": "Altri progetti",
+  "libraryTemplates": "Modelli",
+  "libraryOpenPreview": "Apri l'anteprima",
+  "libraryDuplicate": "Duplica",
+  "editorNewSection": "Nuova sezione",
+  "@editorNewSection": {
+    "description": "Title and heading of a page added from the outline editor"
+  },
+  "editorAddPage": "Aggiungi pagina",
+  "@editorAddPage": {
+    "description": "Button under the last page in the outline editor"
+  },
+  "editorDetailsTitle": "Documento",
+  "@editorDetailsTitle": {
+    "description": "Heading of the document details card in the outline editor"
+  },
+  "editorStatus": "Stato",
+  "@editorStatus": {
+    "description": "Tooltip of the document status menu"
+  },
+  "editorFieldTitle": "Titolo",
+  "editorFieldSubtitle": "Sottotitolo",
+  "editorFieldClient": "Cliente",
+  "editorFieldBrand": "Marchio",
+  "@editorFieldBrand": {
+    "description": "The firm or brand name printed on the document"
+  },
+  "editorFieldAuthor": "Redatto da",
+  "@editorFieldAuthor": {
+    "description": "Shown on the cover as the author"
+  },
+  "editorAccent": "Colore d'accento",
+  "editorSectionTitleHint": "Titolo della sezione",
+  "editorLayout": "Impaginazione",
+  "@editorLayout": {
+    "description": "Tooltip of a page's layout menu"
+  },
+  "editorShowInPreview": "Mostra nell'anteprima",
+  "editorMoveUp": "Sposta su",
+  "editorMoveDown": "Sposta giù",
+  "editorDeletePage": "Elimina pagina",
+  "editorAddBlock": "Aggiungi blocco",
+  "editorRemoveBlock": "Rimuovi",
+  "@editorRemoveBlock": {
+    "description": "Tooltip of the button that removes a block"
+  },
+  "editorNewBulletItem": "Primo punto",
+  "@editorNewBulletItem": {
+    "description": "The first item of a new bullet list"
+  },
+  "editorNewTableItem": "Voce",
+  "@editorNewTableItem": {
+    "description": "First column header of a new table"
+  },
+  "editorNewTableValue": "Valore",
+  "@editorNewTableValue": {
+    "description": "Second column header of a new table"
+  },
+  "editorNewTableColumn": "Colonna",
+  "@editorNewTableColumn": {
+    "description": "Header of a column added to a table"
+  },
+  "editorNewMetric": "Indicatore",
+  "@editorNewMetric": {
+    "description": "Label of each metric in a new metrics block"
+  },
+  "editorNewCallout": "Nota",
+  "@editorNewCallout": {
+    "description": "Title of a new callout block"
+  },
+  "editorParagraphHint": "Scrivi qui…",
+  "editorBulletsHint": "• Un punto per riga",
+  "editorQuoteAuthorHint": "Autore",
+  "editorCalloutTitleHint": "Titolo del riquadro",
+  "editorCalloutTextHint": "Testo del riquadro",
+  "editorMetricLabelHint": "Etichetta",
+  "editorMetricValueHint": "Valore",
+  "editorMetricChangeHint": "Variazione",
+  "editorTableAddRow": "Riga",
+  "@editorTableAddRow": {
+    "description": "Button that adds a table row"
+  },
+  "editorTableAddColumn": "Colonna",
+  "@editorTableAddColumn": {
+    "description": "Button that adds a table column"
+  },
+  "editorTableRemoveRow": "Rimuovi l'ultima riga",
+  "editorCaptionHint": "Didascalia",
+  "previewNotFoundTitle": "Documento non trovato",
+  "previewNotFoundMessage": "Potrebbe essere stato eliminato. Chiudi questo scheda o apri un altro documento.",
+  "previewModePreview": "Anteprima",
+  "@previewModePreview": {
+    "description": "Segment that shows the rendered PDF"
+  },
+  "previewModeEdit": "Modifica",
+  "@previewModeEdit": {
+    "description": "Segment that shows the outline editor"
+  },
+  "previewUndoStep": "Annulla: {label}",
+  "@previewUndoStep": {
+    "description": "Undo tooltip; label is the history step",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "previewRedoStep": "Ripeti: {label}",
+  "@previewRedoStep": {
+    "description": "Redo tooltip; label is the history step",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "previewExport": "Esporta",
+  "@previewExport": {
+    "description": "Short label of the export button"
+  },
+  "previewPageOf": "Pagina {page} di {count}",
+  "@previewPageOf": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "previewRendering": "Aggiornamento…",
+  "@previewRendering": {
+    "description": "The PDF preview is being rendered again"
+  },
+  "previewUpToDate": "Aggiornato · {time}",
+  "@previewUpToDate": {
+    "description": "time is a relative time, e.g. 5 min fa",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "previewOutdated": "Anteprima non aggiornata",
+  "@previewOutdated": {
+    "description": "The last render failed: the preview shows the document as it was before"
+  },
+  "previewRenderFailed": "Impossibile generare l'anteprima del documento",
+  "reviewEmptyTitle": "Ancora nessuna modifica",
+  "reviewEmptyMessage": "Quando l'agente modifica un documento, qui compare ogni pagina cambiata, con il confronto prima/dopo e le differenze nel testo.",
+  "reviewPickTurn": "Scegli una richiesta",
+  "@reviewPickTurn": {
+    "description": "Tooltip of the menu of the agent turns that changed the document"
+  },
+  "reviewLastTurn": "Ultima richiesta",
+  "reviewLastTurnPrompt": "Ultima richiesta · {prompt}",
+  "@reviewLastTurnPrompt": {
+    "placeholders": {
+      "prompt": {
+        "type": "String"
+      }
+    }
+  },
+  "reviewTurnNumber": "Richiesta {number}",
+  "@reviewTurnNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewWordsUnit": "{count, plural, =1{parola} other{parole}}",
+  "@reviewWordsUnit": {
+    "description": "Unit after the added and removed word counts; count is their sum",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewUndoTurn": "Annulla le modifiche",
+  "@reviewUndoTurn": {
+    "description": "Button that reverts every change of the selected agent turn"
+  },
+  "reviewTurnReverted": "Modifiche di questa richiesta annullate",
+  "reviewNothingToCompareTitle": "Niente da confrontare",
+  "reviewNothingToCompareMessage": "Il documento di questa richiesta non è più disponibile.",
+  "reviewPagesChanged": "{count, plural, =1{1 pagina modificata} other{{count} pagine modificate}}",
+  "@reviewPagesChanged": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewBefore": "Prima",
+  "reviewAfter": "Dopo",
+  "reviewNewPage": "Pagina nuova",
+  "@reviewNewPage": {
+    "description": "In place of the before render of a page the turn added"
+  },
+  "reviewDeletedPage": "Eliminata",
+  "@reviewDeletedPage": {
+    "description": "In place of the after render of a page the turn deleted"
+  },
+  "reviewText": "Testo",
+  "@reviewText": {
+    "description": "Heading of the text diff"
+  },
+  "reviewSameText": "Stesso testo: sono cambiati solo l'impaginazione o lo stile.",
+  "chatSuggestionPolishPage": "Rendi più chiara la pagina 3 e riduci il testo",
+  "@chatSuggestionPolishPage": {
+    "description": "A prompt suggestion sent to the agent as written"
+  },
+  "chatSuggestionOverview": "Dammi una panoramica del documento",
+  "chatSuggestionShowPage": "Mostrami la pagina 2",
+  "chatSuggestionDeleteLastPage": "Elimina l'ultima pagina",
+  "chatSuggestionRoi": "Stima costi e benefici",
+  "chatSuggestionProposal": "Scrivi una proposta di una pagina per un nuovo cliente",
+  "chatSuggestionTeamOnePager": "Scrivi una presentazione dello studio in una pagina",
+  "chatShowSidebar": "Mostra la barra laterale",
+  "chatNewChatIn": "Nuova conversazione in {project}",
+  "@chatNewChatIn": {
+    "placeholders": {
+      "project": {
+        "type": "String"
+      }
+    }
+  },
+  "chatShowPanel": "Mostra il pannello laterale",
+  "chatHidePanel": "Nascondi il pannello laterale",
+  "chatActions": "Azioni della conversazione",
+  "chatRenameTitle": "Rinomina la conversazione",
+  "chatClearConversation": "Svuota la conversazione",
+  "chatDelete": "Elimina la conversazione",
+  "chatWhatToWrite": "Cosa scriviamo?",
+  "chatWhatToDoWith": "Cosa facciamo con «{title}»?",
+  "@chatWhatToDoWith": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "chatNewProject": "Progetto",
+  "@chatNewProject": {
+    "description": "Tooltip of the project picker on the new-chat screen"
+  },
+  "chatNewHintNoDocument": "Descrivi il documento che ti serve…",
+  "chatNewHintDocument": "Chiedi una modifica a «{title}»…",
+  "@chatNewHintDocument": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "chatNewCardPolish": "Rifinisci una pagina",
+  "chatNewCardOverview": "Panoramica",
+  "chatNewCardProposal": "Nuova proposta",
+  "chatNewCardTeam": "Presentazione dello studio",
+  "chatDropNotAttached": "Documenti non allegati ({count}): {files}. Formati accettati: {types}.",
+  "@chatDropNotAttached": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "files": {
+        "type": "String"
+      },
+      "types": {
+        "type": "String"
+      }
+    }
+  },
+  "chatDropTooLarge": "Documenti troppo grandi ({count}): {files}. Si allegano al massimo {megabytes} MB per volta, contando quelli già allegati.",
+  "@chatDropTooLarge": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "files": {
+        "type": "String"
+      },
+      "megabytes": {
+        "type": "int"
+      }
+    }
+  },
+  "chatDropUnreadable": "Documenti non letti ({count}): {files}. Forse sono aperti in un altro programma: chiudili e riprova.",
+  "@chatDropUnreadable": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "chatDropTitle": "Rilascia i documenti per aggiungerli a questa conversazione",
+  "chatDropFormats": "PDF, .p7m firmati, DOCX, TXT e scansioni · più documenti o un'intera cartella",
+  "composerHint": "Chiedi una modifica o descrivi un documento…",
+  "composerAttach": "Allega documenti o immagini",
+  "composerSend": "Invia  ·  Invio",
+  "@composerSend": {
+    "description": "Tooltip of the send button, with its key"
+  },
+  "composerNoDocument": "Nessun documento",
+  "composerDocumentOnPage": "{title} · p. {page}",
+  "@composerDocumentOnPage": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "page": {
+        "type": "int"
+      }
+    }
+  },
+  "composerPickDocument": "Documento su cui lavora l'agente",
+  "composerNoDocumentCreate": "Nessun documento · lo crea l'agente",
+  "composerWorking": "Sto lavorando",
+  "@composerWorking": {
+    "description": "Shown while the agent runs, before it names a step"
+  },
+  "composerElapsed": "{seconds} s",
+  "@composerElapsed": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "composerStopHint": "{keys} per fermare",
+  "@composerStopHint": {
+    "placeholders": {
+      "keys": {
+        "type": "String"
+      }
+    }
+  },
+  "copy": "Copia",
+  "copied": "Copiato",
+  "cardCodePlainText": "testo",
+  "@cardCodePlainText": {
+    "description": "Language label of a code block with no language"
+  },
+  "cardRendering": "Preparazione di {kind}…",
+  "@cardRendering": {
+    "description": "A component the agent is still writing; kind is its technical name",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "cardUnknownComponent": "ui:{kind} (componente sconosciuto)",
+  "@cardUnknownComponent": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "cardOpen": "Apri",
+  "cardShowInFolder": "Mostra nella cartella",
+  "cardApprovalNeeded": "Approvazione richiesta",
+  "cardApproved": "Approvata",
+  "cardExpired": "Scaduta",
+  "cardRejected": "Rifiutata",
+  "cardApprove": "Approva",
+  "cardReject": "Rifiuta",
+  "cardEditedPages": "{count, plural, =1{Modificata 1 pagina} other{Modificate {count} pagine}}",
+  "@cardEditedPages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cardWords": "parole",
+  "@cardWords": {
+    "description": "After the words added and removed, e.g. +12 −3 words"
+  },
+  "cardReverted": "Annullato",
+  "cardUndo": "Annulla",
+  "cardReview": "Rivedi",
+  "cardWorkedFor": "Ha lavorato per {duration}",
+  "@cardWorkedFor": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "cardSeconds": "{seconds} s",
+  "@cardSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "String"
+      }
+    }
+  },
+  "cardMinutesSeconds": "{minutes} min {seconds} s",
+  "@cardMinutesSeconds": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      },
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "cardToolCalls": "{count, plural, =1{1 chiamata a strumento} other{{count} chiamate a strumenti}}",
+  "@cardToolCalls": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cardLayoutOnly": "impaginazione",
+  "@cardLayoutOnly": {
+    "description": "A page whose words did not change: only its layout did"
+  },
+  "cardDocument": "Documento",
+  "cardOpenPreview": "Apri anteprima",
+  "cardExport": "Esporta",
+  "cardOutline": "Struttura",
+  "cardChart": "Grafico",
+  "cardPageUnavailable": "Questa pagina non è più disponibile.",
+  "cardFactLayout": "Impaginazione",
+  "cardFactWords": "Parole",
+  "cardFactBlocks": "Blocchi",
+  "cardFactPage": "Pagina",
+  "cardPageOf": "{page} di {total}",
+  "@cardPageOf": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "cardEmptyPage": "Pagina vuota",
+  "cardNothingToCompare": "Niente da confrontare.",
+  "cardWordsAdded": "{count, plural, =1{+1 parola} other{+{count} parole}}",
+  "@cardWordsAdded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cardWordsRemoved": "{count, plural, =1{−1 parola} other{−{count} parole}}",
+  "@cardWordsRemoved": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cardBefore": "Prima",
+  "cardAfter": "Dopo",
+  "cardProgressRunning": "Lavoro in corso",
+  "cardProgressDone": "Lavoro svolto",
+  "cardSteps": "{count, plural, =1{1 passaggio} other{{count} passaggi}}",
+  "@cardSteps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cardMatrixTitle": "Matrice della sentenza",
+  "cardMatrixEntries": "{count, plural, =1{1 voce verificata sul testo} other{{count} voci verificate sul testo}}",
+  "@cardMatrixEntries": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cardMatrixPagesRead": "pagine lette: {pages}",
+  "@cardMatrixPagesRead": {
+    "placeholders": {
+      "pages": {
+        "type": "String"
+      }
+    }
+  },
+  "legalNormsTitle": "Norme utilizzate",
+  "legalArticles": "{count, plural, =1{1 articolo} other{{count} articoli}}",
+  "@legalArticles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "legalOfficialTextLower": "testo ufficiale",
+  "@legalOfficialTextLower": {
+    "description": "In the norms card subtitle, after the article count"
+  },
+  "legalToVerify": "{count} da verificare",
+  "@legalToVerify": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "legalWhatItSays": "Cosa dice",
+  "legalHowItApplies": "Come si collega al caso",
+  "legalWhyThisNorm": "Perché questa norma",
+  "legalHowFound": "Come è stata individuata",
+  "legalInForceAt": "testo vigente al {date}",
+  "@legalInForceAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "legalDiscardedNorms": "Norme vicine considerate e scartate ({count})",
+  "@legalDiscardedNorms": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "legalDegree": "{degree}° grado",
+  "@legalDegree": {
+    "placeholders": {
+      "degree": {
+        "type": "int"
+      }
+    }
+  },
+  "legalDegree1Detail": "Riscontri diretti",
+  "legalDegree2Detail": "Collegamenti tra fatti e norme",
+  "legalDegree3Detail": "Tesi da approfondire",
+  "legalClient": "Assistito",
+  "legalOpponent": "Controparte",
+  "legalCaseAnalysis": "Analisi del caso",
+  "legalLinks": "Collegamenti",
+  "legalStrategies": "Strategie",
+  "legalNorms": "Norme",
+  "legalEffectNeutral": "Neutro",
+  "legalEffectFavourable": "Favorevole al nostro assistito",
+  "legalEffectUnfavourable": "Sfavorevole al nostro assistito",
+  "legalReasoning": "Ragionamento",
+  "legalElements": "Elementi ({count})",
+  "@legalElements": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "legalFromRequest": "dalla richiesta",
+  "legalDocRef": "doc. {doc} · {name} · p. {page}",
+  "@legalDocRef": {
+    "placeholders": {
+      "doc": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      },
+      "page": {
+        "type": "String"
+      }
+    }
+  },
+  "legalOurClientNamed": "Nostro assistito · {name}",
+  "@legalOurClientNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "legalOpponentNamed": "Controparte · {name}",
+  "@legalOpponentNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "legalNoStrategy": "Nessuna strategia dimostrabile.",
+  "legalAttack": "Attacco",
+  "legalDefence": "Difesa",
+  "legalMove": "Mossa",
+  "legalExpectedReply": "Replica prevedibile della controparte",
+  "legalOurCounter": "Nostra contromossa",
+  "legalBasedOn": "Si basa su: {links}",
+  "@legalBasedOn": {
+    "placeholders": {
+      "links": {
+        "type": "String"
+      }
+    }
+  },
+  "legalDroppedLinks": "{count, plural, =1{1 collegamento scartato perché non dimostrabili sugli atti} other{{count} collegamenti scartati perché non dimostrabili sugli atti}}",
+  "@legalDroppedLinks": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "legalOfficialText": "Testo ufficiale",
+  "legalOfficialTextOf": "Testo ufficiale · {caption}",
+  "@legalOfficialTextOf": {
+    "placeholders": {
+      "caption": {
+        "type": "String"
+      }
+    }
+  },
+  "legalOpenOfficialText": "Apri il testo ufficiale",
+  "legalFitFull": "Pertinente",
+  "legalFitUnfit": "Non pertinente",
+  "legalFitDoubtful": "Da verificare",
+  "legalFitUnrated": "Non valutata",
+  "agentReadingAttachments": "Leggo gli allegati",
+  "@agentReadingAttachments": {
+    "description": "Agent activity while attachments are still being read into the case file"
+  },
+  "agentThinking": "Esamino la richiesta",
+  "agentConsultingSources": "Consulto le fonti",
+  "agentDraftingDocument": "Preparo il documento",
+  "agentCheckingResult": "Verifico il risultato",
+  "agentQueued": "Richiesta in attesa",
+  "agentMaterialWarning": "Materiale da verificare",
+  "@agentThinking": {
+    "description": "Agent activity between steps"
+  },
+  "agentPromptTooLong": "Il messaggio è troppo lungo ({length} caratteri, al massimo {max}): allega il testo come documento, o dividilo in più messaggi.",
+  "@agentPromptTooLong": {
+    "placeholders": {
+      "length": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "agentStopped": "Interrotto",
+  "@agentStopped": {
+    "description": "A turn or a tool call the lawyer stopped"
+  },
+  "agentUndoTurn": "Modifiche della richiesta annullate",
+  "@agentUndoTurn": {
+    "description": "History entry of reverting what an agent turn changed"
+  },
+  "agentHistoryLabel": "Agente · {label}",
+  "@agentHistoryLabel": {
+    "description": "History entry of a change the agent made",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "agentWaitingApproval": "In attesa della tua approvazione",
+  "agentNoAnswer": "Nessuna risposta in tempo",
+  "agentNotApproved": "Non approvato",
+  "approvalRunTool": "Confermi questa operazione? {tool}.",
+  "@approvalRunTool": {
+    "placeholders": {
+      "tool": {
+        "type": "String"
+      }
+    }
+  },
+  "approvalDeletePage": "La pagina {page} · «{title}» ({words}) verrà eliminata. Potrai annullare l'operazione.",
+  "@approvalDeletePage": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "title": {
+        "type": "String"
+      },
+      "words": {
+        "type": "String",
+        "description": "wordCount(n)"
+      }
+    }
+  },
+  "attachmentTypeGroup": "Documenti e immagini",
+  "@attachmentTypeGroup": {
+    "description": "File picker filter for attachments"
+  },
+  "logWaitingApproval": "In attesa di approvazione: {title}",
+  "@logWaitingApproval": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "logRemoveAttachmentFailed": "Impossibile togliere «{name}» dal fascicolo: {error}",
+  "@logRemoveAttachmentFailed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "logToolCrashed": "Lo strumento {tool} si è interrotto per un errore: {error}",
+  "@logToolCrashed": {
+    "placeholders": {
+      "tool": {
+        "type": "String"
+      },
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "logRunFinished": "Esecuzione terminata",
+  "logStoppedByUser": "Interrotto dall'utente",
+  "logReverted": "«{title}» riportato a prima della richiesta",
+  "@logReverted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "logReportFailed": "Impossibile inviare il risultato dello strumento: {error}",
+  "@logReportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "logUnknownComponent": "Componente sconosciuto «{kind}» ignorato",
+  "@logUnknownComponent": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "serverKeyMissing": "Manca la chiave di accesso: inseriscila nelle Impostazioni, alla voce «Chiave di accesso».",
+  "serverConfigUnreadable": "La configurazione {source} non è leggibile: va sostituita.",
+  "@serverConfigUnreadable": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "serverAddressMissing": "Nella configurazione ({source}) manca l'indirizzo del servizio.",
+  "@serverAddressMissing": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "serverAddressInvalid": "L'indirizzo del servizio nella configurazione ({source}) non è valido: «{address}».",
+  "@serverAddressInvalid": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "serverKeyRejected": "Il servizio non riconosce questa chiave: controlla di averla copiata per intero, o chiedine una nuova.",
+  "serverUserFolderMissing": "Non trovo la cartella utente in cui salvare la chiave.",
+  "connectionLocalOff": "Il collegamento a PaperAgent non è attivo su questo computer: avvialo e riprova.",
+  "connectionUnreachable": "Non riesco a raggiungere il servizio: controlla la connessione a internet e riprova.",
+  "connectionTls": "Il collegamento sicuro con il servizio non è riuscito: controlla che data e ora del computer siano giuste, poi riprova.",
+  "connectionTimeout": "Il servizio non ha risposto in tempo: riprova tra un momento.",
+  "connectionFailed": "Collegamento con il servizio non riuscito: {message}",
+  "@connectionFailed": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "connectionUnexpected": "Errore imprevisto nel collegamento al servizio ({type}): {error}",
+  "@connectionUnexpected": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failureUnreachable": "Non riesco a raggiungere il servizio dell'agente.",
+  "failureTls": "Il collegamento sicuro con il servizio dell'agente non è riuscito.",
+  "failureTimeout": "Il servizio dell'agente non ha risposto in tempo.",
+  "streamSilent": "Il servizio dell'agente non dà segni di vita da qualche minuto: la richiesta è stata interrotta. Riprova.",
+  "streamBroken": "Collegamento con l'agente interrotto: {error}",
+  "@streamBroken": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "streamEnded": "Il collegamento con l'agente si è chiuso prima della fine della risposta. Riprova.",
+  "serverUnknownError": "Errore sconosciuto del servizio.",
+  "serverRejectedRequest": "Il servizio non ha accettato la richiesta (campo «{field}»). Riprova; se si ripete, segnalalo.",
+  "@serverRejectedRequest": {
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "serverErrorStatus": "Il servizio dell'agente ha risposto con un errore ({status}).",
+  "@serverErrorStatus": {
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "toolDocumentFallback": "documento",
+  "toolOnPage": " · pagina {page}",
+  "@toolOnPage": {
+    "placeholders": {
+      "page": {
+        "type": "String"
+      }
+    }
+  },
+  "toolCreateDocument": "Creo \"{title}\"",
+  "@toolCreateDocument": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "toolReadDocument": "Leggo il documento",
+  "toolAddPage": "Aggiungo una pagina",
+  "toolDeletePage": "Elimino la pagina{on}",
+  "@toolDeletePage": {
+    "placeholders": {
+      "on": {
+        "type": "String"
+      }
+    }
+  },
+  "toolUpdatePage": "Riscrivo la pagina{on}",
+  "@toolUpdatePage": {
+    "placeholders": {
+      "on": {
+        "type": "String"
+      }
+    }
+  },
+  "toolReplaceText": "Sostituisco \"{find}\"",
+  "@toolReplaceText": {
+    "placeholders": {
+      "find": {
+        "type": "String"
+      }
+    }
+  },
+  "toolInsertBlock": "Inserisco un blocco{on}",
+  "@toolInsertBlock": {
+    "placeholders": {
+      "on": {
+        "type": "String"
+      }
+    }
+  },
+  "toolUpdateBlock": "Modifico il blocco {block}{on}",
+  "@toolUpdateBlock": {
+    "placeholders": {
+      "block": {
+        "type": "String"
+      },
+      "on": {
+        "type": "String"
+      }
+    }
+  },
+  "toolRemoveBlock": "Rimuovo il blocco {block}{on}",
+  "@toolRemoveBlock": {
+    "placeholders": {
+      "block": {
+        "type": "String"
+      },
+      "on": {
+        "type": "String"
+      }
+    }
+  },
+  "toolAddTable": "Aggiungo una tabella{on}",
+  "@toolAddTable": {
+    "placeholders": {
+      "on": {
+        "type": "String"
+      }
+    }
+  },
+  "toolAddImage": "Aggiungo un'immagine{on}",
+  "@toolAddImage": {
+    "placeholders": {
+      "on": {
+        "type": "String"
+      }
+    }
+  },
+  "toolChangeLayout": "Cambio l’impaginazione{on}",
+  "@toolChangeLayout": {
+    "placeholders": {
+      "on": {
+        "type": "String"
+      }
+    }
+  },
+  "toolSetTheme": "Aggiorno il tema",
+  "toolUpdateMetadata": "Aggiorno i dati",
+  "toolExportPdf": "Esporto il PDF",
+  "storeNoticeNewer": "Questi dati sono stati salvati da una versione più recente di PaperAgent: puoi consultarli, ma le modifiche non verranno salvate finché non aggiorni l'app.",
+  "storeNoticeRestored": "L’indice del lavoro salvato era danneggiato: ho ripristinato l’ultimo salvataggio valido. L’originale è rimasto nella cartella dati.",
+  "storeNoticeSaveFailed": "Non riesco a salvare il lavoro sul disco ({reason}). Le modifiche restano aperte: riprovo alla prossima modifica.",
+  "@storeNoticeSaveFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "storeNoticeUnreadable": "Non riesco a leggere una parte del lavoro salvato ({reason}): forse è aperta in un altro programma. Ti mostro quello che ho letto, ma non salvo le modifiche finché non riapri PaperAgent.",
+  "@storeNoticeUnreadable": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "storeNoticeRecovered": "L'indice del lavoro salvato era illeggibile: ho recuperato {documents} documenti e {chats} conversazioni nel progetto «{project}».",
+  "@storeNoticeRecovered": {
+    "placeholders": {
+      "documents": {
+        "type": "int"
+      },
+      "chats": {
+        "type": "int"
+      },
+      "project": {
+        "type": "String"
+      }
+    }
+  },
+  "docErrorLastPage": "Un documento deve avere almeno una pagina.",
+  "docErrorNoPage": "La pagina {page} non esiste (il documento ne ha {count}).",
+  "@docErrorNoPage": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "docErrorNoBlock": "Blocco {block} non trovato.",
+  "@docErrorNoBlock": {
+    "placeholders": {
+      "block": {
+        "type": "String"
+      }
+    }
+  },
+  "docErrorEmptySearch": "Il testo da cercare è vuoto.",
+  "docErrorNoDocument": "Nessun documento aperto.",
+  "updateDownloading": "Scarico l'aggiornamento… {percent}%",
+  "@updateDownloading": {
+    "description": "Sidebar update button while the new version downloads",
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "updateReady": "Aggiorna l'app",
+  "@updateReady": {
+    "description": "Sidebar update button once the new version is downloaded: restarts the app into it"
+  },
+  "updateInstalling": "Riavvio per aggiornare…",
+  "updateBlocked": "Aggiornamento da completare",
+  "@updateBlocked": {
+    "description": "Sidebar update button when the update cannot install by itself"
+  },
+  "updateTooltip": "Versione {version} disponibile",
+  "@updateTooltip": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "updateDialogTitle": "Versione {version}",
+  "@updateDialogTitle": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "updateDialogBody": "La nuova versione è scaricata e verificata. L'app si chiude, si aggiorna e si riapre da sola: il lavoro è salvato prima.",
+  "updateRunningWarning": "{count, plural, =1{Una conversazione è ancora in corso: il riavvio la interrompe.} other{{count} conversazioni sono ancora in corso: il riavvio le interrompe.}}",
+  "@updateRunningWarning": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "updateNotes": "Novità",
+  "updateLater": "Più tardi",
+  "updateRestart": "Riavvia e aggiorna",
+  "updateRetry": "Riprova",
+  "updateProblemNotWritable": "L'app non può aggiornarsi da sola: la cartella {path} non è modificabile. Spostala in una cartella tua e riaprila, o installa la nuova versione a mano.",
+  "@updateProblemNotWritable": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "updateProblemNotInstalled": "Sposta l'app nella cartella Applicazioni e riaprila da lì: così potrà aggiornarsi da sola.",
+  "@updateProblemNotInstalled": {
+    "description": "macOS: the app runs from the download folder or the disk image"
+  },
+  "updateInstallFailed": "L'ultimo aggiornamento non è andato a buon fine: l'app è rimasta alla versione precedente. Puoi riprovare; i dettagli sono in {log}.",
+  "@updateInstallFailed": {
+    "placeholders": {
+      "log": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsUpdates": "Aggiornamenti",
+  "settingsVersion": "Versione installata",
+  "settingsVersionValue": "{version} (revisione {build})",
+  "@settingsVersionValue": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "build": {
+        "type": "int"
+      }
+    }
+  },
+  "updateCheckNow": "Controlla ora",
+  "updateStatusOff": "Questa versione non si aggiorna da sola.",
+  "updateStatusChecking": "Controllo gli aggiornamenti…",
+  "updateStatusUpToDate": "L'app è aggiornata: controlla da sola ogni mezz'ora.",
+  "updateStatusCheckFailed": "Non riesco a raggiungere il servizio degli aggiornamenti: riprovo più tardi.",
+  "updateStatusReady": "La versione {version} è pronta: riavvia l'app per installarla.",
+  "@updateStatusReady": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "sourceTitle": "Fonte",
+  "sourcePage": "{name}, pagina {page}",
+  "@sourcePage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "page": {
+        "type": "int"
+      }
+    }
+  },
+  "sourcePages": "{name}, pagine {first}–{last}",
+  "@sourcePages": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "first": {
+        "type": "int"
+      },
+      "last": {
+        "type": "int"
+      }
+    }
+  },
+  "sourceOpen": "Apri {reference}",
+  "@sourceOpen": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "sourceLoading": "Apro il documento…",
+  "sourceUnavailable": "Documento non disponibile",
+  "sourceMissingMessage": "Il documento o la pagina non sono più disponibili in questa conversazione. Se necessario, allega nuovamente il documento.",
+  "sourceConnectionMessage": "Non riesco ad aprire la fonte. Controlla la connessione e riprova.",
+  "sourceRetry": "Riprova",
+  "sourceOriginal": "Documento originale · sola lettura",
+  "sourceExtracted": "Testo estratto · impaginazione originale non riprodotta",
+  "sourceNoText": "Questa pagina non contiene testo leggibile.",
+  "sourcePrevious": "Passaggio precedente",
+  "sourceNext": "Passaggio successivo",
+  "webLinkUnavailable": "Impossibile aprire il collegamento. Riprova dal navigatore.",
+  "sourceSection": "{name}, sezione {page}",
+  "@sourceSection": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "page": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewRunning": "Verifico italiano e impaginazione…",
+  "reviewUnavailable": "Verifica non completata. L’esportazione resta sospesa.",
+  "reviewClean": "Controlli automatici completati: nessun rilievo rilevato.",
+  "reviewAdvisory": "Riferimenti da rileggere",
+  "reviewRequired": "Correzioni da verificare prima dell’esportazione",
+  "reviewHelp": "Correggi nel testo. Conferma soltanto i passaggi che ritieni corretti.",
+  "reviewMetadata": "Titolo e dati del documento",
+  "reviewProtected": "Citazione o dato originale: verificare senza alterarne il senso.",
+  "reviewKeepTerm": "Mantieni testo",
+  "reviewConfirmed": "Confermato",
+  "pdfPreparedFor": "Destinatario",
+  "pdfPreparedBy": "Redatto da",
+  "pdfDate": "Data",
+  "pdfMonthNames": "gennaio;febbraio;marzo;aprile;maggio;giugno;luglio;agosto;settembre;ottobre;novembre;dicembre",
+  "progressStarting": "Avvio della richiesta",
+  "progressFailed": "Richiesta non completata",
+  "progressStopped": "Richiesta interrotta",
+  "progressCompleted": "Richiesta conclusa",
+  "progressHideSteps": "Nascondi i passaggi",
+  "progressShowSteps": "Mostra i passaggi ({count})",
+  "operationApplied": "Operazione eseguita",
+  "operationFailed": "Operazione non riuscita",
+  "operationNotApplied": "Operazione non eseguita",
+  "operationRunning": "Operazione in corso",
+  "agentComparingDocuments": "Confronto i documenti",
+  "evidenceTitle": "Fonti e riscontri",
+  "evidenceSummary": "{claims, plural, =1{1 affermazione} other{{claims} affermazioni}} · {sources, plural, =1{1 fonte richiamata} other{{sources} fonti richiamate}}",
+  "evidenceQualification": "I collegamenti alle fonti e i passaggi citati sono distinti dalla valutazione giuridica del caso.",
+  "evidenceNoClaims": "Nessuna affermazione associata a questo riscontro.",
+  "evidenceUnresolved": "Collegamento alla fonte incompleto",
+  "evidenceTraceable": "Passaggio della fonte disponibile",
+  "evidenceInference": "Deduzione da valutare",
+  "evidenceUnsupported": "Affermazione da correggere",
+  "evidenceUnknown": "Riscontro non determinato",
+  "evidenceNoPassage": "Nessun passaggio citato per questa affermazione.",
+  "evidenceSemanticPending": "Il sostegno alla conclusione richiede una verifica distinta.",
+  "evidenceLegislator": "Testo normativo",
+  "evidenceCourt": "Voce del giudice",
+  "evidenceParty": "Posizione di una parte",
+  "evidenceSource": "Fonte richiamata",
+  "evidenceVersion": "Versione al {date}",
+  "evidenceUncertain": "Trascrizione incerta: confrontare con l’originale.",
+  "phaseIdle": "Pronto",
+  "phaseThinking": "Elaborazione",
+  "phaseWorking": "Esecuzione",
+  "phaseWaiting": "In attesa",
+  "phaseError": "Errore",
+  "eventRequest": "Richiesta",
+  "eventStatus": "Attività",
+  "eventText": "Risposta",
+  "eventTool": "Operazione",
+  "eventResult": "Risultato",
+  "eventUi": "Scheda",
+  "eventApproval": "Conferma",
+  "eventAttachment": "Allegato",
+  "eventError": "Errore",
+  "eventDone": "Conclusione",
+  "eventOther": "Evento",
+  "failureUnexpected": "Si è verificato un errore imprevisto. Riprova; se si ripete, copia il registro delle attività per l’assistenza.",
+  "logCopyDetails": "Copia i dettagli tecnici",
+  "logDetailsCopied": "Dettagli copiati",
+  "logDetailsHint": "Dettagli disponibili per l’assistenza.",
+  "requestData": "dati della richiesta",
+  "@progressShowSteps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@evidenceSummary": {
+    "placeholders": {
+      "claims": {
+        "type": "int"
+      },
+      "sources": {
+        "type": "int"
+      }
+    }
+  },
+  "@evidenceVersion": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "cardUnavailable": "Scheda non disponibile. Il contenuto ricevuto non è leggibile.",
+  "operationFailureHint": "Operazione non riuscita. I dettagli sono disponibili nel registro delle attività.",
+  "componentTool": "Operazione",
+  "componentPage": "Pagina",
+  "componentDiff": "Confronto delle modifiche",
+  "componentDocument": "Documento",
+  "componentOutline": "Struttura del documento",
+  "componentChart": "Grafico",
+  "componentExport": "Esportazione",
+  "componentApproval": "Conferma richiesta",
+  "componentSummary": "Riepilogo delle modifiche",
+  "componentNorms": "Riferimenti normativi",
+  "componentCase": "Analisi del fascicolo",
+  "componentProgress": "Avanzamento",
+  "componentMatrix": "Confronto documentale",
+  "componentOther": "Scheda",
+  "accessTitle": "Accedi a Daylex",
+  "accessHelp": "Inserisci la chiave ricevuta dal tuo amministratore. Ogni chiave è associata a un solo computer.",
+  "accessInvalidKey": "Inserisci una chiave Daylex completa, con prefisso dlx_.",
+  "accessVaultFailed": "Impossibile aprire l’archivio protetto del computer. Sblocca il portachiavi e riprova.",
+  "accessShowKey": "Mostra chiave",
+  "accessHideKey": "Nascondi chiave",
+  "accessActivate": "Attiva su questo computer",
+  "accessDisclosure": "L’amministratore può vedere presenza, sezioni utilizzate, tipo, durata ed esito delle richieste. Se abilitata sul servizio, la supervisione include il testo delle richieste inviate. Bozze, digitazione e allegati non vengono copiati nelle analitiche. La conservazione è limitata dalla configurazione del servizio; i documenti restano salvati sul computer.",
+  "accessAcknowledge": "Ho letto l’informativa sulla supervisione",
+  "serviceMaintenance": "Daylex è in manutenzione",
+  "serviceMaintenanceHelp": "Le nuove richieste sono temporaneamente sospese. Il lavoro già salvato resta disponibile sul computer.",
+  "serviceOffline": "Connessione al servizio non disponibile",
+  "serviceOfflineHelp": "Non è stato possibile verificare lo stato del servizio. Il lavoro locale resta disponibile; controlla la rete e riprova.",
+  "serviceDetails": "Dettagli",
+  "serviceRetry": "Riprova",
+  "operationUncertain": "Esito da verificare",
+  "operationVerificationHint": "La sessione si è interrotta prima di ricevere l’esito. Controlla il documento prima di ripetere l’operazione.",
+  "instanceUnavailable": "Daylex è già aperto oppure la cartella dei dati non è accessibile. Chiudi l’altra finestra e riprova; se il problema persiste, verifica i permessi della cartella.",
+  "exitUnsavedTitle": "Modifiche non salvate",
+  "exitUnsavedHelp": "Il salvataggio non è riuscito. Mantieni aperta l’app e riprova dopo aver verificato spazio e permessi del disco. Uscendo perderai le modifiche non salvate.",
+  "exitKeepOpen": "Mantieni aperto",
+  "exitDiscard": "Esci senza salvare",
+  "accessKeyHint": "dlx_…"
+}
