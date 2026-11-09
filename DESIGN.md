@@ -89,7 +89,7 @@ components:
   revision-control:
     backgroundColor: "{colors.layer}"
     textColor: "{colors.mint}"
-    rounded: "{rounded.square}"
+    rounded: "{rounded.action}"
     padding: "11px 14px"
   revision-control-hover:
     backgroundColor: "{colors.mint}"
@@ -168,7 +168,7 @@ There are no box shadows, gradients, blur or glass surfaces. Depth comes from th
 
 ## Shapes
 
-Download controls are rounded: 7px for both device choices and primary actions. Revision controls remain square. The reusable signature is a pair of opposed orthogonal steps at the upper-right and lower-left corners, 24px on desktop and 18px at up to 600px. The final shared clipping rule applies to the backing sheet, front sheet, download band and closing panel; earlier diagonal cuts on the closing panel are overridden.
+Download controls are rounded: 7px for both device choices and primary actions. Revision controls also use 7px corners. The reusable signature is a pair of opposed orthogonal steps at the upper-right and lower-left corners, 24px on desktop and 18px at up to 600px. The final shared clipping rule applies to the backing sheet, front sheet, download band and closing panel; earlier diagonal cuts on the closing panel are overridden.
 
 The Daylex mark repeats opposed rectilinear strokes. Its navigation form uses current text color; the favicon uses mint on black. The opening's broad background field has a separate diagonal entry cut; it does not replace the orthogonal folio signature. The actual workspace screenshot has no cut corners.
 
