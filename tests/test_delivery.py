@@ -44,6 +44,10 @@ class DeliveryTests(unittest.TestCase):
         (self.src / self.package['archive']).write_bytes(b'changed')
         with self.assertRaises(ValueError): receiver.validate(self.src, self.updates, self.public)
 
+    def test_unsafe_release_directory_rejected(self):
+        self.write_signed(self.src / 'delivery.json', dict(packages=[dict(self.package, commit='../../escape')]))
+        with self.assertRaises(ValueError): receiver.validate(self.src, self.updates, self.public)
+
     def test_modified_signature_rejected(self):
         value = json.loads((self.src / 'delivery.json').read_text())
         value['payload'] += ' '

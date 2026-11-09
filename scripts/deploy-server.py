@@ -60,6 +60,8 @@ def validate(src, updates, public=PUBLIC_KEY):
         platform = p['platform']
         if platform not in ('windows', 'macos', 'linux'):
             raise ValueError('Unsupported platform')
+        if not re.fullmatch(r'[0-9a-f]{40}', p['commit']):
+            raise ValueError('Invalid source commit')
         if not re.fullmatch(r'\d+\.\d+\.\d+', p['version']) or not isinstance(p['build'], int) or p['build'] <= 0:
             raise ValueError('Invalid version')
         expected = f'daylex-{platform}-{p["version"]}-b{p["build"]}.zip'
