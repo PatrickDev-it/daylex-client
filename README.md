@@ -5,10 +5,16 @@ No backend implementation, production data, access tokens or signing keys are in
 
 ## Development
 
-Flutter 3.47.2, Dart 3.13.2 and Node 22.21.1. From `app/`, run `flutter pub get --enforce-lockfile`,
+Flutter 3.47.9, Dart 3.13.7 and Node 22.21.1. `toolchain.json` pins the Flutter source commit and Dart
+version used by every CI job. Run `python scripts/flutter_toolchain.py` to install this isolated SDK;
+add its printed `bin` directory to PATH (or select that SDK in the editor). This leaves other SDKs intact.
+From `app/`, run `flutter pub get --enforce-lockfile`,
 then `npm ci --omit=dev --ignore-scripts` in `whatsapp_bridge/`. Run `flutter run -d windows`, `macos` or `linux`.
 Linux requires GTK 3, libsecret and a running Secret Service keyring. Credential storage fails closed when
 the keyring is unavailable; credentials are never persisted in plaintext.
+Run `python scripts/analyze.py` from the repository root for the same strict analysis as CI.
+The qualified 3.47.9 SDK passes analysis on Windows where the previous 3.47.2 installation's analyzer
+process crashed. Warnings and informational diagnostics remain fatal; no analysis rules are suppressed.
 
 ## Product target
 
@@ -43,15 +49,17 @@ The homepage keeps installation choices concise; `assistenza.html` contains end-
 `tecnica.html` contains package requirements, checksums and administrator information.
 
 Desktop releases refresh download links on both the homepage and technical page through the same
-renderer, preserving the marketing copy. For a website-only deployment, export the reviewed commit's
-`site/`, `scripts/deploy-server.py`, `scripts/render-site.py` and `scripts/install-site.py` to the server.
-Run `sudo python3 SOURCE/scripts/install-site.py SOURCE COMMIT_SHA`. This takes the deployment lock,
-retains the current installers, renders against the live inventory and switches the site atomically.
-It also installs the matching root-owned receiver so future CI releases keep the new presentation.
+renderer, preserving the marketing copy. A push changing `site/` automatically starts the web workflow:
+qualify and publish the PWA, then sign, publish and verify the presentation assets. The receiver retains
+the current installers, renders against the live inventory and switches the site atomically under the
+shared deployment lock. Both Windows choices always point to the current installer. Site source cannot
+replace updater metadata, downloads or server code; a signed receipt records the deployed commit.
+No administrator command is required for normal releases. `install-site.py` is an administrative
+bootstrap/recovery tool, not part of the routine publishing path.
 `site/release.json` is public runtime metadata and is deliberately not tracked; local rendering with
 `python scripts/render-site.py` requires a copy of the current site's inventory.
 
-Every push to `main` builds and tests on `windows-latest`, `macos-latest` and `ubuntu-latest`.
+Client and delivery changes pushed to `main` build and test on `windows-latest`, `macos-latest` and `ubuntu-latest`.
 Pull requests run the same qualification without deployment credentials. Build numbers are generated
 from the Actions run and attempt; the marketing version remains in `app/pubspec.yaml`.
 
@@ -130,6 +138,12 @@ The workflow creates a temporary keychain and removes it after signing and notar
 This is now the source of truth for client changes. The original private repository remains intact.
 Old versioned downloads and previous website releases are retained. A corrected application release must
 always use a newer build number; updater downgrade prevention is intentional.
+SSH transport and public HTTP verification retry three times, with bounded backoff. The recovery workflow
+retries current-main runs up to three attempts when runners fail to start or publication is interrupted.
+It never retries failed analysis, compilation or tests, and never deploys an obsolete commit. A scheduled
+check every 30 minutes permits a fresh run after a one-hour cooldown if GitHub failed before jobs started.
+This also recovers missed completion events after an Actions outage; it cannot make GitHub available
+during an outage. Signed validation and all quality gates run again before any release is published.
 The Linux support target is Ubuntu x64; its minimum release matches the build runner and is recorded in
 the signed package inventory and website (currently Ubuntu 26.04). It does not cover every Linux distribution. `latest` labels track GitHub's
 stable images, not necessarily the OS vendor's newest release.

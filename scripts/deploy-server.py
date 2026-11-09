@@ -193,7 +193,8 @@ def atomic_copy(source, destination):
 
 def publish(src, packages, updates=UPDATES, site=SITE):
     current = (site / 'current').resolve(strict=True)
-    release_id = f'ci-b{packages[0]["build"]}-{packages[0]["commit"][:12]}'
+    suffix = hashlib.sha256(current.name.encode()).hexdigest()[:12]
+    release_id = f'ci-b{packages[0]["build"]}-{packages[0]["commit"][:12]}-{suffix}'
     candidate = site / 'releases' / release_id
     if not candidate.exists():
         # A fresh site release, with previous versioned downloads retained by hard link.
@@ -209,7 +210,12 @@ def publish(src, packages, updates=UPDATES, site=SITE):
         atomic_copy(src / p['archive'], updates / p['archive'])
         atomic_copy(src / p['installer'], candidate / 'downloads' / p['installer'])
         checksum = candidate / 'downloads' / (p['installer'] + '.sha256')
-        checksum.write_text(f'{p["installer_sha256"]}  {p["installer"]}\n')
+        expected_checksum = f'{p["installer_sha256"]}  {p["installer"]}\n'
+        if checksum.exists():
+            if checksum.read_text() != expected_checksum:
+                raise ValueError('Immutable checksum changed')
+        else:
+            checksum.write_text(expected_checksum)
         checksum.chmod(0o644)
     for path in candidate.rglob('*'):
         if path.is_file(): path.chmod(0o644)
@@ -227,13 +233,13 @@ def publish(src, packages, updates=UPDATES, site=SITE):
     link.replace(site / 'current')
     print('PUBLISHED ' + ', '.join(f'{p["platform"]} b{p["build"]}' for p in packages), flush=True)
 
-def validate_web(src, web=WEB, public=PUBLIC_KEY):
+def validate_web(src, web=WEB, public=PUBLIC_KEY, kind='web'):
     release = verified(src / 'delivery.json', public)
-    if release.get('kind') != 'web' or type(release.get('build')) is not int or release['build'] <= 0:
+    if kind not in ('web', 'site') or release.get('kind') != kind or type(release.get('build')) is not int or release['build'] <= 0:
         raise ValueError('Invalid web release')
     if not re.fullmatch(r'[0-9a-f]{40}', release.get('commit', '')):
         raise ValueError('Invalid web source commit')
-    expected = f'daylex-web-b{release["build"]}.zip'
+    expected = f'daylex-{kind}-b{release["build"]}.zip'
     if release.get('file') != expected:
         raise ValueError('Invalid web archive name')
     archive = src / expected
@@ -241,6 +247,8 @@ def validate_web(src, web=WEB, public=PUBLIC_KEY):
         raise ValueError('Web archive integrity mismatch')
     assets = release['assets']
     required = {'index.html', 'main.dart.js', 'runtime.mjs', 'storage.mjs', 'manifest.json', 'service-worker.js', 'flutter_bootstrap.js'}
+    if kind == 'site':
+        required = {'index.html', 'style.css', 'app.js', 'assistenza.html', 'tecnica.html', 'favicon.svg'}
     if not isinstance(assets, dict) or not required <= set(assets) or len(assets) > 5000:
         raise ValueError('Incomplete web assets')
     with zipfile.ZipFile(archive) as bundle:
@@ -257,15 +265,61 @@ def validate_web(src, web=WEB, public=PUBLIC_KEY):
                 entry.file_size > 150 * 1024**2):
                 raise ValueError('Unsafe web asset')
             names.add(name)
+            if kind == 'site' and (name in ('release.json', 'site-release.json') or
+                                  ('/' in name and name.split('/')[0] not in ('fonts', 'media')) or
+                                  PurePosixPath(name).suffix not in ('.html', '.css', '.js', '.svg', '.png', '.jpg', '.jpeg', '.webp', '.ttf', '.woff2', '.txt', '.md')):
+                raise ValueError('Site payload cannot overwrite downloads, inventory or server code')
             with bundle.open(entry) as data:
                 if hashlib.file_digest(data, 'sha256').hexdigest() != assets[name]:
                     raise ValueError('Web asset integrity mismatch')
-    current = web / 'current/web-release.json'
+    current = web / f'current/{kind}-release.json'
     if current.exists():
         previous = verified(current, public)
         if previous['build'] > release['build'] or (previous['build'] == release['build'] and previous['sha256'] != release['sha256']):
             raise ValueError('Web rollback or mutation refused')
     return release
+
+def publish_site(src, release, site=SITE):
+    previous = (site / 'current').resolve(strict=True)
+    versions = site / 'releases'
+    suffix = hashlib.sha256(previous.name.encode()).hexdigest()[:12]
+    candidate = versions / f'site-b{release["build"]}-{release["commit"][:12]}-{suffix}'
+    if not candidate.exists():
+        with tempfile.TemporaryDirectory(prefix='.staging-site-', dir=versions) as directory:
+            staged = Path(directory) / 'site'
+            shutil.copytree(previous, staged, copy_function=os.link)
+            with zipfile.ZipFile(src / release['file']) as bundle:
+                for entry in bundle.infolist():
+                    target = staged / entry.filename
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.unlink(missing_ok=True)  # Never modify the previous release's inode.
+                    with target.open('wb') as output, bundle.open(entry) as data:
+                        shutil.copyfileobj(data, output)
+            inventory = staged / 'release.json'
+            info = json.loads(inventory.read_text())
+            inventory.unlink()
+            inventory.write_text(json.dumps(info))
+            packages = []
+            for platform in ('windows', 'macos', 'linux'):
+                item = info[platform]
+                packages.append(dict(platform=platform, installer=Path(item['url']).name,
+                    installer_size=item['bytes'], installer_sha256=item['sha256'], version=item['version'],
+                    build=item['build'], authenticode=item.get('authenticode', False),
+                    notarized=item.get('notarized', False), signing=item.get('signing'),
+                    linux_minimum=item.get('linux_minimum') or '26.04'))
+            render_site(staged, packages)  # Refresh links using LIVE versions, never stale source links.
+            receipt = staged / 'site-release.json'
+            receipt.unlink(missing_ok=True)
+            shutil.copyfile(src / 'delivery.json', receipt)
+            for file in staged.rglob('*'):
+                file.chmod(0o755 if file.is_dir() else 0o644)
+            staged.chmod(0o755)
+            staged.rename(candidate)
+    link = site / '.current-ci'
+    link.unlink(missing_ok=True)
+    link.symlink_to(candidate, target_is_directory=True)
+    link.replace(site / 'current')
+    print(f'PUBLISHED site b{release["build"]}', flush=True)
 
 def publish_web(src, release, web=WEB, site=SITE):
     versions = web / 'releases'
@@ -322,7 +376,10 @@ def main():
         with tempfile.TemporaryDirectory(prefix='incoming-', dir=STATE) as directory:
             src = Path(directory)
             receive(sys.stdin.buffer, src)
-            if verified(src / 'delivery.json').get('kind') == 'web':
+            kind = verified(src / 'delivery.json').get('kind')
+            if kind == 'site':
+                publish_site(src, validate_web(src, web=SITE, kind='site'))
+            elif kind == 'web':
                 publish_web(src, validate_web(src))
             else:
                 packages = validate(src, UPDATES)

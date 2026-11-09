@@ -2,7 +2,7 @@ name: Build and publish PWA
 on:
   push:
     branches: [main]
-    paths: ['app/**', 'web-tools/**', 'scripts/**', 'tests/**', '.github/workflows/web.yml']
+    paths: ['site/**', 'app/**', 'web-tools/**', 'scripts/**', 'tests/**', 'toolchain.json', '.github/workflows/web.yml']
   pull_request:
   workflow_dispatch:
 permissions:
@@ -24,10 +24,8 @@ jobs:
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
-      - name: Pinned Flutter SDK
-        run: |
-          git clone --depth 1 --branch 3.47.2 https://github.com/flutter/flutter.git "$HOME/development/flutter"
-          echo "$HOME/development/flutter/bin" >> "$GITHUB_PATH"
+      - name: Qualified Flutter and Dart toolchain
+        run: python scripts/flutter_toolchain.py
       - name: Dependencies
         run: |
           python scripts/package.py --build "$((100 + GITHUB_RUN_NUMBER * 100 + GITHUB_RUN_ATTEMPT))"
@@ -39,9 +37,8 @@ jobs:
       - name: Browser storage, backup and recovery
         working-directory: web-tools
         run: npm test
-      - name: Analyze
-        working-directory: app
-        run: flutter analyze --no-pub
+      - name: Analyze (fatal warnings and infos)
+        run: python scripts/analyze.py
       - name: Browser compatibility, PDF and credential tests
         run: python scripts/test-web.py
       - name: Build self-hosted PWA
@@ -82,3 +79,15 @@ jobs:
           DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
           DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
         run: bash scripts/deploy.sh web
+      - name: Sign presentation website
+        env:
+          RELEASE_SIGNING_KEY: ${{ secrets.RELEASE_SIGNING_KEY }}
+        run: |
+          export SITE_BUILD="$((100 + GITHUB_RUN_NUMBER * 100 + GITHUB_RUN_ATTEMPT))"
+          python scripts/sign-site.py
+      - name: Publish and verify presentation website
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+        run: bash scripts/deploy.sh site

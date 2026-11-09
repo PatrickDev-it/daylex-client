@@ -42,6 +42,77 @@ class DeliveryTests(unittest.TestCase):
     def test_valid_delivery(self):
         self.assertEqual(receiver.validate(self.src, self.updates, self.public), [self.package])
 
+    def presentation(self, extra=None):
+        files = {name: b'fixture' for name in ('style.css', 'app.js', 'assistenza.html', 'favicon.svg')}
+        platforms = ('windows', 'windows', 'macos', 'linux')
+        files['index.html'] = ('<html data-site-version="3">New presentation' + ''.join(
+            f'<a data-download="{p}" href="downloads/stale">{p}</a>' for p in platforms) + '</html>').encode()
+        files['tecnica.html'] = ''.join(f'<!-- release:{p} -->old<!-- /release:{p} -->'
+                                       for p in ('windows', 'macos', 'linux')).encode()
+        files.update(extra or {})
+        archive = self.src / 'daylex-site-b201.zip'
+        with zipfile.ZipFile(archive, 'w') as bundle:
+            for name, data in files.items(): bundle.writestr(name, data)
+        release = dict(kind='site', build=201, commit='b'*40, file=archive.name,
+                       size=archive.stat().st_size, sha256=receiver.digest(archive),
+                       assets={name: hashlib.sha256(data).hexdigest() for name, data in files.items()})
+        self.write_signed(self.src / 'delivery.json', release)
+        return release
+
+    def live_site(self):
+        site = self.root / 'site'
+        previous = site / 'releases/previous'
+        (previous / 'downloads').mkdir(parents=True)
+        (previous / 'downloads/old.exe').write_bytes(b'old installer')
+        info = {p: dict(url=f'downloads/live-{p}.zip', bytes=10, sha256='a'*64,
+                       version='0.1.0', build=101) for p in ('windows', 'macos', 'linux')}
+        info['web'] = dict(build=901, url='/app/')
+        (previous / 'release.json').write_text(json.dumps(info))
+        (previous / 'index.html').write_text('Old presentation')
+        (previous / 'style.css').write_text('old styles')
+        (site / 'current').symlink_to(previous)
+        return site, previous
+
+    def test_signed_site_cannot_replace_server_code_or_live_inventory(self):
+        for name in ('release.json', 'site-release.json', 'downloads/old.exe',
+                     'scripts/receiver.py', 'receiver.py', '../escape'):
+            self.presentation({name: b'bad'})
+            with self.assertRaises(ValueError):
+                receiver.validate_web(self.src, self.root / 'site', self.public, kind='site')
+
+    def test_site_publication_uses_live_downloads_preserves_pwa_and_previous_files(self):
+        site, previous = self.live_site()
+        release = self.presentation()
+        self.assertEqual(receiver.validate_web(self.src, site, self.public, kind='site'), release)
+        receiver.publish_site(self.src, release, site)
+        home = (site / 'current/index.html').read_text()
+        self.assertIn('New presentation', home)
+        self.assertNotIn('downloads/stale', home)
+        self.assertEqual(home.count('downloads/live-windows.zip'), 2)
+        self.assertEqual(json.loads((site / 'current/release.json').read_text())['web']['build'], 901)
+        self.assertEqual((site / 'current/downloads/old.exe').read_bytes(), b'old installer')
+        self.assertEqual((previous / 'index.html').read_text(), 'Old presentation')
+        self.assertEqual((previous / 'style.css').read_text(), 'old styles')
+        # A lost SSH response can retry the same signed payload without mutating history.
+        self.assertEqual(receiver.validate_web(self.src, site, self.public, kind='site'), release)
+        receiver.publish_site(self.src, release, site)
+        self.assertEqual((site / 'current/index.html').read_text(), home)
+        self.write_signed(site / 'current/site-release.json', dict(release, build=202))
+        with self.assertRaises(ValueError): receiver.validate_web(self.src, site, self.public, kind='site')
+
+    def test_native_retry_does_not_revert_a_newer_presentation_or_pwa(self):
+        site, _ = self.live_site()
+        release = self.presentation()
+        receiver.publish_site(self.src, release, site)
+        receiver.publish(self.src, [self.package], self.updates, site)
+        newer = self.presentation({'style.css': b'newer styles'})
+        receiver.publish_site(self.src, newer, site)
+        receiver.publish(self.src, [self.package], self.updates, site)
+        self.assertEqual((site / 'current/style.css').read_bytes(), b'newer styles')
+        self.assertIn('New presentation', (site / 'current/index.html').read_text())
+        self.assertEqual(json.loads((site / 'current/release.json').read_text())['web']['build'], 901)
+        self.assertIn(self.package['installer'], (site / 'current/index.html').read_text())
+
     def web_release(self, extra=None):
         archive = self.src / 'daylex-web-b201.zip'
         files = {name: b'fixture' for name in ('index.html', 'main.dart.js', 'runtime.mjs', 'storage.mjs', 'manifest.json', 'service-worker.js', 'flutter_bootstrap.js')}

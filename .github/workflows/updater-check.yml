@@ -12,11 +12,11 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - name: Pinned Dart SDK through Flutter
-        shell: pwsh
-        run: |
-          git clone --depth 1 --branch 3.47.2 https://github.com/flutter/flutter.git "$env:RUNNER_TEMP/flutter"
-          "$env:RUNNER_TEMP/flutter/bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Qualified Flutter and Dart toolchain
+        run: python scripts/flutter_toolchain.py
       - name: Regression scenarios
         shell: pwsh
         run: |
