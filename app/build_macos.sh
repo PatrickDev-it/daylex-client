@@ -1,17 +1,13 @@
 #!/usr/bin/env bash
 # Builds Daylex for macOS on this Mac and packs it, from nothing but Xcode:
 #   bash build_macos.sh
-# Flutter (the version below, the one the app is developed with) is downloaded into ~/development/flutter
-# the first time. Result, in dist/:
+# Uses the same pinned toolchain.json SDK as analysis, tests and the other desktop builds.
+# Result, in dist/:
 #   Daylex.dmg                          the drag-to-Applications disk image, for a first install by hand;
-#   daylex-macos-X.Y.Z-bBUILD.zip       the update every installed app downloads, once published from the
-#                                       workstation holding the release key:
-#                                       python scripts/release.py publish macos <that zip>
+#   daylex-macos-X.Y.Z-bBUILD.zip       the update automatically signed and published by CI.
 set -euo pipefail
 cd "$(dirname "$0")"
 
-readonly flutter_version=3.47.2
-readonly flutter_home="${HOME}/development/flutter"
 readonly app=Daylex
 
 # Ad-hoc distribution is supported; Gatekeeper approval is required on the user's Mac.
@@ -52,19 +48,14 @@ if ! xcodebuild -license check >/dev/null 2>&1; then
   sudo xcodebuild -license accept
 fi
 
-step "Flutter ${flutter_version}"
-if [[ ! -x "${flutter_home}/bin/flutter" ]]; then
-  mkdir -p "$(dirname "$flutter_home")"
-  git clone --depth 1 --branch "$flutter_version" https://github.com/flutter/flutter.git "$flutter_home"
-fi
+step "Flutter: toolchain verificato"
+flutter_home="$(python3 ../scripts/flutter_toolchain.py --path)"
 export PATH="${flutter_home}/bin:${PATH}"
-installed="$(flutter --version --machine 2>/dev/null | sed -n 's/.*"frameworkVersion": *"\([^"]*\)".*/\1/p')"
-[[ "$installed" == "$flutter_version" ]] || echo "attenzione: in ${flutter_home} c'è Flutter ${installed}, non ${flutter_version}"
 flutter config --no-analytics >/dev/null
 flutter config --enable-macos-desktop >/dev/null
 
 step "dipendenze"
-flutter pub get
+flutter pub get --enforce-lockfile
 if ! command -v node >/dev/null || ! command -v npm >/dev/null; then
   echo "Serve Node.js per il connettore WhatsApp. Installalo e rilancia lo script."
   exit 1
@@ -72,7 +63,7 @@ fi
 (cd whatsapp_bridge && npm ci --omit=dev --ignore-scripts)
 
 step "build (qualche minuto la prima volta)"
-if ! flutter build macos --release; then
+if ! flutter build macos --release --no-pub; then
   if ! command -v pod >/dev/null; then
     echo
     echo "La build richiede CocoaPods. Installalo e rilancia lo script:"
@@ -190,6 +181,5 @@ echo "dist/${app}.dmg: aprilo e trascina ${app} in Applicazioni (solo la prima i
 if [[ "$adhoc" == true ]]; then
   echo "App non notarizzata: dopo il primo tentativo di apertura, autorizzala da Impostazioni di Sistema > Privacy e sicurezza > Apri comunque."
 fi
-echo "${update}: copialo sul PC con la chiave di rilascio e pubblicalo con"
-echo "  python scripts/release.py publish macos ${update##*/}"
+echo "${update}: pronto per la pipeline di firma e pubblicazione automatica."
 if [[ "${CI:-}" != true ]]; then open dist; fi

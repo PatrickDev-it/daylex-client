@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 PIN = json.loads((ROOT / 'toolchain.json').read_text())
@@ -18,7 +19,7 @@ def ensure_sdk():
     if actual != PIN['commit']:
         raise RuntimeError('Flutter checkout does not match the approved toolchain commit')
     flutter = sdk / 'bin' / ('flutter.bat' if os.name == 'nt' else 'flutter')
-    subprocess.run([str(flutter), '--version'], check=True)
+    subprocess.run([str(flutter), '--version'], check=True, stdout=sys.stderr)
     if (sdk / 'bin/cache/dart-sdk/version').read_text().strip() != PIN['dart']:
         raise RuntimeError('Flutter downloaded an unexpected Dart SDK')
     return sdk
@@ -28,4 +29,4 @@ if __name__ == '__main__':
     if os.environ.get('GITHUB_PATH'):
         with open(os.environ['GITHUB_PATH'], 'a') as output:
             output.write(str(sdk / 'bin') + '\n')
-    print(f'Qualified toolchain: {sdk}')
+    print(str(sdk) if '--path' in sys.argv[1:] else f'Qualified toolchain: {sdk}')
