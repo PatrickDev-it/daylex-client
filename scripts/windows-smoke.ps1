@@ -14,7 +14,12 @@ $runtimeNames = @('msvcp140.dll','vcruntime140.dll','vcruntime140_1.dll')
 foreach ($name in $runtimeNames) {
   if (!(Test-Path -LiteralPath (Join-Path $target $name))) { throw "Package missing required runtime: $name" }
 }
-$process = Start-Process -FilePath $exe -PassThru -WindowStyle Hidden
+# A GUI smoke test on the isolated Actions desktop must allow its first window.
+# SW_HIDE in STARTUPINFO suppresses Flutter's first ShowWindow call and makes
+# MainWindowHandle/CloseMainWindow unusable, even when the application is healthy.
+if ($env:GITHUB_ACTIONS -ne 'true') { throw 'GUI startup qualification must run on the isolated CI desktop' }
+$process = Start-Process -FilePath $exe -WorkingDirectory $target -PassThru
+$startupError = $null
 try {
   Start-Sleep -Seconds 12
   $process.Refresh()
@@ -27,7 +32,16 @@ try {
   & (Join-Path $target 'whatsapp_bridge/node.exe') --version
   if ($LASTEXITCODE -ne 0) { throw 'Bundled Node failed' }
   [ordered]@{os=$os.Caption;build=$os.BuildNumber;architecture=$env:PROCESSOR_ARCHITECTURE;package='x64';version=(Get-Item $exe).VersionInfo.ProductVersion;startup=$true;appLocalRuntime=$true;sha256=(Get-FileHash $Archive -Algorithm SHA256).Hash} | ConvertTo-Json | Set-Content app/dist/windows-startup.json
+} catch {
+  $startupError = $_
+  throw
 } finally {
-  if (!$process.HasExited) { $null=$process.CloseMainWindow(); if (!$process.WaitForExit(10000)) { $process.Kill(); throw 'App did not close cleanly' } }
+  if (!$process.HasExited) {
+    $null=$process.CloseMainWindow()
+    if (!$process.WaitForExit(10000)) {
+      $process.Kill()
+      if (!$startupError) { throw 'App did not close cleanly' }
+    }
+  }
 }
 
