@@ -3547,6 +3547,18 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'dlx_…'**
   String get accessKeyHint;
+
+  /// No description provided for @webAccessHelp.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci una chiave dedicata a questo browser, ricevuta dall’amministratore. La chiave già associata all’app desktop non si trasferisce automaticamente.'**
+  String get webAccessHelp;
+
+  /// No description provided for @webSessionHelp.
+  ///
+  /// In it, this message translates to:
+  /// **'La chiave resta solo in questa sessione: dovrai reinserirla quando ricarichi o riapri Daylex. Documenti e chat rimangono in questo browser; scarica regolarmente una copia dell’archivio.'**
+  String get webSessionHelp;
 }
 
 class _AppLocalizationsDelegate

@@ -2177,4 +2177,12 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get accessKeyHint => 'dlx_…';
+
+  @override
+  String get webAccessHelp =>
+      'Inserisci una chiave dedicata a questo browser, ricevuta dall’amministratore. La chiave già associata all’app desktop non si trasferisce automaticamente.';
+
+  @override
+  String get webSessionHelp =>
+      'La chiave resta solo in questa sessione: dovrai reinserirla quando ricarichi o riapri Daylex. Documenti e chat rimangono in questo browser; scarica regolarmente una copia dell’archivio.';
 }

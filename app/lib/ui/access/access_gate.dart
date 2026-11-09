@@ -157,10 +157,10 @@ class _AccessFormState extends ConsumerState<AccessForm> {
         children: [
           Text(l.accessTitle, style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 12),
-          Text(kIsWeb ? 'Inserisci una chiave dedicata a questo browser, ricevuta dall’amministratore. La chiave già associata all’app desktop non si trasferisce automaticamente.' : l.accessHelp),
+          Text(kIsWeb ? l.webAccessHelp : l.accessHelp),
           if (kIsWeb) ...[
             const SizedBox(height: 12),
-            const Text('La chiave resta solo in questa sessione: dovrai reinserirla quando ricarichi o riapri Daylex. Documenti e chat rimangono in questo browser; scarica regolarmente una copia dell’archivio.'),
+            Text(l.webSessionHelp),
           ],
           const SizedBox(height: 24),
           TextField(

@@ -15,3 +15,5 @@
 release-input/
 delivery.tar
 site-preview/
+app/test/assets/
+app/test/canvaskit/

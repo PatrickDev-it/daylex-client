@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -100,7 +101,22 @@ void main() {
   );
 
   test('PDF renderer works in browser without native isolates', () async {
-    final fonts = await PdfFontSet.load();
+    // Browser widget tests do not install Flutter's native asset-channel mock.
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    messenger.setMockMessageHandler('flutter/assets', (message) async {
+      final name = utf8.decode(
+        message!.buffer.asUint8List(
+          message.offsetInBytes,
+          message.lengthInBytes,
+        ),
+      );
+      final response = await http.get(Uri.base.resolve('/assets/$name'));
+      expect(response.statusCode, 200, reason: name);
+      return ByteData.sublistView(response.bodyBytes);
+    });
+    addTearDown(() => messenger.setMockMessageHandler('flutter/assets', null));
+    final fonts = await PdfFontSet.load().timeout(const Duration(seconds: 10));
     final bytes = await PdfRenderer(fonts)
         .renderInBackground(docTemplates.first.build('test'));
     expect(utf8.decode(bytes.take(4).toList()), '%PDF');

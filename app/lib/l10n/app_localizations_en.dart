@@ -2156,4 +2156,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accessKeyHint => 'dlx_…';
+
+  @override
+  String get webAccessHelp =>
+      'Enter a dedicated key for this browser, supplied by your administrator. A key already linked to the desktop app cannot be transferred automatically.';
+
+  @override
+  String get webSessionHelp =>
+      'The key stays in memory for this session only: enter it again after reloading or reopening Daylex. Documents and chats remain in this browser; download a backup regularly.';
 }

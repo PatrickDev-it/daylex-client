@@ -1698,5 +1698,7 @@
   "exitUnsavedHelp": "Il salvataggio non è riuscito. Mantieni aperta l’app e riprova dopo aver verificato spazio e permessi del disco. Uscendo perderai le modifiche non salvate.",
   "exitKeepOpen": "Mantieni aperto",
   "exitDiscard": "Esci senza salvare",
-  "accessKeyHint": "dlx_…"
+  "accessKeyHint": "dlx_…",
+  "webAccessHelp": "Inserisci una chiave dedicata a questo browser, ricevuta dall’amministratore. La chiave già associata all’app desktop non si trasferisce automaticamente.",
+  "webSessionHelp": "La chiave resta solo in questa sessione: dovrai reinserirla quando ricarichi o riapri Daylex. Documenti e chat rimangono in questo browser; scarica regolarmente una copia dell’archivio."
 }
