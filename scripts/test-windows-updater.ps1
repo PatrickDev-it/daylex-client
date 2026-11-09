@@ -9,6 +9,7 @@ $compiler = Join-Path $env:WINDIR 'Microsoft.NET/Framework64/v4.0.30319/csc.exe'
 if ($LASTEXITCODE -ne 0) { throw 'Fixture compile failed' }
 $results = @()
 foreach ($mode in @('valid','tampered','rollback','cancelled')) {
+  Write-Output "Testing updater scenario: $mode"
   $root = Join-Path $sandbox $mode
   $app = Join-Path $root 'app'
   $new = Join-Path $root 'package'
@@ -44,7 +45,12 @@ foreach ($mode in @('valid','tampered','rollback','cancelled')) {
   $deadline = (Get-Date).AddSeconds(20)
   while (!(Test-Path -LiteralPath (Join-Path $app 'booted.txt')) -and (Get-Date) -lt $deadline) { Start-Sleep -Milliseconds 200 }
   if ($held) { $held.Dispose() }
-  if (!(Test-Path -LiteralPath (Join-Path $app 'booted.txt'))) { throw 'Installer did not restart fixture' }
+  if (!(Test-Path -LiteralPath (Join-Path $app 'booted.txt'))) {
+    $logFile = Join-Path $root 'install.log'
+    if (Test-Path -LiteralPath $logFile) { Get-Content -LiteralPath $logFile }
+    Get-ChildItem -LiteralPath $app | Select-Object Name,Length | Format-Table
+    throw "Installer did not restart fixture in scenario $mode"
+  }
   $actual = (Get-Content -LiteralPath (Join-Path $app 'version.txt') -Raw).Trim()
   if ($actual -ne $(if ($mode -eq 'valid') {'new'} else {'old'})) { throw "Wrong installed content: $mode" }
   if (!(Test-Path -LiteralPath (Join-Path $app 'unins000.dat')) -or (Get-Content -LiteralPath (Join-Path $app 'unins000.dat') -Raw).Trim() -ne 'installer-owned') { throw 'Updater removed installer metadata' }

@@ -1,0 +1,27 @@
+name: Windows updater regression
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  updater:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Pinned Dart SDK through Flutter
+        shell: pwsh
+        run: |
+          git clone --depth 1 --branch 3.47.2 https://github.com/flutter/flutter.git "$env:RUNNER_TEMP/flutter"
+          "$env:RUNNER_TEMP/flutter/bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+      - name: Regression scenarios
+        shell: pwsh
+        run: |
+          Push-Location app
+          flutter pub get --enforce-lockfile
+          if ($LASTEXITCODE -ne 0) { throw 'Dependencies failed' }
+          Pop-Location
+          New-Item app/dist -ItemType Directory -Force | Out-Null
+          ./scripts/test-windows-updater.ps1
