@@ -42,12 +42,12 @@ The page observes the user's request and the chosen route. It cannot observe nat
 
 Structural comparisons: one download click remains one; the example's simultaneous stage actions decrease from three to one; native next-step guidance becomes available without navigating to and searching a separate help page. All six alternate device routes remain visible.
 
-Verify recommendation, manual override, each native handoff, repeat request, keyboard focus, modified clicks, JavaScript-disabled links, reduced motion, narrow screens and existing release substitution. Use intercepted dummy files in browser tests, never run installers.
+Verify recommendation, manual override, each native handoff, repeat request, keyboard focus, modified clicks, JavaScript-disabled links, reduced motion, narrow screens and existing release substitution. Use a local HTTP endpoint serving harmless fixture files for native transfer tests; in production UI checks suppress the native default action after the application handler. Never run installers.
 
 These are observable interface changes, not proof of improved conversion or reduced task time. A short first-use study should measure correct package selection, access-prerequisite comprehension, understanding after a download click, task completion and time to the first document. No user study or measured AI-efficiency claim is available in this session.
 
 ## Post-implementation audit
-Five viewports (1440, 1366, 768, 390, 320px) keep all six device routes above 749px, with no horizontal overflow. Browser checks verified native download events and completed harmless fixture transfers from a real local HTTP endpoint; retry and manual OS switching preserve their selected targets. OS-specific help, focus transfer, one-action demo progression/replay, modified-click preservation and no-JavaScript fallbacks passed. Intercepted production fixtures verify routing/UI only; they cannot prove native installer completion.
+Five viewports (1440, 1366, 768, 390, 320px) keep all six device routes above 749px, with no horizontal overflow. Browser checks verified native download events and completed harmless fixture transfers from a real local HTTP endpoint; retry and manual OS switching preserve their selected targets. OS-specific help, focus transfer, one-action demo progression/replay, modified-click preservation and no-JavaScript fallbacks passed. Production checks verified routing and inline guidance with native downloads deliberately suppressed; signed asset receipts and public installer metadata were verified separately. These checks do not prove OS installation completion.
 
 Tradeoff: the optional example now requires two deliberate advances to see the human final version, rather than direct selection among three stages; the sequence makes order explicit without delaying the primary download. A fresh first-use study is still required to validate comprehension and conversion.
 
