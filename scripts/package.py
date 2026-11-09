@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 import os
+import platform as os_platform
 from pathlib import Path
 import re
 import shutil
@@ -72,6 +73,8 @@ def package(platform):
                     installer=installer.name, installer_sha256=digest(installer),
                     installer_size=installer.stat().st_size, notarized=platform == 'macos',
                     authenticode=False, commit=os.environ.get('GITHUB_SHA', 'local'))
+    if platform == 'linux':
+        metadata['linux_minimum'] = os_platform.freedesktop_os_release()['VERSION_ID']
     (DIST / f'{platform}-package.json').write_text(json.dumps(metadata, indent=2) + '\n')
 
 if __name__ == '__main__':

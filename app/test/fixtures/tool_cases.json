@@ -1,0 +1,2125 @@
+{
+  "about": "What the app does with each document tool call: the app's DocumentToolExecutor (Dart test test/tool_contract_test.dart) and its Python twin paperagent_server/docsim.py (tests/test_tool_contract.py) must both give these results. `after` is the document after the call, without ids and dates; it is absent when the call leaves the document as it was.",
+  "documents": {
+    "atto": {
+      "metadata": {
+        "title": "Atto Rossi",
+        "subtitle": "Citazione",
+        "client": "Mario Rossi",
+        "status": "draft"
+      },
+      "theme": {
+        "accent": "#4a7cff",
+        "brandName": "Studio"
+      },
+      "pages": [
+        {
+          "title": "Copertina",
+          "layout": "cover",
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Atto di citazione",
+              "level": 1
+            },
+            {
+              "type": "paragraph",
+              "text": "Il signor Mario Rossi, residente a Milano."
+            }
+          ]
+        },
+        {
+          "title": "Fatto",
+          "layout": "standard",
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "FATTO",
+              "level": 2
+            },
+            {
+              "type": "paragraph",
+              "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+            },
+            {
+              "type": "table",
+              "columns": [
+                "Fattura",
+                "Importo"
+              ],
+              "rows": [
+                [
+                  "n. 12",
+                  "1.200 €"
+                ]
+              ],
+              "caption": "Fatture"
+            }
+          ]
+        },
+        {
+          "title": "Conclusioni",
+          "layout": "standard",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Voglia il Tribunale condannare Bianchi."
+            },
+            {
+              "type": "bullets",
+              "items": [
+                "capitale",
+                "interessi"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "lettera": {
+      "metadata": {
+        "title": "Diffida",
+        "subtitle": "",
+        "client": "Bianchi",
+        "status": "draft"
+      },
+      "theme": {
+        "accent": "#4a7cff",
+        "brandName": ""
+      },
+      "pages": [
+        {
+          "title": "Lettera",
+          "layout": "standard",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Egregio signor Bianchi,"
+            },
+            {
+              "type": "paragraph",
+              "text": "con la presente La diffidiamo."
+            },
+            {
+              "type": "paragraph",
+              "text": "Distinti saluti."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "cases": [
+    {
+      "name": "read_document returns the document",
+      "document": "atto",
+      "call": {
+        "name": "read_document",
+        "arguments": {}
+      },
+      "result": {
+        "ok": true,
+        "summary": "Lette 3 pagine"
+      }
+    },
+    {
+      "name": "add_page appends without position",
+      "document": "atto",
+      "call": {
+        "name": "add_page",
+        "arguments": {
+          "page": {
+            "title": "Diritto",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Art. 1453 c.c."
+              }
+            ]
+          }
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Aggiunta la pagina 4",
+        "focusPage": 4
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Diritto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Art. 1453 c.c."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "add_page inserts at position",
+      "document": "atto",
+      "call": {
+        "name": "add_page",
+        "arguments": {
+          "page": {
+            "title": "Premessa"
+          },
+          "position": 1
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Aggiunta la pagina 1",
+        "focusPage": 1
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio"
+        },
+        "pages": [
+          {
+            "title": "Premessa",
+            "layout": "standard",
+            "blocks": []
+          },
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "delete_page shows the page before",
+      "document": "atto",
+      "call": {
+        "name": "delete_page",
+        "arguments": {
+          "page": 2
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Eliminata la pagina 2",
+        "focusPage": 1
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "delete_page of a missing page",
+      "document": "atto",
+      "call": {
+        "name": "delete_page",
+        "arguments": {
+          "page": 9
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "La pagina 9 non esiste (3 pagine). \"page\" è un numero di pagina; i blocchi di una pagina si numerano a parte con \"block\"."
+      }
+    },
+    {
+      "name": "delete_page keeps the last page",
+      "document": "lettera",
+      "call": {
+        "name": "delete_page",
+        "arguments": {
+          "page": 1
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Un documento deve avere almeno una pagina."
+      }
+    },
+    {
+      "name": "update_page replaces title and blocks",
+      "document": "atto",
+      "call": {
+        "name": "update_page",
+        "arguments": {
+          "page": 3,
+          "title": "Conclusioni finali",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Voglia il Tribunale accogliere."
+            }
+          ]
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Aggiornata la pagina 3",
+        "focusPage": 3
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni finali",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale accogliere."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "update_page with an unknown layout",
+      "document": "atto",
+      "call": {
+        "name": "update_page",
+        "arguments": {
+          "page": 2,
+          "layout": "fancy"
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Aggiornata la pagina 2",
+        "focusPage": 2
+      }
+    },
+    {
+      "name": "update_page without page",
+      "document": "atto",
+      "call": {
+        "name": "update_page",
+        "arguments": {
+          "title": "x"
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Manca \"page\"."
+      }
+    },
+    {
+      "name": "replace_text everywhere covers title and client",
+      "document": "atto",
+      "call": {
+        "name": "replace_text",
+        "arguments": {
+          "find": "Rossi",
+          "replace": "Verdi"
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Sostituite 4 occorrenze"
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Verdi",
+          "subtitle": "Citazione",
+          "client": "Mario Verdi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Verdi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Verdi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "replace_text on one page reports what is left",
+      "document": "atto",
+      "call": {
+        "name": "replace_text",
+        "arguments": {
+          "find": "Mario Rossi",
+          "replace": "Luca Verdi",
+          "page": 1
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Sostituita 1 occorrenza. Ancora nel documento: \"Mario Rossi\" ×1, \"Mario\" ×1, \"Rossi\" ×3. Se è lo stesso nome o testo, sostituisci anche questo.",
+        "focusPage": 1
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Luca Verdi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "replace_text on the wrong page says where",
+      "document": "atto",
+      "call": {
+        "name": "replace_text",
+        "arguments": {
+          "find": "Bianchi",
+          "replace": "Neri",
+          "page": 1
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "\"Bianchi\" non è a pagina 1: è a pagina 3. Ometti \"page\" per sostituirlo ovunque."
+      }
+    },
+    {
+      "name": "replace_text of missing text",
+      "document": "atto",
+      "call": {
+        "name": "replace_text",
+        "arguments": {
+          "find": "Gialli",
+          "replace": "Neri"
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "\"Gialli\" non trovato."
+      }
+    },
+    {
+      "name": "insert_block before a block",
+      "document": "atto",
+      "call": {
+        "name": "insert_block",
+        "arguments": {
+          "page": 2,
+          "block": {
+            "type": "heading",
+            "text": "PREMESSA",
+            "level": 2
+          },
+          "position": 1
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Inserito un blocco a pagina 2",
+        "focusPage": 2
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "PREMESSA",
+                "level": 2
+              },
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "insert_block appends without position",
+      "document": "atto",
+      "call": {
+        "name": "insert_block",
+        "arguments": {
+          "page": 3,
+          "block": {
+            "type": "callout",
+            "title": "Nota",
+            "text": "Termine di 40 giorni."
+          }
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Inserito un blocco a pagina 3",
+        "focusPage": 3
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              },
+              {
+                "type": "callout",
+                "title": "Nota",
+                "text": "Termine di 40 giorni."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "insert_block with an unknown type writes a paragraph",
+      "document": "atto",
+      "call": {
+        "name": "insert_block",
+        "arguments": {
+          "page": 3,
+          "block": {
+            "type": "fancy",
+            "text": "Testo",
+            "extra": 1
+          }
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Inserito un blocco a pagina 3",
+        "focusPage": 3
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              },
+              {
+                "type": "paragraph",
+                "text": "Testo"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "insert_block with a string block",
+      "document": "atto",
+      "call": {
+        "name": "insert_block",
+        "arguments": {
+          "page": 3,
+          "block": "Testo"
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Atteso un oggetto, ricevuto String."
+      }
+    },
+    {
+      "name": "update_block keeps the block id",
+      "document": "atto",
+      "call": {
+        "name": "update_block",
+        "arguments": {
+          "page": 2,
+          "block": 2,
+          "content": {
+            "type": "paragraph",
+            "text": "Il 4 marzo 2025 Rossi consegnava la merce."
+          }
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Aggiornato il blocco 2 a pagina 2",
+        "focusPage": 2
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 4 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "update_block in a one-page letter ignores a wrong page",
+      "document": "lettera",
+      "call": {
+        "name": "update_block",
+        "arguments": {
+          "page": 2,
+          "block": 2,
+          "content": {
+            "type": "paragraph",
+            "text": "con la presente La diffidiamo formalmente."
+          }
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Aggiornato il blocco 2 a pagina 1",
+        "focusPage": 1
+      },
+      "after": {
+        "metadata": {
+          "title": "Diffida",
+          "subtitle": "",
+          "client": "Bianchi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": ""
+        },
+        "pages": [
+          {
+            "title": "Lettera",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Egregio signor Bianchi,"
+              },
+              {
+                "type": "paragraph",
+                "text": "con la presente La diffidiamo formalmente."
+              },
+              {
+                "type": "paragraph",
+                "text": "Distinti saluti."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "update_block of a missing block",
+      "document": "atto",
+      "call": {
+        "name": "update_block",
+        "arguments": {
+          "page": 2,
+          "block": 9,
+          "content": {
+            "type": "paragraph",
+            "text": "x"
+          }
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Il blocco 9 non esiste a pagina 2 (3 blocchi)."
+      }
+    },
+    {
+      "name": "update_block with a string content",
+      "document": "atto",
+      "call": {
+        "name": "update_block",
+        "arguments": {
+          "page": 2,
+          "block": 2,
+          "content": "testo"
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Atteso un oggetto, ricevuto String."
+      }
+    },
+    {
+      "name": "remove_block",
+      "document": "atto",
+      "call": {
+        "name": "remove_block",
+        "arguments": {
+          "page": 3,
+          "block": 1
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Rimosso il blocco 1 da pagina 3",
+        "focusPage": 3
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "remove_block in a one-page letter ignores a wrong page",
+      "document": "lettera",
+      "call": {
+        "name": "remove_block",
+        "arguments": {
+          "page": 3,
+          "block": 3
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Rimosso il blocco 3 da pagina 1",
+        "focusPage": 1
+      },
+      "after": {
+        "metadata": {
+          "title": "Diffida",
+          "subtitle": "",
+          "client": "Bianchi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": ""
+        },
+        "pages": [
+          {
+            "title": "Lettera",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Egregio signor Bianchi,"
+              },
+              {
+                "type": "paragraph",
+                "text": "con la presente La diffidiamo."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "add_table at position",
+      "document": "atto",
+      "call": {
+        "name": "add_table",
+        "arguments": {
+          "page": 3,
+          "columns": [
+            "Voce",
+            "Importo"
+          ],
+          "rows": [
+            [
+              "capitale",
+              "1.200 €"
+            ]
+          ],
+          "caption": "Riepilogo",
+          "position": 1
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Aggiunta una tabella a pagina 3",
+        "focusPage": 3
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "table",
+                "columns": [
+                  "Voce",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "capitale",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Riepilogo"
+              },
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "add_table twin of an existing table",
+      "document": "atto",
+      "call": {
+        "name": "add_table",
+        "arguments": {
+          "page": 2,
+          "columns": [
+            "Fattura",
+            "Importo"
+          ],
+          "rows": [
+            [
+              "n. 13",
+              "800 €"
+            ]
+          ]
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "La pagina 2 ha già questa tabella (blocco 3). Per aggiungere righe chiama update_block sul blocco 3 con tutte le righe."
+      }
+    },
+    {
+      "name": "add_image placeholder",
+      "document": "atto",
+      "call": {
+        "name": "add_image",
+        "arguments": {
+          "page": 1,
+          "caption": "Planimetria",
+          "position": 2
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Aggiunta un'immagine a pagina 1",
+        "focusPage": 1
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "image",
+                "caption": "Planimetria",
+                "height": 200.0
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "add_image of a missing attachment",
+      "document": "atto",
+      "call": {
+        "name": "add_image",
+        "arguments": {
+          "page": 1,
+          "attachment": "foto.jpg"
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Allegato \"foto.jpg\" non trovato."
+      }
+    },
+    {
+      "name": "change_layout",
+      "document": "atto",
+      "call": {
+        "name": "change_layout",
+        "arguments": {
+          "page": 1,
+          "layout": "premium"
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Impaginazione aggiornata a pagina 1",
+        "focusPage": 1
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "premium",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "set_theme",
+      "document": "atto",
+      "call": {
+        "name": "set_theme",
+        "arguments": {
+          "accent": "#1F6FEB",
+          "brandName": "Studio Legale Verdi"
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Tema aggiornato"
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#1f6feb",
+          "brandName": "Studio Legale Verdi"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "set_theme with an invalid colour",
+      "document": "atto",
+      "call": {
+        "name": "set_theme",
+        "arguments": {
+          "accent": "blu"
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Colore non valido \"blu\"."
+      }
+    },
+    {
+      "name": "update_metadata",
+      "document": "atto",
+      "call": {
+        "name": "update_metadata",
+        "arguments": {
+          "title": "Atto Rossi c. Bianchi",
+          "author": "Avv. Maria Rossi",
+          "status": "review"
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Dati aggiornati"
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi c. Bianchi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "Avv. Maria Rossi",
+          "status": "review"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "update_metadata ignores an unknown status",
+      "document": "atto",
+      "call": {
+        "name": "update_metadata",
+        "arguments": {
+          "subtitle": "Bozza",
+          "status": "final"
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Dati aggiornati"
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Bozza",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "create_document",
+      "document": null,
+      "call": {
+        "name": "create_document",
+        "arguments": {
+          "title": "Nota al cliente",
+          "client": "Mario Rossi",
+          "accent": "1f6feb",
+          "pages": [
+            {
+              "title": "Nota",
+              "blocks": [
+                {
+                  "type": "paragraph",
+                  "text": "Gentile cliente,"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Creato un documento di 1 pagina",
+        "focusPage": 1
+      },
+      "after": {
+        "metadata": {
+          "title": "Nota al cliente",
+          "subtitle": "",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#1f6feb",
+          "brandName": ""
+        },
+        "pages": [
+          {
+            "title": "Nota",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Gentile cliente,"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "create_document without pages",
+      "document": null,
+      "call": {
+        "name": "create_document",
+        "arguments": {
+          "title": "Vuoto",
+          "pages": []
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Un documento deve avere almeno una pagina."
+      }
+    },
+    {
+      "name": "a tool on no document",
+      "document": null,
+      "call": {
+        "name": "add_page",
+        "arguments": {
+          "page": {
+            "title": "x"
+          }
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Nessun documento aperto."
+      }
+    },
+    {
+      "name": "an unknown tool",
+      "document": "atto",
+      "call": {
+        "name": "nope",
+        "arguments": {}
+      },
+      "result": {
+        "ok": false,
+        "summary": "Strumento sconosciuto \"nope\"."
+      }
+    }
+  ]
+}

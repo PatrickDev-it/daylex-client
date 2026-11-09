@@ -89,7 +89,7 @@ def article(p):
                     'Versione di anteprima. Installer non ancora firmato digitalmente: Windows potrebbe mostrare un avviso.'),
         'macos': ('macOS', 'Mac Intel e Apple Silicon',
                   'Apri il file .dmg e trascina Daylex in Applicazioni. Pacchetto firmato e notarizzato da Apple.'),
-        'linux': ('Linux', 'Ubuntu 24.04 o successivo · x86-64 · portachiavi di sistema',
+        'linux': ('Linux', f'Ubuntu {html.escape(p.get("linux_minimum", "24.04"))} o successivo · x86-64 · portachiavi di sistema',
                   'Estrai lo ZIP in una cartella e avvia bash install.sh. Richiede GTK 3, libsecret, unzip e un portachiavi di sistema attivo.'),
     }[platform]
     name = html.escape(p['installer'], quote=True)

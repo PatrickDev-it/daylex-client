@@ -15,7 +15,7 @@ import 'package:paper_agent/features/document/service/document_service.dart';
 /// The app is the reference: after changing the executor on purpose, rewrite
 /// the expected results with `TOOL_CASES_WRITE=1 flutter test
 /// test/tool_contract_test.dart`, review the diff, then make docsim follow.
-final _file = File('../paper_agent_server/contract/tool_cases.json');
+final _file = File('test/fixtures/tool_cases.json');
 
 class _Host implements ToolHost {
   _Host(this.activeDocument);
@@ -108,3 +108,4 @@ void main() {
     });
   }
 }
+
