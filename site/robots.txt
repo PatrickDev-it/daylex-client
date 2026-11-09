@@ -1,0 +1,4 @@
+# Crawling must remain possible so search engines can read the noindex headers.
+# Every response on daylex.it carries X-Robots-Tag: noindex.
+User-agent: *
+Disallow:

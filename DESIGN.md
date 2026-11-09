@@ -55,8 +55,8 @@ typography:
     letterSpacing: "-0.035em"
 rounded:
   square: "0px"
-  action: "12px"
-  device: "14px"
+  action: "7px"
+  device: "7px"
 spacing:
   compact: "8px"
   icon: "12px"
@@ -168,7 +168,7 @@ There are no box shadows, gradients, blur or glass surfaces. Depth comes from th
 
 ## Shapes
 
-Download controls are rounded: 14px for device choices and 12px for primary actions. Revision controls remain square. The reusable signature is a pair of opposed orthogonal steps at the upper-right and lower-left corners, 24px on desktop and 18px at up to 600px. The final shared clipping rule applies to the backing sheet, front sheet, download band and closing panel; earlier diagonal cuts on the closing panel are overridden.
+Download controls are rounded: 7px for both device choices and primary actions. Revision controls remain square. The reusable signature is a pair of opposed orthogonal steps at the upper-right and lower-left corners, 24px on desktop and 18px at up to 600px. The final shared clipping rule applies to the backing sheet, front sheet, download band and closing panel; earlier diagonal cuts on the closing panel are overridden.
 
 The Daylex mark repeats opposed rectilinear strokes. Its navigation form uses current text color; the favicon uses mint on black. The opening's broad background field has a separate diagonal entry cut; it does not replace the orthogonal folio signature. The actual workspace screenshot has no cut corners.
 
@@ -229,3 +229,5 @@ Primary filled actions use #15803d with white text, changing to #dff4e2 with bla
 Assistance and technical pages use the same wordmark, Archivo, grounds and actions as the homepage. Installation and PWA chrome share these tokens. Native launch icons use the opposed folio on black; `scripts/brand-assets.py` deterministically rasterizes the existing vector geometry. No stock or generated imagery is introduced.
 
 The homepage's requested OS hover behavior and one-time stagger remain local to that selection row. The operational app does not add entrance animations. Preserve reduced motion, visible keyboard focus and text scaling.
+
+Website refinement: all existing rounded elements on public pages, installation guides and HTML PWA chrome use 7px. The native/Flutter application retains its separately documented radii. Public web routes and assets carry noindex directives; robots.txt must permit retrieval so crawlers can read them.

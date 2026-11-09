@@ -19,13 +19,13 @@
 @media(max-width:360px){.example-controls button{font-size:13px}}
 
 /* Device selection: soft controls within the established folio frame. */
-.download-link{border-radius:14px;opacity:.84;filter:grayscale(0);transition:background .26s ease,opacity .26s ease,filter .26s ease}
+.download-link{border-radius:7px;opacity:.84;filter:grayscale(0);transition:background .26s ease,opacity .26s ease,filter .26s ease}
 .download-link>img{filter:none;width:24px;height:24px}
 .download-link[data-recommended]{background:var(--layer);opacity:1}
 .download-link:hover,.download-link:focus-visible{transform:none;background:var(--layer);opacity:1;filter:grayscale(0) brightness(1.16) contrast(1.06)}
 .download-link:focus-visible{outline:3px solid var(--cyan);outline-offset:-3px}
 @media(hover:hover){.download-list:has(.download-link:hover) .download-link:not(:hover){background:var(--sheet);opacity:.74;filter:grayscale(1)}}
-.primary-action{border-radius:12px;gap:14px}
+.primary-action{border-radius:7px;gap:14px}
 .cta-os{width:22px;height:22px;object-fit:contain;filter:brightness(0) invert(1);flex:none}
 .primary-action:hover .cta-os{filter:brightness(0)}
 @media(max-width:1250px){.hero-action{display:inline-flex;margin-top:22px}}
