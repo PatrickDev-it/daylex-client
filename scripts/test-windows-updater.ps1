@@ -42,7 +42,9 @@ foreach ($mode in @('valid','tampered','rollback','cancelled')) {
     $results += @{mode=$mode;version='old';restarted=$false}
     continue
   }
-  $deadline = (Get-Date).AddSeconds(20)
+  # The installer itself may wait up to 60 seconds for its parent to exit;
+  # allow that boundary plus file-copy retries and process startup on hosted CI.
+  $deadline = (Get-Date).AddSeconds(90)
   while (!(Test-Path -LiteralPath (Join-Path $app 'booted.txt')) -and (Get-Date) -lt $deadline) { Start-Sleep -Milliseconds 200 }
   if ($held) { $held.Dispose() }
   if (!(Test-Path -LiteralPath (Join-Path $app 'booted.txt'))) {

@@ -12,6 +12,8 @@ concurrency:
 env:
   FLUTTER_VERSION: '3.47.2'
 jobs:
+  updater:
+    uses: ./.github/workflows/updater-check.yml
   build:
     strategy:
       fail-fast: false
@@ -119,7 +121,6 @@ jobs:
         shell: pwsh
         run: |
           ./scripts/windows-smoke.ps1 -Archive (Get-ChildItem app/dist/daylex-windows-*.zip).FullName -Installer (Get-ChildItem app/dist/Daylex-Setup-*.exe).FullName
-          ./scripts/test-windows-updater.ps1
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: desktop-${{ matrix.platform }}
@@ -131,7 +132,7 @@ jobs:
         run: |
           if [[ -f "$RUNNER_TEMP/daylex-signing.keychain-db" ]]; then security delete-keychain "$RUNNER_TEMP/daylex-signing.keychain-db"; fi
   publish:
-    needs: build
+    needs: [build, updater]
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.RELEASE_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
