@@ -47,3 +47,5 @@ The owner subsequently fixed #000 and #0c0c0c as dominant neutral grounds, with 
 
 ## Device-selection refinement
 Owner-directed exception: device cards (14px) and download CTAs (12px) are rounded. The device row appears once in a calm 640ms/110ms sequence; reduced motion and no-JS show everything immediately. OS icons are colored, with hover confined to the individual control. Both CTAs locally detect the platform, show its name and use live installer anchors; unknown devices retain explicit manual choice, mobile devices use the existing PWA guide. The page identity and folio geometry remain unchanged.
+
+Hover correction: inactive device choices are entirely grayscale at 74% opacity. Only the hovered choice gains full opacity, native icon colors, increased brightness/contrast and a lighter surface. No hover border or outline; keyboard focus remains visible. The entrance ends at the resting opacity to avoid a final flash.

@@ -112,7 +112,7 @@ if (downloadList && !reducedMotion.matches && 'IntersectionObserver' in window) 
       if (link.matches(':focus, :hover')) return;
       const animation = link.animate([
         {opacity: 0, translate: '0 12px'},
-        {opacity: 1, translate: '0 0'}
+        {opacity: Number(getComputedStyle(link).opacity), translate: '0 0'}
       ], {duration: 640, delay: index * 110, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards'});
       animations.push(animation);
       const reveal = () => animation.cancel();
