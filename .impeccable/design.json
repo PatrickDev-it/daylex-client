@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-09T21:21:06.666005+00:00",
+  "generatedAt": "2026-11-09T21:58:54.959282+00:00",
   "title": "Design System: Daylex homepage",
   "extensions": {
     "colorMeta": {
@@ -206,9 +206,9 @@
       "name": "Device route",
       "kind": "button",
       "refersTo": "download-link",
-      "description": "Inactive devices are grayscale at 74% opacity; hover restores full opacity/color and brightness/contrast without a border.",
-      "html": "<a class=\"ds-download\" href=\"#download\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2 4.5 10.5 3.3v8H2zm10-1.4L22 1.7v9.6H12zM2 12.7h8.5v8L2 19.5zm10 0h10v9.6L12 20.9z\"/></svg><span><strong>Windows 11</strong><small>Scarica l’app</small></span></a>",
-      "css": ".ds-download{font-family:Archivo,sans-serif;display:flex;border-radius:14px;align-items:center;gap:12px;min-height:84px;box-sizing:border-box;padding:12px 14px;background:var(--sheet,#171717);color:var(--ink,#f3f3f3);text-decoration:none;opacity:.74;filter:grayscale(1);transition:background .26s ease,opacity .26s ease,filter .26s ease}.ds-download svg{width:22px;height:22px;fill:#00a4ef;flex:none}.ds-download strong{display:block;font-size:16px;font-weight:550;line-height:1.35;letter-spacing:-.025em}.ds-download small{display:block;font-size:14px;line-height:1.4;color:var(--muted,#b5b5b5);margin-top:4px}.ds-download:hover{background:var(--layer,#242424);opacity:1;filter:grayscale(0) brightness(1.16) contrast(1.06)}.ds-download:focus-visible{opacity:1;filter:grayscale(0) brightness(1.16) contrast(1.06);outline:3px solid var(--cyan,#00aeb3);outline-offset:5px;outline-offset:-3px}@media(prefers-reduced-motion:reduce){.ds-download{transition:none}}"
+      "description": "All routes remain colored at rest; detected recommendations are fully opaque, alternatives at 84%. Only during hover are all siblings grayscale at 74%.",
+      "html": "<div class=\"ds-download-list\"><a class=\"ds-download\" href=\"#download\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2 4.5 10.5 3.3v8H2zm10-1.4L22 1.7v9.6H12zM2 12.7h8.5v8L2 19.5zm10 0h10v9.6L12 20.9z\"/></svg><span><strong>Windows 11</strong><small>Scarica l’app</small></span></a></div>",
+      "css": ".ds-download{font-family:Archivo,sans-serif;display:flex;border-radius:14px;align-items:center;gap:12px;min-height:84px;box-sizing:border-box;padding:12px 14px;background:var(--sheet,#171717);color:var(--ink,#f3f3f3);text-decoration:none;opacity:.84;filter:grayscale(0);transition:background .26s ease,opacity .26s ease,filter .26s ease}.ds-download svg{width:22px;height:22px;fill:#00a4ef;flex:none}.ds-download strong{display:block;font-size:16px;font-weight:550;line-height:1.35;letter-spacing:-.025em}.ds-download small{display:block;font-size:14px;line-height:1.4;color:var(--muted,#b5b5b5);margin-top:4px}.ds-download:hover{background:var(--layer,#242424);opacity:1;filter:grayscale(0) brightness(1.16) contrast(1.06)}.ds-download:focus-visible{opacity:1;filter:grayscale(0) brightness(1.16) contrast(1.06);outline:3px solid var(--cyan,#00aeb3);outline-offset:5px;outline-offset:-3px}@media(prefers-reduced-motion:reduce){.ds-download{transition:none}} .ds-download[data-recommended]{background:var(--layer,#242424);opacity:1}@media(hover:hover){.ds-download-list:has(.ds-download:hover) .ds-download:not(:hover){background:var(--sheet,#171717);opacity:.74;filter:grayscale(1)}}"
     },
     {
       "name": "Revision controls",

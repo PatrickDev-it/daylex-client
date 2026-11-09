@@ -52,3 +52,5 @@ Hover correction: inactive device choices are entirely grayscale at 74% opacity.
 
 ## UX refoundation
 See UX_STRATEGY.md for the pre-implementation principles, audit, task flows and validation limits. The code requirement now sits next to the first action; detected recommendations and manual alternatives have an explicit hierarchy. Native requests reveal inline OS-specific next steps and honest browser-owned status. The optional example follows draft → AI proposal → human revision with one named next action and replay. Existing visual choices and release hooks remain intact.
+
+Latest device-state clarification: preserve color at rest, with detected OS routes fully active and alternatives at 84% opacity. Only card hover makes all other routes grayscale at 74%; pointer exit restores the detected recommendation. When the browser can identify Windows but not its version, highlight both Windows routes rather than falsely claiming Windows 11.

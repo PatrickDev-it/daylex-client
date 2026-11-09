@@ -58,7 +58,7 @@ function downloadChoice(hints = {}) {
     if (unsupportedCPU || oldWindows) return {id: 'pwa', label: 'Installa l’app web'};
     if (version >= 13) return {id: 'windows', label: 'Scarica per Windows 11'};
     if (version >= 1 && version <= 10) return {id: 'windows10', label: 'Scarica per Windows 10'};
-    return {id: 'windows', label: 'Scarica per Windows'};
+    return {id: 'windows', label: 'Scarica per Windows', recommendedIds: ['windows', 'windows10']};
   }
   if (/Mac/i.test(platform + ua)) return {id: 'macos', label: 'Scarica per macOS'};
   if (/Linux/i.test(platform + ua)) {
@@ -76,6 +76,10 @@ function showDownloadChoice(choice) {
   if (!choice) return;
   const target = document.getElementById(choice.id);
   if (!target) return;
+  const recommendedIds = choice.recommendedIds || [choice.id];
+  document.querySelectorAll('.download-link').forEach(link => {
+    link.toggleAttribute('data-recommended', recommendedIds.includes(link.id));
+  });
   let primaryRecommended = false;
   document.querySelectorAll('[data-smart-download]').forEach(action => {
     // Do not change a target once the person is interacting with that action.

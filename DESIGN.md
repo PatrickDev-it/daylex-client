@@ -162,7 +162,7 @@ The real workspace image spans the frame in grayscale with no enclosing panel, p
 
 ## Elevation & Depth
 
-There are no box shadows, gradients, blur or glass surfaces. Depth comes from the slight offset between graphite folio layers and the contrast between black, near-black and sheet surfaces. The product screenshot remains unframed. Inactive device choices are grayscale at 74% opacity. Hover restores the individual choice to full opacity and color, increases brightness/contrast and changes its surface, with no border or outline. Keyboard focus retains its accessible outline.
+There are no box shadows, gradients, blur or glass surfaces. Depth comes from the slight offset between graphite folio layers and the contrast between black, near-black and sheet surfaces. The product screenshot remains unframed. At rest all device choices are colored: recommended routes use full opacity and the layer surface, others use 84% opacity. Only while a card is hovered do all its siblings, including the recommended route, become grayscale at 74% opacity. The hovered card gains full opacity and increased brightness/contrast with no border or outline. Pointer exit restores the detected recommendation. Keyboard focus retains its accessible outline.
 
 **The Flat Material Rule.** Use tone, alignment and the stepped silhouette to distinguish layers; do not add shadows or decorative glow.
 
@@ -180,7 +180,7 @@ A rounded, compact green action with a 54px minimum height, 14px text/icon gap a
 
 ### Device routes
 
-Six neutral, rectangular links combine a recognizable colored OS symbol, device name and supporting line. Minimum height is 84px on desktop, 76px in the intermediate layout and 78px on phones. At rest, the entire control is grayscale at 74% opacity. Hover changes only that control from sheet to layer, restores full opacity and color, and applies brightness 1.16 / contrast 1.06 without any border or outline; focus uses an inset outline offset of -3px to remain visible within the clipped band. These are navigation/download controls, not a generic feature-card pattern.
+Six neutral, rectangular links combine a recognizable colored OS symbol, device name and supporting line. Minimum height is 84px on desktop, 76px in the intermediate layout and 78px on phones. At rest all controls stay colored: detected recommendations are fully opaque on layer, alternatives at 84% opacity on sheet. Hover applies brightness 1.16 / contrast 1.06 at full opacity to that control, while every sibling becomes grayscale at 74% opacity on sheet, without any hover border or outline; focus uses an inset outline offset of -3px to remain visible within the clipped band. These are navigation/download controls, not a generic feature-card pattern.
 
 Keep all six routes as direct HTML anchors usable without JavaScript. Release integration retains `data-site-version="3"` and the four `data-download` anchors: Windows 11, Windows 10, macOS and Linux. Both Windows routes target the same installer. The iPhone/iPad and PWA routes retain the existing installation guide; the native app and PWA are outside this redesign.
 
