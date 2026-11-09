@@ -49,5 +49,6 @@ The workflow creates a temporary keychain and removes it after signing and notar
 This is now the source of truth for client changes. The original private repository remains intact.
 Old versioned downloads and previous website releases are retained. A corrected application release must
 always use a newer build number; updater downgrade prevention is intentional.
-The Linux support target is Ubuntu 24.04+ x64, not every Linux distribution. `latest` labels track GitHub's
+The Linux support target is Ubuntu x64; its minimum release matches the build runner and is recorded in
+the signed package inventory and website (currently Ubuntu 26.04). It does not cover every Linux distribution. `latest` labels track GitHub's
 stable images, not necessarily the OS vendor's newest release.
