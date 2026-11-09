@@ -186,9 +186,14 @@ function Note([string]$m) { Add-Content -LiteralPath $Log -Value "$(Get-Date -Fo
 $copy = @('/MIR', '/R:5', '/W:1', '/NFL', '/NDL', '/NJH', '/NJS', '/NP', '/XF', 'unins*.exe', 'unins*.dat', 'unins*.msg')
 try {
   Note "waiting for the app ($AppPid) to quit"
+  $parentProcess = $null
+  try { $parentProcess = [Diagnostics.Process]::GetProcessById($AppPid) } catch [ArgumentException] {}
   if ($ReadyFile) { [IO.File]::WriteAllText($ReadyFile, 'ready') }
-  try { Wait-Process -Id $AppPid -Timeout 60 } catch {}
-  if (Get-Process -Id $AppPid -ErrorAction SilentlyContinue) { Note 'the app did not quit: nothing changed'; exit 1 }
+  if ($parentProcess) {
+    try {
+      if (-not $parentProcess.WaitForExit(60000)) { Note 'the app did not quit: nothing changed'; exit 1 }
+    } finally { $parentProcess.Dispose() }
+  }
   if ($ExpectedSha256 -notmatch '^[0-9a-f]{64}$' -or (Get-FileHash -LiteralPath $Archive -Algorithm SHA256).Hash -ne $ExpectedSha256) { throw 'archive integrity check failed' }
   $Work = [IO.Path]::GetFullPath($Work).TrimEnd('\')
   $InstallDir = [IO.Path]::GetFullPath($InstallDir).TrimEnd('\')
