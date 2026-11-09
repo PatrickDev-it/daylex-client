@@ -26,14 +26,15 @@ def digest(path):
         return hashlib.file_digest(source, 'sha256').hexdigest()
 
 packages = [json.loads(file.read_text()) for file in sorted(directory.glob('*-package.json'))]
-assert {p['platform'] for p in packages} >= {'windows', 'linux'}, 'Required packages missing'
+assert {p['platform'] for p in packages} == {'windows', 'linux', 'macos'}, 'Required packages missing'
 assert len({(p['version'], p['build'], p['commit']) for p in packages}) == 1, 'Mixed release builds'
 files = set()
 published = datetime.now(timezone.utc).isoformat()
 for package in packages:
     platform = package['platform']
     assert platform in ('windows', 'linux', 'macos')
-    assert platform != 'macos' or package['notarized'], 'Mac must be notarized'
+    if platform == 'macos':
+        assert (package.get('signing'), package.get('notarized')) in (('adhoc', False), ('developer-id', True)), 'Invalid Mac signing metadata'
     assert package['commit'] == os.environ['GITHUB_SHA'], 'Artifacts from another commit'
     archive = directory / package['archive']
     installer = directory / package['installer']

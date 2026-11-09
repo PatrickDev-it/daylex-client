@@ -40,6 +40,41 @@ class DeliveryTests(unittest.TestCase):
     def test_valid_delivery(self):
         self.assertEqual(receiver.validate(self.src, self.updates, self.public), [self.package])
 
+    def mac_package(self, signing='adhoc', notarized=False):
+        archive = self.src / 'daylex-macos-0.1.0-b201.zip'
+        archive.write_bytes(b'synthetic Mac archive')
+        installer = self.src / 'Daylex-0.1.0-b201-macos-universal.dmg'
+        installer.write_bytes(b'synthetic DMG')
+        package = dict(self.package, platform='macos', archive=archive.name, installer=installer.name,
+                       installer_size=installer.stat().st_size, installer_sha256=receiver.digest(installer),
+                       signing=signing, notarized=notarized)
+        manifest = dict(self.manifest, platform='macos', file=archive.name,
+                        size=archive.stat().st_size, sha256=receiver.digest(archive))
+        self.write_signed(self.src / 'macos.json', manifest)
+        self.write_signed(self.src / 'delivery.json', dict(packages=[package]))
+        return package
+
+    def test_adhoc_mac_delivery_keeps_signed_update_trust(self):
+        package = self.mac_package()
+        self.assertEqual(receiver.validate(self.src, self.updates, self.public), [package])
+        text = receiver.article(package)
+        self.assertIn('non notarizzata', text)
+        self.assertIn('Apri comunque', text)
+        self.assertNotIn('App firmata con Developer ID', text)
+        (self.src / package['installer']).write_bytes(b'tampered DMG')
+        with self.assertRaises(ValueError): receiver.validate(self.src, self.updates, self.public)
+
+    def test_notarized_mac_delivery_and_disclosure(self):
+        package = self.mac_package('developer-id', True)
+        self.assertEqual(receiver.validate(self.src, self.updates, self.public), [package])
+        self.assertIn('App firmata con Developer ID', receiver.article(package))
+        self.assertNotIn('Apri comunque', receiver.article(package))
+
+    def test_inconsistent_mac_signing_claim_rejected(self):
+        for mode, notarized in [('adhoc', True), ('developer-id', False), (None, False)]:
+            self.mac_package(mode, notarized)
+            with self.assertRaises(ValueError): receiver.validate(self.src, self.updates, self.public)
+
     def test_modified_archive_rejected(self):
         (self.src / self.package['archive']).write_bytes(b'changed')
         with self.assertRaises(ValueError): receiver.validate(self.src, self.updates, self.public)

@@ -14,17 +14,23 @@ readonly flutter_version=3.47.2
 readonly flutter_home="${HOME}/development/flutter"
 readonly app=Daylex
 
-# Distribution is the default. Ad-hoc builds must be deliberately requested and are never release artifacts.
+# Ad-hoc distribution is supported; Gatekeeper approval is required on the user's Mac.
 development=false
-if [[ "${1:-}" == "--development" ]]; then development=true; fi
+adhoc=false
+case "${1:-}" in
+  --development) development=true; adhoc=true ;;
+  --adhoc) adhoc=true ;;
+  '') ;;
+  *) echo "Usage: bash build_macos.sh [--adhoc|--development]"; exit 1 ;;
+esac
 sign_identity="${DAYLEX_SIGN_IDENTITY:-}"
 notary_profile="${DAYLEX_NOTARY_PROFILE:-}"
 notary_flags=(--keychain-profile "$notary_profile")
 if [[ -n "${DAYLEX_NOTARY_KEYCHAIN:-}" ]]; then notary_flags+=(--keychain "$DAYLEX_NOTARY_KEYCHAIN"); fi
-if [[ "$development" == false ]]; then
+if [[ "$adhoc" == false ]]; then
   [[ "$sign_identity" == "Developer ID Application:"* && -n "$notary_profile" ]] || {
     echo "Distribuzione: configura DAYLEX_SIGN_IDENTITY e DAYLEX_NOTARY_PROFILE (profilo notarytool nel Portachiavi)."
-    echo "Per una build locale non distribuibile: bash build_macos.sh --development"
+    echo "Per un DMG distribuibile senza notarizzazione: bash build_macos.sh --adhoc"
     exit 1
   }
   sign_flags=(--sign "$sign_identity" --options runtime --timestamp)
@@ -124,7 +130,7 @@ cleanup_build() {
   fi
 }
 trap cleanup_build EXIT
-if [[ "$development" == false ]]; then
+if [[ "$adhoc" == false ]]; then
   step "notarizzazione app"
   ditto -c -k --keepParent "$built" "dist/notarization.zip"
   xcrun notarytool submit "dist/notarization.zip" "${notary_flags[@]}" --wait
@@ -136,7 +142,7 @@ fi
 ditto "$built" "dist/dmg/${app}.app"
 ln -s /Applications dist/dmg/Applications
 hdiutil create -quiet -volname "$app" -srcfolder dist/dmg -ov -format UDZO "dist/${app}.dmg"
-if [[ "$development" == false ]]; then
+if [[ "$adhoc" == false ]]; then
   codesign --force --sign "$sign_identity" --timestamp "dist/${app}.dmg"
   xcrun notarytool submit "dist/${app}.dmg" "${notary_flags[@]}" --wait
   xcrun stapler staple "dist/${app}.dmg"
@@ -163,6 +169,12 @@ hdiutil detach -quiet "$mounted"
 mounted=""
 ditto -x -k "$update" "$verify_temp/zip"
 verify_app "$verify_temp/zip/${app}.app"
+# Record the mode only after both delivered bundles pass signature verification.
+if [[ "$adhoc" == true ]]; then
+  printf '{"signing":"adhoc","notarized":false}\n' > dist/macos-signing.json
+else
+  printf '{"signing":"developer-id","notarized":true}\n' > dist/macos-signing.json
+fi
 artifacts_verified=true
 cleanup_build
 trap - EXIT
@@ -171,10 +183,13 @@ shasum -a 256 "dist/${app}.dmg" "$update"
 step "fatto"
 if [[ "$development" == true ]]; then
   echo "Build locale ad-hoc: non pubblicabile nel canale aggiornamenti."
-  open dist
+  if [[ "${CI:-}" != true ]]; then open dist; fi
   exit 0
 fi
 echo "dist/${app}.dmg: aprilo e trascina ${app} in Applicazioni (solo la prima installazione)."
+if [[ "$adhoc" == true ]]; then
+  echo "App non notarizzata: dopo il primo tentativo di apertura, autorizzala da Impostazioni di Sistema > Privacy e sicurezza > Apri comunque."
+fi
 echo "${update}: copialo sul PC con la chiave di rilascio e pubblicalo con"
 echo "  python scripts/release.py publish macos ${update##*/}"
-open dist
+if [[ "${CI:-}" != true ]]; then open dist; fi

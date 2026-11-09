@@ -67,8 +67,8 @@ def validate(src, updates, public=PUBLIC_KEY):
         expected = f'daylex-{platform}-{p["version"]}-b{p["build"]}.zip'
         if p['archive'] != expected or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]{0,180}', p['installer']):
             raise ValueError('Invalid artifact name')
-        if platform == 'macos' and p.get('notarized') is not True:
-            raise ValueError('Mac release requires notarization')
+        if platform == 'macos' and (p.get('signing'), p.get('notarized')) not in (('adhoc', False), ('developer-id', True)):
+            raise ValueError('Invalid Mac signing metadata')
         release = verified(src / f'{platform}.json', public)
         if any(release[k] != p[k] for k in ('platform', 'version', 'build')) or release['file'] != expected:
             raise ValueError('Update manifest and inventory disagree')
@@ -90,7 +90,12 @@ def article(p):
         'windows': ('Windows', 'Windows 10 / 11 · Intel o AMD a 64 bit',
                     'Versione di anteprima. Installer non ancora firmato digitalmente: Windows potrebbe mostrare un avviso.'),
         'macos': ('macOS', 'Mac Intel e Apple Silicon',
-                  'Apri il file .dmg e trascina Daylex in Applicazioni. Pacchetto firmato e notarizzato da Apple.'),
+                  'Apri il DMG e trascina Daylex in Applicazioni. ' +
+                  ('App firmata con Developer ID e notarizzata da Apple.' if p.get('notarized') else
+                   'App non notarizzata, con firma ad-hoc. Dopo il primo tentativo di apertura, se macOS la blocca, '
+                   'vai in Impostazioni di Sistema → Privacy e sicurezza → Apri comunque e conferma solo se ti fidi della provenienza. '
+                   'macOS potrebbe richiedere una nuova conferma dopo un aggiornamento. '
+                   '<a href="https://support.apple.com/it-it/102445">Istruzioni Apple</a>.')),
         'linux': ('Linux', f'Ubuntu {html.escape(p.get("linux_minimum", "24.04"))} o successivo · x86-64 · portachiavi di sistema',
                   'Estrai lo ZIP in una cartella e avvia bash install.sh. Richiede GTK 3, libsecret, unzip e un portachiavi di sistema attivo.'),
     }[platform]
@@ -118,7 +123,8 @@ def render_site(dest, packages):
             raise ValueError('Website platform section missing')
         info[platform] = dict(url='downloads/' + p['installer'], bytes=p['installer_size'],
                               sha256=p['installer_sha256'], version=p['version'], build=p['build'],
-                              authenticode=p.get('authenticode', False), notarized=p.get('notarized', False))
+                              authenticode=p.get('authenticode', False), notarized=p.get('notarized', False),
+                              signing=p.get('signing'))
     info.update(version=packages[0]['version'], build=packages[0]['build'])
     if any(p['platform'] == 'linux' for p in packages):
         if 'data-platform="linux"' not in text:

@@ -71,8 +71,13 @@ def package(platform):
         (DIST / f'{path.name}.sha256').write_text(f'{digest(path)}  {path.name}\n')
     metadata = dict(platform=platform, version=name, build=build, archive=archive.name,
                     installer=installer.name, installer_sha256=digest(installer),
-                    installer_size=installer.stat().st_size, notarized=platform == 'macos',
+                    installer_size=installer.stat().st_size, notarized=False,
                     authenticode=False, commit=os.environ.get('GITHUB_SHA', 'local'))
+    if platform == 'macos':
+        signing = json.loads((DIST / 'macos-signing.json').read_text())
+        if (signing.get('signing'), signing.get('notarized')) not in (('adhoc', False), ('developer-id', True)):
+            raise ValueError('Invalid Mac signing metadata')
+        metadata.update(signing=signing['signing'], notarized=signing['notarized'])
     if platform == 'linux':
         metadata['linux_minimum'] = os_platform.freedesktop_os_release()['VERSION_ID']
     (DIST / f'{platform}-package.json').write_text(json.dumps(metadata, indent=2) + '\n')

@@ -88,6 +88,9 @@ jobs:
       - name: Universal Mac Node runtime
         if: runner.os == 'macOS'
         run: bash scripts/macos-node.sh
+      - name: Mac updater integrity and rollback
+        if: runner.os == 'macOS'
+        run: python scripts/test-macos-updater.py
       - name: Configure Apple signing
         id: apple
         if: runner.os == 'macOS' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
@@ -110,11 +113,10 @@ jobs:
           if [[ '${{ steps.apple.outputs.ready }}' == true ]]; then
             bash build_macos.sh
           else
-            bash build_macos.sh --development
-            echo 'macOS compiled for qualification only: Apple signing secrets are missing.' >> "$GITHUB_STEP_SUMMARY"
+            bash build_macos.sh --adhoc
+            echo 'macOS DMG and update ZIP use ad-hoc signing. Not notarized; explicit Gatekeeper approval may be required.' >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Package distributable files
-        if: runner.os != 'macOS' || steps.apple.outputs.ready == 'true'
         run: python scripts/package.py --platform '${{ matrix.platform }}'
       - name: Packaged Windows startup
         if: runner.os == 'Windows'
