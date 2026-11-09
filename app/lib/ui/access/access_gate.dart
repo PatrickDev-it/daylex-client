@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -156,7 +157,11 @@ class _AccessFormState extends ConsumerState<AccessForm> {
         children: [
           Text(l.accessTitle, style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 12),
-          Text(l.accessHelp),
+          Text(kIsWeb ? 'Inserisci una chiave dedicata a questo browser, ricevuta dall’amministratore. La chiave già associata all’app desktop non si trasferisce automaticamente.' : l.accessHelp),
+          if (kIsWeb) ...[
+            const SizedBox(height: 12),
+            const Text('La chiave resta solo in questa sessione: dovrai reinserirla quando ricarichi o riapri Daylex. Documenti e chat rimangono in questo browser; scarica regolarmente una copia dell’archivio.'),
+          ],
           const SizedBox(height: 24),
           TextField(
             controller: _key,

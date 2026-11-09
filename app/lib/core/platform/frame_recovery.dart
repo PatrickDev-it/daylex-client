@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/gestures.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -43,7 +44,7 @@ class _FrameRecoveryState extends State<FrameRecovery> with WidgetsBindingObserv
   @override
   void initState() {
     super.initState();
-    _log('start: ${Platform.operatingSystem} ${Platform.operatingSystemVersion}');
+    _log(kIsWeb ? 'start: web' : 'start: ${Platform.operatingSystem} ${Platform.operatingSystemVersion}');
     WidgetsBinding.instance.addObserver(this);
     GestureBinding.instance.pointerRouter.addGlobalRoute(_onPointer);
     HardwareKeyboard.instance.addHandler(_onKey);

@@ -58,6 +58,32 @@ Linux installs into a user-owned bundle with `bash install.sh`; system-managed f
 
 ## Production setup
 
+The companion PWA lives at `https://daylex.it/app/`. Its separate `Build and publish PWA` workflow
+checks browser persistence/recovery, browser compatibility and PDF rendering, then signs the complete
+static asset inventory. The same restricted receiver verifies every asset and atomically switches the
+web release. The desktop release pipeline remains independent.
+
+For local web development: run `npm ci --ignore-scripts` in `web-tools/`, then from this repository
+run `python scripts/build-web.py` and `python scripts/preview-web.py`. Open `http://127.0.0.1:8765/app/`.
+`--fixture` is an explicit loopback-only test API with synthetic data; it is never deployed.
+
+The PWA uses IndexedDB for documents/chats and a Web Lock to prevent conflicting writes across tabs.
+The toolbar exports/imports the local archive; importing downloads a backup and retains a recovery copy.
+Browser data is separate from desktop data and can be removed by clearing site data. It does not sync
+automatically between devices. Access keys remain in session memory; the browser's device identity is
+persistent. With the existing one-device key policy, use a dedicated key for the browser, supplied by
+the administrator. No access keys are written to IndexedDB, CacheStorage, localStorage or source code.
+
+The service worker caches only hashed public build assets, never API responses, user documents or
+credentials. New releases download in the background; “Salva e ricarica” commits pending work before
+activating them. AI/review require connectivity; a new session requires the access key again.
+On iPad, use Safari > Share > Add to Home Screen. Native iOS marketplace distribution is not configured.
+
+For server setup, `scripts/daylex-site.caddy` serves the website, `/app/` and the existing authenticated
+`/v1/` API on one origin, avoiding cross-origin credential handling. Validate before reloading Caddy.
+The PWA's CSP permits dynamic code evaluation required by the PDF printing dependency; scripts, fonts,
+PDF.js, workers and CanvasKit are self-hosted. The download website keeps its stricter separate CSP.
+
 `production` environment: restrict deployment to `main`. Set `RELEASE_ENABLED=true` and `DEPLOY_HOST` as
 repository variables. Store these environment secrets through GitHub Settings or `gh secret set`:
 

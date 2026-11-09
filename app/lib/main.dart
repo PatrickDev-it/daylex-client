@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
@@ -16,7 +17,7 @@ InstanceLock? _instanceLock;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
-    _instanceLock ??= InstanceLock.acquire(Directory(appDataDir()));
+    if (!kIsWeb) _instanceLock ??= InstanceLock.acquire(Directory(appDataDir()));
   } on FileSystemException {
     final l = lookupAppLocalizations(const Locale('it'));
     runApp(
@@ -34,7 +35,7 @@ Future<void> main() async {
     return;
   }
   // Before anything reads the saved work: on a Mac coming from the sandboxed app, it is still in the container.
-  migrateSandboxData();
+  if (!kIsWeb) migrateSandboxData();
   await DesktopCredentials.instance.initialize();
   runApp(
     ProviderScope(

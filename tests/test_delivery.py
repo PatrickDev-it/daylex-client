@@ -6,6 +6,8 @@ from pathlib import Path
 import tarfile
 import tempfile
 import unittest
+import zipfile
+import hashlib
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 spec = importlib.util.spec_from_file_location('receiver', Path(__file__).resolve().parents[1] / 'scripts/deploy-server.py')
@@ -39,6 +41,51 @@ class DeliveryTests(unittest.TestCase):
 
     def test_valid_delivery(self):
         self.assertEqual(receiver.validate(self.src, self.updates, self.public), [self.package])
+
+    def web_release(self, extra=None):
+        archive = self.src / 'daylex-web-b201.zip'
+        files = {name: b'fixture' for name in ('index.html', 'main.dart.js', 'runtime.mjs', 'storage.mjs', 'manifest.json', 'service-worker.js', 'flutter_bootstrap.js')}
+        files.update(extra or {})
+        with zipfile.ZipFile(archive, 'w') as bundle:
+            for name, data in files.items(): bundle.writestr(name, data)
+        release = dict(kind='web', build=201, commit='a'*40, file=archive.name,
+                       size=archive.stat().st_size, sha256=receiver.digest(archive),
+                       assets={name: hashlib.sha256(data).hexdigest() for name, data in files.items()})
+        self.write_signed(self.src / 'delivery.json', release)
+        return release
+
+    def test_web_delivery_rejects_traversal_even_with_valid_signature(self):
+        for name in ('../escape', '/absolute', 'nested/../escape', 'a//b', 'web-release.json'):
+            self.web_release({name: b'bad'})
+            with self.assertRaises(ValueError): receiver.validate_web(self.src, self.root / 'web', self.public)
+
+    def test_web_delivery_checks_each_asset(self):
+        release = self.web_release()
+        release['assets']['main.dart.js'] = '0'*64
+        self.write_signed(self.src / 'delivery.json', release)
+        with self.assertRaises(ValueError): receiver.validate_web(self.src, self.root / 'web', self.public)
+
+    def test_web_publish_preserves_desktop_and_rejects_downgrade(self):
+        release = self.web_release()
+        web = self.root / 'web'
+        site = self.root / 'site'
+        previous = site / 'releases/previous'
+        (previous / 'downloads').mkdir(parents=True)
+        (previous / 'downloads/old.dmg').write_bytes(b'previous Mac installer')
+        text = '<nav aria-label="Navigazione principale"></nav><article id="macos">Mac download</article>'
+        (previous / 'index.html').write_text(text)
+        (previous / 'release.json').write_text('{"macos":{"build":601}}')
+        (site / 'current').symlink_to(previous)
+        self.assertEqual(receiver.validate_web(self.src, web, self.public), release)
+        receiver.publish_web(self.src, release, web, site)
+        self.assertEqual((web / 'current/main.dart.js').read_bytes(), b'fixture')
+        self.assertEqual((previous / 'index.html').read_text(), text)
+        self.assertIn('href="/app/"', (site / 'current/index.html').read_text())
+        self.assertEqual((site / 'current/downloads/old.dmg').read_bytes(), b'previous Mac installer')
+        self.assertEqual(json.loads((site / 'current/release.json').read_text())['macos']['build'], 601)
+        self.assertEqual(receiver.validate_web(self.src, web, self.public), release)
+        self.write_signed(web / 'current/web-release.json', dict(release, build=202))
+        with self.assertRaises(ValueError): receiver.validate_web(self.src, web, self.public)
 
     def mac_package(self, signing='adhoc', notarized=False):
         archive = self.src / 'daylex-macos-0.1.0-b201.zip'

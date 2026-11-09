@@ -1,7 +1,8 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart';
+import '../../core/platform/browser_runtime.dart' as browser;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../document/model/document.dart';
@@ -106,6 +107,10 @@ class ExportService {
       throw const DocumentReviewFailure(
         'Il documento è stato modificato durante la verifica. Ripeti l’esportazione.',
       );
+    }
+    if (kIsWeb) {
+      browser.download(bytes, doc.fileName, 'application/pdf');
+      return doc.fileName;
     }
     final location = await getSaveLocation(
       suggestedName: doc.fileName,

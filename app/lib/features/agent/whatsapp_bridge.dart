@@ -31,6 +31,7 @@ class WhatsappBridge extends ChangeNotifier {
   bool get ready => state == 'ready';
 
   Future<void> start() async {
+    if (kIsWeb) throw UnsupportedError('WhatsApp è disponibile solo nell’app desktop.');
     final current = _starting;
     if (current != null) return current;
     final starting = _start();

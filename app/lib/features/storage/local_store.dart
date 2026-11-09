@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/platform/user_dirs.dart';
+import '../../core/platform/browser_runtime.dart' as browser;
 import '../../l10n/app_localizations.dart';
 
 /// Something the lawyer must know about the saved work. Kept as data, not text: the banner words it in the
@@ -75,7 +76,13 @@ class IndexRecoveredNotice extends StoreNotice {
 ///     snapshots/<id>.json     a document version a message refers to; immutable, written once
 ///     preferences.json        the theme and the language the lawyer picked
 class LocalStore {
-  LocalStore(this.root);
+  LocalStore(Directory root) : _root = root;
+  LocalStore._browser() : _root = null {
+    browser.onChange(() {
+      final problem = browser.error;
+      if (problem != null) notice.value = SaveFailedNotice(problem);
+    });
+  }
 
   /// Bumped when a file's shape changes, a new block type included: an older app would drop what it cannot
   /// read on its next save, so it meets a newer file read-only. Readers bring older files up in [_migrate].
@@ -84,7 +91,8 @@ class LocalStore {
   /// How long a change waits before it is written: edits that follow close together become one save.
   static const saveDelay = Duration(milliseconds: 300);
 
-  final Directory root;
+  final Directory? _root;
+  Directory get root => _root!;
 
   /// What the lawyer must know about the saved work (a file set aside, a save that failed), until dismissed.
   final notice = ValueNotifier<StoreNotice?>(null);
@@ -95,7 +103,7 @@ class LocalStore {
   var _newer = false;
   var _held = false;
   final _unsaved = <String>{};
-  bool get hasUnsavedWrites => _unsaved.isNotEmpty;
+  bool get hasUnsavedWrites => _unsaved.isNotEmpty || (kIsWeb && browser.pending);
 
   /// How many times a file another program holds is tried before giving up, and the pause between tries:
   /// an antivirus or an indexer holds a file for moments.
@@ -105,6 +113,7 @@ class LocalStore {
   /// The platform's per-user app data folder, or `PAPERAGENT_DATA`. None in tests: they start from an empty
   /// first launch, or their own fixture, and write nothing.
   static LocalStore? open() {
+    if (kIsWeb) return LocalStore._browser();
     final env = Platform.environment;
     if (env['FLUTTER_TEST'] == 'true') return null;
     final custom = env['PAPERAGENT_DATA'];
@@ -113,19 +122,19 @@ class LocalStore {
   }
 
   File _file(String relative) => File('${root.path}${Platform.pathSeparator}$relative');
+  bool _exists(String relative) => kIsWeb ? browser.read('data/$relative') != null : _file(relative).existsSync();
 
   /// File names from ids: an id never escapes its folder.
   static String _safe(String id) => id.replaceAll(RegExp(r'[^A-Za-z0-9_.@-]'), '_');
 
   Map<String, dynamic>? _read(String relative) {
-    final file = _file(relative);
-    if (!file.existsSync()) return null;
+    if (!_exists(relative)) return null;
     final List<int> bytes;
     try {
-      bytes = _bytes(file);
+      bytes = kIsWeb ? utf8.encode(browser.read('data/$relative')!) : _bytes(_file(relative));
     } on FileSystemException catch (e) {
       // The system's refusal, not the content's fault: the file stays as it is, and is not written over.
-      if (file.existsSync()) _hold(relative, e);
+      if (_exists(relative)) _hold(relative, e);
       return null;
     }
     final Map<String, dynamic> json;
@@ -174,6 +183,14 @@ class LocalStore {
 
   /// Keeps a file that cannot be read for a human, never overwritten silently.
   void setAside(String relative) {
+    if (kIsWeb) {
+      final content = browser.read('data/$relative');
+      if (content != null) {
+        browser.write('data/$relative.corrupt-${DateTime.now().millisecondsSinceEpoch}', content);
+        browser.remove('data/$relative');
+      }
+      return;
+    }
     final file = _file(relative);
     if (!file.existsSync()) return;
     try {
@@ -192,14 +209,18 @@ class LocalStore {
 
   void _writeFile(String relative, Map<String, dynamic> json, {bool keepPrevious = false}) {
     if (readOnly) return;
-    final file = _file(relative);
-    file.parent.createSync(recursive: true);
-    final temp = File('${file.path}.tmp');
     // A component prop that is not JSON (a DateTime) is kept as text rather than losing the whole chat.
     final text = jsonEncode({
       'version': version,
       ...json,
     }, toEncodable: (o) => o is DateTime ? o.toIso8601String() : o.toString());
+    if (kIsWeb) {
+      browser.write('data/$relative', text, backup: keepPrevious);
+      return;
+    }
+    final file = _file(relative);
+    file.parent.createSync(recursive: true);
+    final temp = File('${file.path}.tmp');
     temp.writeAsStringSync(text, flush: true);
     if (keepPrevious && file.existsSync()) file.copySync('${file.path}.bak');
     temp.renameSync(file.path);
@@ -208,6 +229,11 @@ class LocalStore {
   void _delete(String relative) {
     _unsaved.add(relative);
     if (readOnly) return;
+    if (kIsWeb) {
+      browser.remove('data/$relative');
+      _unsaved.remove(relative);
+      return;
+    }
     final file = _file(relative);
     if (file.existsSync()) file.deleteSync();
     _unsaved.remove(relative);
@@ -215,6 +241,11 @@ class LocalStore {
 
   /// Ids of the files in [folder], for rebuilding a lost index.
   List<String> _ids(String folder) {
+    if (kIsWeb) {
+      final prefix = 'data/$folder/';
+      return [for (final key in browser.keys())
+        if (key.startsWith(prefix) && key.endsWith('.json')) key.substring(prefix.length, key.length - 5)]..sort();
+    }
     final dir = Directory('${root.path}${Platform.pathSeparator}$folder');
     if (!dir.existsSync()) return const [];
     return [
@@ -227,12 +258,11 @@ class LocalStore {
   /// The workspace index. One that cannot be read is set aside, and the copy the save before kept takes
   /// its place: at most the last few seconds of reorganising are lost, never the work.
   Map<String, dynamic>? readWorkspace() {
-    final index = _file('workspace.json');
-    final existed = index.existsSync();
+    final existed = _exists('workspace.json');
     if (_read('workspace.json') case final json?) return json;
     final backup = _read('workspace.json.bak');
     // Restored only if it was damaged and set aside: one held by another program is still there, and said so.
-    if (backup != null && existed && !index.existsSync()) {
+    if (backup != null && existed && !_exists('workspace.json')) {
       notice.value = const IndexRestoredNotice();
     }
     return backup;
@@ -253,12 +283,13 @@ class LocalStore {
 
   /// When the chat file was last written, for a chat rebuilt without its index.
   DateTime? chatSavedAt(String id) {
+    if (kIsWeb) return browser.modified('data/chats/${_safe(id)}.json');
     final file = _file('chats/${_safe(id)}.json');
     return file.existsSync() ? file.lastModifiedSync() : null;
   }
 
   Map<String, dynamic>? readSnapshot(String id) => _read('snapshots/${_safe(id)}.json');
-  bool hasSnapshot(String id) => _file('snapshots/${_safe(id)}.json').existsSync();
+  bool hasSnapshot(String id) => _exists('snapshots/${_safe(id)}.json');
   void writeSnapshot(String id, Map<String, dynamic> json) => _write('snapshots/${_safe(id)}.json', json);
 
   Map<String, dynamic>? readPreferences() => _read('preferences.json');

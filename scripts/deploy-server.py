@@ -16,12 +16,16 @@ import shutil
 import sys
 import tarfile
 import tempfile
+import zipfile
+import stat
+from pathlib import PurePosixPath
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 
 PUBLIC_KEY = 'zd/PmMt2KpSg0aGGUaPqr8/PKgEjrtWiw2VZRO5vnng='
 UPDATES = Path('/opt/paperagent/updates')
 SITE = Path('/srv/daylex-site')
 STATE = Path('/srv/daylex-release')
+WEB = Path('/srv/daylex-pwa')
 
 def digest(path):
     with path.open('rb') as file:
@@ -192,6 +196,94 @@ def publish(src, packages, updates=UPDATES, site=SITE):
     link.replace(site / 'current')
     print('PUBLISHED ' + ', '.join(f'{p["platform"]} b{p["build"]}' for p in packages), flush=True)
 
+def validate_web(src, web=WEB, public=PUBLIC_KEY):
+    release = verified(src / 'delivery.json', public)
+    if release.get('kind') != 'web' or type(release.get('build')) is not int or release['build'] <= 0:
+        raise ValueError('Invalid web release')
+    if not re.fullmatch(r'[0-9a-f]{40}', release.get('commit', '')):
+        raise ValueError('Invalid web source commit')
+    expected = f'daylex-web-b{release["build"]}.zip'
+    if release.get('file') != expected:
+        raise ValueError('Invalid web archive name')
+    archive = src / expected
+    if archive.stat().st_size != release['size'] or digest(archive) != release['sha256']:
+        raise ValueError('Web archive integrity mismatch')
+    assets = release['assets']
+    required = {'index.html', 'main.dart.js', 'runtime.mjs', 'storage.mjs', 'manifest.json', 'service-worker.js', 'flutter_bootstrap.js'}
+    if not isinstance(assets, dict) or not required <= set(assets) or len(assets) > 5000:
+        raise ValueError('Incomplete web assets')
+    with zipfile.ZipFile(archive) as bundle:
+        entries = bundle.infolist()
+        if len(entries) != len(assets) or sum(entry.file_size for entry in entries) > 700 * 1024**2:
+            raise ValueError('Invalid web archive size')
+        names = set()
+        for entry in entries:
+            name = entry.filename
+            if (name in names or name not in assets or entry.is_dir() or
+                not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_./@ -]{0,240}', name) or
+                '..' in PurePosixPath(name).parts or stat.S_ISLNK(entry.external_attr >> 16) or
+                PurePosixPath(name).as_posix() != name or name == 'web-release.json' or
+                entry.file_size > 150 * 1024**2):
+                raise ValueError('Unsafe web asset')
+            names.add(name)
+            with bundle.open(entry) as data:
+                if hashlib.file_digest(data, 'sha256').hexdigest() != assets[name]:
+                    raise ValueError('Web asset integrity mismatch')
+    current = web / 'current/web-release.json'
+    if current.exists():
+        previous = verified(current, public)
+        if previous['build'] > release['build'] or (previous['build'] == release['build'] and previous['sha256'] != release['sha256']):
+            raise ValueError('Web rollback or mutation refused')
+    return release
+
+def publish_web(src, release, web=WEB, site=SITE):
+    versions = web / 'releases'
+    versions.mkdir(parents=True, exist_ok=True)
+    name = f'b{release["build"]}-{release["commit"][:12]}'
+    candidate = versions / name
+    if not candidate.exists():
+        with tempfile.TemporaryDirectory(prefix='.staging-', dir=versions) as staging:
+            staged = Path(staging)
+            with zipfile.ZipFile(src / release['file']) as bundle:
+                bundle.extractall(staged)  # Every entry was bounded, hashed and path-checked above.
+            shutil.copyfile(src / 'delivery.json', staged / 'web-release.json')
+            for file in staged.rglob('*'):
+                file.chmod(0o755 if file.is_dir() else 0o644)
+            staged.chmod(0o755)
+            staged.rename(candidate)
+    link = web / '.current-ci'
+    link.unlink(missing_ok=True)
+    link.symlink_to(candidate, target_is_directory=True)
+    link.replace(web / 'current')
+    previous = (site / 'current').resolve(strict=True)
+    suffix = hashlib.sha256(previous.name.encode()).hexdigest()[:12]
+    site_candidate = site / 'releases' / f'web-{name}-{suffix}'
+    if not site_candidate.exists():
+        shutil.copytree(previous, site_candidate, copy_function=os.link)
+        for file in ('index.html', 'release.json'):
+            data = (site_candidate / file).read_bytes()
+            (site_candidate / file).unlink()
+            (site_candidate / file).write_bytes(data)
+        page = site_candidate / 'index.html'
+        text = page.read_text(encoding='utf-8')
+        if 'href="/app/"' not in text:
+            text = text.replace('<nav aria-label="Navigazione principale">',
+                                '<nav aria-label="Navigazione principale"><a href="/app/">Apri nel browser</a>', 1)
+        page.write_text(text, encoding='utf-8')
+        info_file = site_candidate / 'release.json'
+        info = json.loads(info_file.read_text())
+        info['web'] = dict(url='/app/', build=release['build'], commit=release['commit'])
+        info_file.write_text(json.dumps(info, indent=2) + '\n')
+        for file in site_candidate.rglob('*'):
+            if file.is_file(): file.chmod(0o644)
+            elif file.is_dir(): file.chmod(0o755)
+        site_candidate.chmod(0o755)
+    link = site / '.current-ci'
+    link.unlink(missing_ok=True)
+    link.symlink_to(site_candidate, target_is_directory=True)
+    link.replace(site / 'current')
+    print(f'PUBLISHED web b{release["build"]}', flush=True)
+
 def main():
     STATE.mkdir(exist_ok=True)
     with (STATE / 'publish.lock').open('a') as lock:
@@ -199,8 +291,11 @@ def main():
         with tempfile.TemporaryDirectory(prefix='incoming-', dir=STATE) as directory:
             src = Path(directory)
             receive(sys.stdin.buffer, src)
-            packages = validate(src, UPDATES)
-            publish(src, packages)
+            if verified(src / 'delivery.json').get('kind') == 'web':
+                publish_web(src, validate_web(src))
+            else:
+                packages = validate(src, UPDATES)
+                publish(src, packages)
 
 if __name__ == '__main__':
     main()

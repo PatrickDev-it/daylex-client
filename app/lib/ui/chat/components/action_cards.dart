@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -28,8 +29,8 @@ class ExportCard extends StatelessWidget {
     final l = context.l10n;
     final path = propString(props['path']) ?? '';
     final name = path.split(RegExp(r'[\\/]')).last;
-    final file = File(path);
-    final size = file.existsSync() ? file.lengthSync() : null;
+    final file = kIsWeb ? null : File(path);
+    final size = file != null && file.existsSync() ? file.lengthSync() : null;
     final pages = propIntOrNull(props['pages']);
 
     return CardWidth(
@@ -80,13 +81,13 @@ class ExportCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            ComponentButton(
+            if (!kIsWeb) ComponentButton(
               label: l.cardOpen,
               icon: LucideIcons.externalLink,
               onPressed: size == null ? null : () => openFile(path),
             ),
-            const SizedBox(width: 6),
-            ComponentButton(
+            if (!kIsWeb) const SizedBox(width: 6),
+            if (!kIsWeb) ComponentButton(
               label: l.cardShowInFolder,
               icon: LucideIcons.folderOpen,
               onPressed: size == null ? null : () => revealFile(path),

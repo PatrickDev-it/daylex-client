@@ -1,0 +1,8 @@
+{
+  "name": "daylex-web-assets",
+  "private": true,
+  "type": "module",
+  "scripts": {"test": "node --test tests/*.test.js"},
+  "dependencies": {"pdfjs-dist": "6.2.108"},
+  "devDependencies": {"fake-indexeddb": "6.2.4"}
+}

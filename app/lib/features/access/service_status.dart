@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import '../../core/platform/http_transport.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -83,7 +84,7 @@ class ServiceStatus extends ChangeNotifier {
             'area': credentials.area,
             'version': version,
             'foreground': foreground,
-            'platform': Platform.isWindows
+            'platform': kIsWeb ? 'other' : Platform.isWindows
                 ? 'windows'
                 : Platform.isMacOS
                 ? 'macos'

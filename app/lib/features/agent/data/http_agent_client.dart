@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import '../../../core/platform/http_transport.dart';
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
@@ -28,6 +28,7 @@ class AgentServerConfig {
 
   /// Optional endpoint override. Credentials belong only to DesktopCredentials.
   static File? get file {
+    if (kIsWeb) return null;
     final home = userHome(Platform.environment);
     return home == null ? null : File('$home/.paperagent/server.json');
   }
@@ -54,8 +55,8 @@ class AgentServerConfig {
   }
 
   static (String?, String?, String) _read(AppLocalizations l) {
-    final env = Platform.environment;
-    var url = kReleaseMode ? null : env['PAPERAGENT_URL'];
+    final env = kIsWeb ? const <String, String>{} : Platform.environment;
+    var url = kIsWeb ? Uri.base.origin : kReleaseMode ? null : env['PAPERAGENT_URL'];
     var token = kReleaseMode ? null : env['PAPERAGENT_TOKEN'];
     var source = 'PAPERAGENT_URL / PAPERAGENT_TOKEN';
     final file = AgentServerConfig.file;
@@ -139,6 +140,7 @@ class AgentServerConfig {
   /// Discards a saved server override while retaining the lawyer's access key.
   /// Environment overrides are managed by the operator, not by this setting.
   static void resetAddress(AppLocalizations l, {File? configFile}) {
+    if (kIsWeb) return;
     if (Platform.environment['PAPERAGENT_URL'] case final String override
         when override.isNotEmpty) {
       throw AgentConfigException(l.serverAddressEnvironmentOverride);

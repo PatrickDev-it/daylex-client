@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -208,7 +209,7 @@ class SettingsView extends ConsumerWidget {
                           last: true,
                         ),
                       ]),
-                      ListenableBuilder(
+                      if (!kIsWeb) ListenableBuilder(
                         listenable: whatsapp,
                         builder: (context, _) => section(l.whatsappTitle, [
                           row(
@@ -246,7 +247,7 @@ class SettingsView extends ConsumerWidget {
                             ),
                         ]),
                       ),
-                      section(l.settingsUpdates, [
+                      if (!kIsWeb) section(l.settingsUpdates, [
                         row(
                           l.settingsVersion,
                           _UpdateAction(update),

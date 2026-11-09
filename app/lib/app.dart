@@ -2,10 +2,12 @@ import 'dart:ui' show AppExitResponse;
 
 import 'package:deskify/deskify.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import 'core/platform/frame_recovery.dart';
+import 'core/platform/browser_runtime.dart' as browser;
 import 'core/theme/app_theme.dart';
 import 'features/storage/local_store.dart';
 import 'features/workspace/chat_thread.dart';
@@ -98,6 +100,12 @@ class _SaveOnExitState extends ConsumerState<_SaveOnExit> {
   @override
   void initState() {
     super.initState();
+    if (kIsWeb) {
+      browser.onSave(() {
+        AppActions(ref).saveNow();
+        return !(ref.read(localStoreProvider)?.readOnly ?? false);
+      });
+    }
     _lifecycle = AppLifecycleListener(
       onStateChange: (state) {
         if (state != AppLifecycleState.resumed) _flush();

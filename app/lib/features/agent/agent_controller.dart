@@ -45,7 +45,7 @@ export 'session_state.dart';
 /// only in tests or when asked for (`PAPERAGENT_MOCK=1`): a missing or broken
 /// configuration is said, never covered by the mock's answers.
 final agentClientProvider = Provider<AgentClient>((ref) {
-  final env = Platform.environment;
+  final env = kIsWeb ? const <String, String>{} : Platform.environment;
   if (!kReleaseMode && (env['FLUTTER_TEST'] == 'true' || env['PAPERAGENT_MOCK'] == '1')) {
     return MockAgentClient();
   }
@@ -446,7 +446,7 @@ class AgentController extends Notifier<AgentState> {
       turn,
       session.approvals,
       ref.read(snapshotStoreProvider),
-      whatsapp: ref.read(whatsappProvider),
+      whatsapp: kIsWeb ? null : ref.read(whatsappProvider),
     );
     final reply = session.reply = StreamedReply(
       chat,

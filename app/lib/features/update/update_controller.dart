@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:ui' show AppExitResponse, AppExitType;
 
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -114,6 +115,7 @@ class UpdateEnvironment {
 
   /// Null where this build does not update itself: no release key built in, a platform without releases, tests.
   static UpdateEnvironment? forThisComputer() {
+    if (kIsWeb) return null;
     final platform = updatePlatform;
     final installer = Installer.forThisComputer();
     if (updateChannelUrl == null || releasePublicKey == null || platform == null || installer == null) return null;

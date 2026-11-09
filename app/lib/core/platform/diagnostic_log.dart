@@ -16,7 +16,7 @@ class DiagnosticLog {
   static final window = DiagnosticLog.open('window.log');
 
   static DiagnosticLog? open(String name) {
-    if (Platform.environment['FLUTTER_TEST'] == 'true') return null;
+    if (kIsWeb || Platform.environment['FLUTTER_TEST'] == 'true') return null;
     final sep = Platform.pathSeparator;
     return DiagnosticLog(File('${appDataDir()}${sep}logs$sep$name'));
   }

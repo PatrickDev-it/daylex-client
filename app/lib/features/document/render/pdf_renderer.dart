@@ -4,6 +4,7 @@ import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -49,6 +50,7 @@ class PdfRenderer {
 
   /// Renders on a background isolate to keep the UI responsive.
   Future<Uint8List> renderInBackground(PaperDocument doc) {
+    if (kIsWeb) return render(doc);
     final fonts = this.fonts;
     return Isolate.run(() => PdfRenderer(fonts).render(doc));
   }

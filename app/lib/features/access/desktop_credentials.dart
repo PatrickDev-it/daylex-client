@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
+import '../../core/platform/http_transport.dart';
+import '../../core/platform/browser_runtime.dart' as browser;
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -26,10 +27,27 @@ class SystemCredentialVault implements CredentialVault {
   );
 }
 
+/// Web keys stay in memory for this session, never in browser persistent storage.
+class BrowserCredentialVault implements CredentialVault {
+  final _session = <String, String>{};
+  @override
+  Future<String?> read(String key) async => key == 'daylex.device.v1'
+      ? browser.read('device') : _session[key];
+  @override
+  Future<void> write(String key, String value) async {
+    if (key == 'daylex.device.v1') {
+      browser.write('device', value);
+      await browser.flush();
+    } else {
+      _session[key] = value;
+    }
+  }
+}
+
 /// The only owner of desktop credentials. No secret is stored in workspace data.
 class DesktopCredentials extends ChangeNotifier {
   DesktopCredentials(this.vault);
-  static final instance = DesktopCredentials(const SystemCredentialVault());
+  static final instance = DesktopCredentials(kIsWeb ? BrowserCredentialVault() : const SystemCredentialVault());
   final CredentialVault vault;
   String? key;
   String? device;
@@ -40,6 +58,7 @@ class DesktopCredentials extends ChangeNotifier {
   String area = 'chat';
 
   static File? get legacyFile {
+    if (kIsWeb) return null;
     final home = userHome();
     return home == null ? null : File('$home/.paperagent/server.json');
   }

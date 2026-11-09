@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart';
 
 import 'domain/agent_protocol.dart';
 
@@ -27,7 +27,7 @@ String _typeOf(String name) {
 
 /// The file's own name. XFile.name splits on one separator only: "Temp/nota.txt" from a path that mixes both.
 String _nameOf(XFile f) =>
-    f.path.isEmpty ? f.name : f.path.split(RegExp(r'[\\/]')).last;
+    kIsWeb || f.path.isEmpty ? f.name : f.path.split(RegExp(r'[\\/]')).last;
 
 /// The files the lawyer picks in the system dialog; [label] names the filter.
 Future<List<XFile>> pickAttachable(String label) => openFiles(
@@ -74,7 +74,7 @@ Future<(List<AgentAttachment>, LeftOut)> readAttachable(
       continue;
     }
     try {
-      if (deferBytes && f.path.isNotEmpty && await File(f.path).exists()) {
+      if (!kIsWeb && deferBytes && f.path.isNotEmpty && await File(f.path).exists()) {
         if (picked.length >= maxFiles || await f.length() > maxFileBytes) {
           tooLarge.add(name);
           continue;
@@ -125,7 +125,7 @@ Iterable<XFile> expandFolders(
   void Function(String name)? onUnreadable,
 }) sync* {
   for (final f in files) {
-    if (f.path.isEmpty || !FileSystemEntity.isDirectorySync(f.path)) {
+    if (kIsWeb || f.path.isEmpty || !FileSystemEntity.isDirectorySync(f.path)) {
       yield f;
       continue;
     }
