@@ -55,6 +55,8 @@ typography:
     letterSpacing: "-0.035em"
 rounded:
   square: "0px"
+  action: "12px"
+  device: "14px"
 spacing:
   compact: "8px"
   icon: "12px"
@@ -72,7 +74,7 @@ components:
   button-primary:
     backgroundColor: "{colors.green}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.square}"
+    rounded: "{rounded.action}"
     padding: "14px 22px"
   button-primary-hover:
     backgroundColor: "{colors.mint}"
@@ -80,7 +82,7 @@ components:
   download-link:
     backgroundColor: "{colors.sheet}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.square}"
+    rounded: "{rounded.device}"
     padding: "12px 14px"
   download-link-hover:
     backgroundColor: "{colors.layer}"
@@ -138,7 +140,7 @@ Neutral black and graphite carry the composition; color identifies an action, fo
 - **Supporting ink** (`muted`): captions, device details, help links and unselected controls.
 - **Quiet graphite** (`quiet`): the decorative folio mark, not body text.
 
-**The Rare Accent Rule.** Keep black and near-black dominant; reserve the three owner-defined accents for actions and meaningful states. Do not expand them into decorative section backgrounds.
+**The Rare Accent Rule.** Keep black and near-black dominant; reserve the three owner-defined accents for actions and meaningful states. Do not expand them into decorative section backgrounds. Explicit owner exception: OS marks use recognizable colors (Windows blue, Tux native colors, mint Apple and cyan web); these do not become new page accents.
 
 ## Typography
 
@@ -160,13 +162,13 @@ The real workspace image spans the frame in grayscale with no enclosing panel, p
 
 ## Elevation & Depth
 
-There are no box shadows, gradients, blur or glass surfaces. Depth comes from the slight offset between graphite folio layers and the contrast between black, near-black and sheet surfaces. The product screenshot remains unframed. Interactive download links lift by 2px on hover; this is a control response, not ambient elevation.
+There are no box shadows, gradients, blur or glass surfaces. Depth comes from the slight offset between graphite folio layers and the contrast between black, near-black and sheet surfaces. The product screenshot remains unframed. Interactive download links change surface and outline on hover; neighboring links remain unchanged.
 
 **The Flat Material Rule.** Use tone, alignment and the stepped silhouette to distinguish layers; do not add shadows or decorative glow.
 
 ## Shapes
 
-Controls are square. The reusable signature is a pair of opposed orthogonal steps at the upper-right and lower-left corners, 24px on desktop and 18px at up to 600px. The final shared clipping rule applies to the backing sheet, front sheet, download band and closing panel; earlier diagonal cuts on the closing panel are overridden.
+Download controls are rounded: 14px for device choices and 12px for primary actions. Revision controls remain square. The reusable signature is a pair of opposed orthogonal steps at the upper-right and lower-left corners, 24px on desktop and 18px at up to 600px. The final shared clipping rule applies to the backing sheet, front sheet, download band and closing panel; earlier diagonal cuts on the closing panel are overridden.
 
 The Daylex mark repeats opposed rectilinear strokes. Its navigation form uses current text color; the favicon uses mint on black. The opening's broad background field has a separate diagonal entry cut; it does not replace the orthogonal folio signature. The actual workspace screenshot has no cut corners.
 
@@ -174,11 +176,11 @@ The Daylex mark repeats opposed rectilinear strokes. Its navigation form uses cu
 
 ### Primary action
 
-A square, compact green action with a 54px minimum height, 30px text/icon gap and frontmatter padding. Hover changes to mint with black text; active press moves down 2px. State transitions last 0.2s; the transform uses the shared easing. The cyan keyboard outline is 3px with a 5px offset. The mobile opening relies on the visible device band; the closing action remains available.
+A rounded, compact green action with a 54px minimum height, 14px text/icon gap and frontmatter padding. Hover changes to mint with black text; active press moves down 2px. State transitions last 0.2s; the transform uses the shared easing. The cyan keyboard outline is 3px with a 5px offset. The opening and closing actions both remain available on mobile. Local OS detection names the destination and copies its current release-managed anchor; iOS/Android use the guided PWA. Windows 10/11 are distinguished only with reliable Client Hints; otherwise the label is Windows. Known unsupported CPU targets use the PWA; unknown platforms retain manual selection. This is platform routing, not a hardware compatibility certification. No download starts without a click.
 
 ### Device routes
 
-Six neutral, rectangular links combine a recognizable monochrome OS symbol, device name and supporting line. Minimum height is 84px on desktop, 76px in the intermediate layout and 78px on phones. Hover changes sheet to layer and lifts the control by 2px; focus uses an inset outline offset of -3px to remain visible within the clipped band. These are navigation/download controls, not a generic feature-card pattern.
+Six neutral, rectangular links combine a recognizable colored OS symbol, device name and supporting line. Minimum height is 84px on desktop, 76px in the intermediate layout and 78px on phones. Hover changes only that control from sheet to layer and adds a thin cyan inset outline; focus uses an inset outline offset of -3px to remain visible within the clipped band. These are navigation/download controls, not a generic feature-card pattern.
 
 Keep all six routes as direct HTML anchors usable without JavaScript. Release integration retains `data-site-version="3"` and the four `data-download` anchors: Windows 11, Windows 10, macOS and Linux. Both Windows routes target the same installer. The iPhone/iPad and PWA routes retain the existing installation guide; the native app and PWA are outside this redesign.
 
@@ -186,7 +188,7 @@ Keep all six routes as direct HTML anchors usable without JavaScript. Release in
 
 The sheet uses the stepped geometry, a muted backing layer, a short document title, readable document wording, a cyan AI-margin symbol and muted explanation. Mint marks the changed phrase only in the AI stage. Its three real buttons use `aria-pressed`, with a graphite/mint selected state and a cyan inset focus outline. An explicit caption identifies an illustrative guided example; it is not presented as a live AI response.
 
-JavaScript reveals the controls and changes between the initial draft, AI suggestion and human revision. A polite status region announces the selected text. Without JavaScript the labeled example remains readable and the inactive controls remain hidden. The only content animation is the user-triggered 0.38s revision: text moves from 8px below at 0.5 opacity to its resting position. There are no generic entrance animations, scroll reveals, auto-cycling states or continuous animation. Reduced motion disables animations and transitions and changes smooth anchor scrolling to immediate scrolling.
+JavaScript reveals the controls and changes between the initial draft, AI suggestion and human revision. A polite status region announces the selected text. Without JavaScript the labeled example remains readable and the inactive controls remain hidden. The document animation is the user-triggered 0.38s revision: text moves from 8px below at 0.5 opacity to its resting position. The owner explicitly requests one progressive entrance for the six device choices: 640ms per item, 110ms stagger, 1190ms total, once on entering view. Focus or pointer entry immediately reveals that item. All links are visible by default without JavaScript; reduced motion skips and cancels the sequence. No other scroll reveals, auto-cycling states or continuous animation. Reduced motion disables animations and transitions and changes smooth anchor scrolling to immediate scrolling.
 
 ### Navigation and wordmark
 
@@ -208,7 +210,7 @@ Use the actual application capture in grayscale with an accurate caption and alt
 
 ### Don't:
 - **Don't** add colorful section fills, gradients, glass, shadows, pill controls or decorative feature-card grids.
-- **Don't** introduce entrance animations, scroll reveals, automatic revision loops or particle text.
+- **Don't** expand the device-choice entrance into a repeated page-wide reveal or introduce automatic revision loops or particle text.
 - **Don't** invent testimonials, adoption metrics, certifications or proof of brand recognition.
 - **Don't** turn the background field's diagonal cut into the reusable folio silhouette.
 - **Don't** hide downloads behind JavaScript, tabs or a carousel, or remove the existing release hooks.

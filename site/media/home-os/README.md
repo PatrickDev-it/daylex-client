@@ -1,0 +1,1 @@
+Homepage OS icons. Windows, Apple and PWA derive from ../os/ (see its license). Linux: Devicon linux-original.svg, https://github.com/devicons/devicon/blob/master/icons/linux/linux-original.svg ; license included. OS colors are a scoped exception to the restrained page palette.

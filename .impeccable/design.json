@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-09T20:32:13.235233+00:00",
+  "generatedAt": "2026-11-09T22:00:00+01:00",
   "title": "Design System: Daylex homepage",
   "extensions": {
     "colorMeta": {
@@ -170,7 +170,12 @@
       {
         "name": "revision",
         "value": "0.38s",
-        "purpose": "User-triggered text revision, from translateY(8px)/opacity .5 to rest. Disabled for reduced motion; no entrance or scroll animations."
+        "purpose": "User-triggered text revision, from translateY(8px)/opacity .5 to rest. Disabled for reduced motion; device choices have a separate owner-requested bounded stagger."
+      },
+      {
+        "name": "device-entrance",
+        "value": "640ms cubic-bezier(.16,1,.3,1), 110ms stagger",
+        "purpose": "Once on device-list intersection, max1190ms; focus/pointer reveal immediately. Skipped/cancelled for reduced motion; no-JS remains visible."
       }
     ],
     "breakpoints": [
@@ -193,17 +198,17 @@
       "name": "Primary action",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "The square download action, with mint hover and a visible focus ring.",
+      "description": "Rounded primary action showing the detected OS and linking to the live installer or guided PWA.",
       "html": "<a class=\"ds-primary\" href=\"#download\">Scarica Daylex <svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 4v14m-5-5 5 5 5-5M5 21h14\"/></svg></a>",
-      "css": ".ds-primary{font-family:Archivo,sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:30px;min-height:54px;box-sizing:border-box;padding:14px 22px;background:var(--green,#15803d);color:var(--ink,#f3f3f3);font-size:16px;font-weight:550;text-decoration:none;border-radius:0;transition:transform .2s cubic-bezier(.16,1,.3,1),background .2s}.ds-primary svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.ds-primary:hover{background:var(--mint,#dff4e2);color:var(--black,#000)}.ds-primary:focus-visible{outline:3px solid var(--cyan,#00aeb3);outline-offset:5px;}.ds-primary:active{transform:translateY(2px)}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}}"
+      "css": ".ds-primary{font-family:Archivo,sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:14px;min-height:54px;box-sizing:border-box;padding:14px 22px;background:var(--green,#15803d);color:var(--ink,#f3f3f3);font-size:16px;font-weight:550;text-decoration:none;border-radius:12px;transition:transform .2s cubic-bezier(.16,1,.3,1),background .2s}.ds-primary svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.ds-primary:hover{background:var(--mint,#dff4e2);color:var(--black,#000)}.ds-primary:focus-visible{outline:3px solid var(--cyan,#00aeb3);outline-offset:5px;}.ds-primary:active{transform:translateY(2px)}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}}"
     },
     {
       "name": "Device route",
       "kind": "button",
       "refersTo": "download-link",
-      "description": "A direct platform route with monochrome OS symbol and supporting text.",
+      "description": "Rounded direct device route with colored OS symbol; hover emphasizes this control only.",
       "html": "<a class=\"ds-download\" href=\"#download\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2 4.5 10.5 3.3v8H2zm10-1.4L22 1.7v9.6H12zM2 12.7h8.5v8L2 19.5zm10 0h10v9.6L12 20.9z\"/></svg><span><strong>Windows 11</strong><small>Scarica l’app</small></span></a>",
-      "css": ".ds-download{font-family:Archivo,sans-serif;display:flex;align-items:center;gap:12px;min-height:84px;box-sizing:border-box;padding:12px 14px;background:var(--sheet,#171717);color:var(--ink,#f3f3f3);text-decoration:none;transition:background .2s,transform .2s}.ds-download svg{width:22px;height:22px;fill:currentColor;flex:none}.ds-download strong{display:block;font-size:16px;font-weight:550;line-height:1.35;letter-spacing:-.025em}.ds-download small{display:block;font-size:14px;line-height:1.4;color:var(--muted,#b5b5b5);margin-top:4px}.ds-download:hover{background:var(--layer,#242424);transform:translateY(-2px)}.ds-download:focus-visible{outline:3px solid var(--cyan,#00aeb3);outline-offset:5px;outline-offset:-3px}@media(prefers-reduced-motion:reduce){.ds-download{transition:none}}"
+      "css": ".ds-download{font-family:Archivo,sans-serif;display:flex;border-radius:14px;align-items:center;gap:12px;min-height:84px;box-sizing:border-box;padding:12px 14px;background:var(--sheet,#171717);color:var(--ink,#f3f3f3);text-decoration:none;transition:background .2s,transform .2s}.ds-download svg{width:22px;height:22px;fill:currentColor;flex:none}.ds-download strong{display:block;font-size:16px;font-weight:550;line-height:1.35;letter-spacing:-.025em}.ds-download small{display:block;font-size:14px;line-height:1.4;color:var(--muted,#b5b5b5);margin-top:4px}.ds-download:hover{background:var(--layer,#242424);outline:1px solid var(--cyan,#00aeb3);outline-offset:-1px}.ds-download:focus-visible{outline:3px solid var(--cyan,#00aeb3);outline-offset:5px;outline-offset:-3px}@media(prefers-reduced-motion:reduce){.ds-download{transition:none}}"
     },
     {
       "name": "Revision controls",

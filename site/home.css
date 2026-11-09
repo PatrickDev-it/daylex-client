@@ -17,3 +17,14 @@
 .folio-back,.folio-sheet,.download-band,.closing{clip-path:polygon(0 0,calc(100% - var(--cut)) 0,calc(100% - var(--cut)) var(--cut),100% var(--cut),100% 100%,var(--cut) 100%,var(--cut) calc(100% - var(--cut)),0 calc(100% - var(--cut)))}
 .product-proof{padding:0;background:none;clip-path:none}
 @media(max-width:360px){.example-controls button{font-size:13px}}
+
+/* Device selection: soft controls within the established folio frame. */
+.download-link{border-radius:14px;transition:background .22s ease,outline-color .22s ease}
+.download-link>img{filter:none;width:24px;height:24px}
+.download-link:hover{transform:none;background:var(--layer);outline:1px solid var(--cyan);outline-offset:-1px}
+.download-link:focus-visible{outline:3px solid var(--cyan);outline-offset:-3px}
+.primary-action{border-radius:12px;gap:14px}
+.cta-os{width:22px;height:22px;object-fit:contain;filter:brightness(0) invert(1);flex:none}
+.primary-action:hover .cta-os{filter:brightness(0)}
+@media(max-width:1250px){.hero-action{display:inline-flex;margin-top:22px}}
+@media(max-width:600px){.primary-action{font-size:14px;padding-inline:16px;gap:12px}}

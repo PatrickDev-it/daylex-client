@@ -44,3 +44,6 @@ Hidden-logo crops and fresh independent critique test distinctiveness of the exe
 
 ## Explicit palette steering
 The owner subsequently fixed #000 and #0c0c0c as dominant neutral grounds, with #00aeb3, #dff4e2 and #15803d used sparingly. This overrides the preliminary garnet concept. The supplied TikTok SVG is a tonal/compositional reference, not a source of logos, puzzle artwork or claims. Recognition now rests on the folio geometry, lettering and controlled text-revision sequence.
+
+## Device-selection refinement
+Owner-directed exception: device cards (14px) and download CTAs (12px) are rounded. The device row appears once in a calm 640ms/110ms sequence; reduced motion and no-JS show everything immediately. OS icons are colored, with hover confined to the individual control. Both CTAs locally detect the platform, show its name and use live installer anchors; unknown devices retain explicit manual choice, mobile devices use the existing PWA guide. The page identity and folio geometry remain unchanged.
