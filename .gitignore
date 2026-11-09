@@ -17,3 +17,6 @@ delivery.tar
 site-preview/
 app/test/assets/
 app/test/canvaskit/
+.taste-skill/
+.impeccable/
+site/release.json

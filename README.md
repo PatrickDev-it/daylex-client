@@ -37,6 +37,20 @@ Core Technology Fee are not a reliable basis for implementation.
 
 ## Delivery
 
+The public presentation website is in `site/`. `PRODUCT.md` records its audience and conversion goal;
+`DESIGN.md` records the visual system. Serve locally with `python -m http.server 8767 --directory site`.
+The homepage keeps installation choices concise; `assistenza.html` contains end-user help and
+`tecnica.html` contains package requirements, checksums and administrator information.
+
+Desktop releases refresh download links on both the homepage and technical page through the same
+renderer, preserving the marketing copy. For a website-only deployment, export the reviewed commit's
+`site/`, `scripts/deploy-server.py`, `scripts/render-site.py` and `scripts/install-site.py` to the server.
+Run `sudo python3 SOURCE/scripts/install-site.py SOURCE COMMIT_SHA`. This takes the deployment lock,
+retains the current installers, renders against the live inventory and switches the site atomically.
+It also installs the matching root-owned receiver so future CI releases keep the new presentation.
+`site/release.json` is public runtime metadata and is deliberately not tracked; local rendering with
+`python scripts/render-site.py` requires a copy of the current site's inventory.
+
 Every push to `main` builds and tests on `windows-latest`, `macos-latest` and `ubuntu-latest`.
 Pull requests run the same qualification without deployment credentials. Build numbers are generated
 from the Actions run and attempt; the marketing version remains in `app/pubspec.yaml`.

@@ -112,15 +112,32 @@ def article(p):
             f'<p class="note">{instructions}</p>'
             f'<a class="small-link" href="downloads/{name}.sha256" download>Scarica il codice di verifica SHA-256</a></article>')
 
+def marketing_article(p):
+    platform = p['platform']
+    label, requirements, note = {
+        'windows': ('Windows', 'Windows 10 e 11', 'Il computer potrebbe chiederti una conferma durante l’installazione.'),
+        'macos': ('Mac', 'Per Mac Intel e Apple Silicon',
+                  'Apri il file e trascina Daylex in Applicazioni.' if p.get('notarized') else 'Il Mac potrebbe chiederti di confermare l’apertura.'),
+        'linux': ('Linux', f'Ubuntu {html.escape(p.get("linux_minimum", "26.04"))} e successivi', 'Trovi tutti i passaggi nella guida.'),
+    }[platform]
+    name = html.escape(p['installer'], quote=True)
+    return (f'<article id="{platform}"><h3>Daylex per {label}</h3><p>{requirements}</p>'
+            f'<a class="button" href="downloads/{name}" download>Scarica per {label}</a>'
+            f'<p class="download-note">Versione di anteprima. {note}</p>'
+            f'<a class="text-link" href="assistenza.html#{platform}">Guida all’installazione</a></article>')
+
 def render_site(dest, packages):
     index = dest / 'index.html'
     text = index.read_text(encoding='utf-8')
+    marketing = 'data-site-version="2"' in text
+    technical = dest / 'tecnica.html'
+    technical_text = technical.read_text(encoding='utf-8') if marketing else None
     info = json.loads((dest / 'release.json').read_text())
     for p in packages:
         platform = p['platform']
         pattern = rf'<article id="{platform}">.*?</article>'
         if re.search(pattern, text, re.S):
-            text = re.sub(pattern, lambda _: article(p), text, count=1, flags=re.S)
+            text = re.sub(pattern, lambda _: marketing_article(p) if marketing else article(p), text, count=1, flags=re.S)
         elif platform == 'linux':
             text = text.replace('</article>', '</article>' + article(p), 1)
         else:
@@ -128,7 +145,12 @@ def render_site(dest, packages):
         info[platform] = dict(url='downloads/' + p['installer'], bytes=p['installer_size'],
                               sha256=p['installer_sha256'], version=p['version'], build=p['build'],
                               authenticode=p.get('authenticode', False), notarized=p.get('notarized', False),
-                              signing=p.get('signing'))
+                              signing=p.get('signing'), linux_minimum=p.get('linux_minimum'))
+        if marketing:
+            technical_pattern = rf'<!-- release:{platform} -->.*?<!-- /release:{platform} -->'
+            if not re.search(technical_pattern, technical_text, re.S):
+                raise ValueError('Technical release section missing')
+            technical_text = re.sub(technical_pattern, lambda _: f'<!-- release:{platform} -->{article(p)}<!-- /release:{platform} -->', technical_text, count=1, flags=re.S)
     info.update(version=packages[0]['version'], build=packages[0]['build'])
     if any(p['platform'] == 'linux' for p in packages):
         if 'data-platform="linux"' not in text:
@@ -144,6 +166,8 @@ def render_site(dest, packages):
                             'Su macOS, apri il DMG e trascina Daylex in Applicazioni, poi inserisci la chiave API.')
         text = text.replace('La versione macOS sarà disponibile prossimamente.', 'Disponibile anche per macOS.')
     index.write_text(text, encoding='utf-8')
+    if marketing:
+        technical.write_text(technical_text, encoding='utf-8')
     (dest / 'release.json').write_text(json.dumps(info, indent=2) + '\n')
     script = dest / 'app.js'
     js = script.read_text()
@@ -168,8 +192,9 @@ def publish(src, packages, updates=UPDATES, site=SITE):
     if not candidate.exists():
         # A fresh site release, with previous versioned downloads retained by hard link.
         shutil.copytree(current, candidate, copy_function=os.link)
-        # Break hard links before modifying the three website files.
-        for name in ('index.html', 'release.json', 'app.js'):
+        # Break hard links before modifying generated website files.
+        for name in ('index.html', 'release.json', 'app.js', 'tecnica.html'):
+            if not (candidate / name).exists(): continue
             data = (candidate / name).read_bytes()
             (candidate / name).unlink()
             (candidate / name).write_bytes(data)

@@ -126,6 +126,36 @@ class DeliveryTests(unittest.TestCase):
         (self.src / self.package['archive']).write_bytes(b'changed')
         with self.assertRaises(ValueError): receiver.validate(self.src, self.updates, self.public)
 
+    def test_marketing_release_keeps_technical_details_out_of_home(self):
+        site = self.root / 'marketing'
+        site.mkdir()
+        (site / 'index.html').write_text('<html data-site-version="2"><a data-platform="linux">Linux</a><article id="linux">old</article></html>')
+        (site / 'tecnica.html').write_text('<!-- release:linux -->old<!-- /release:linux -->')
+        (site / 'release.json').write_text('{}')
+        (site / 'app.js').write_text('')
+        receiver.render_site(site, [self.package])
+        home = (site / 'index.html').read_text()
+        technical = (site / 'tecnica.html').read_text()
+        self.assertIn(self.package['installer'], home)
+        self.assertIn('Guida all’installazione', home)
+        for jargon in ('SHA-256', 'libsecret', 'bash install.sh', 'build '):
+            self.assertNotIn(jargon, home)
+            self.assertIn(jargon, technical)
+
+    def test_modern_publish_does_not_modify_previous_technical_page(self):
+        site = self.root / 'modern-site'
+        previous = site / 'releases' / 'previous'
+        (previous / 'downloads').mkdir(parents=True)
+        (previous / 'index.html').write_text('<html data-site-version="2"><a data-platform="linux">Linux</a><article id="linux">old</article></html>')
+        original = '<!-- release:linux -->previous metadata<!-- /release:linux -->'
+        (previous / 'tecnica.html').write_text(original)
+        (previous / 'release.json').write_text('{}')
+        (previous / 'app.js').write_text('')
+        (site / 'current').symlink_to(previous)
+        receiver.publish(self.src, [self.package], self.updates, site)
+        self.assertEqual((previous / 'tecnica.html').read_text(), original)
+        self.assertIn(self.package['installer'], (site / 'current/tecnica.html').read_text())
+
     def test_unsafe_release_directory_rejected(self):
         self.write_signed(self.src / 'delivery.json', dict(packages=[dict(self.package, commit='../../escape')]))
         with self.assertRaises(ValueError): receiver.validate(self.src, self.updates, self.public)
