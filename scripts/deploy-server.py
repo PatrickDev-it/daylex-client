@@ -112,7 +112,6 @@ def render_site(dest, packages):
             text = re.sub(pattern, lambda _: article(p), text, count=1, flags=re.S)
         elif platform == 'linux':
             text = text.replace('</article>', '</article>' + article(p), 1)
-            text = text.replace('</a></div>\n', '</a><a href="#linux" data-platform="linux">Linux</a></div>\n', 1)
         else:
             raise ValueError('Website platform section missing')
         info[platform] = dict(url='downloads/' + p['installer'], bytes=p['installer_size'],
@@ -124,8 +123,10 @@ def render_site(dest, packages):
             text = text.replace('data-platform="macos">macOS</a>', 'data-platform="macos">macOS</a><a href="#linux" data-platform="linux">Linux</a>', 1)
         text = text.replace('Posso installarlo su Windows ARM o Linux?', 'Quali sistemi sono supportati?')
         text = text.replace('Il pacchetto attuale è destinato a Windows con processore Intel o AMD a 64 bit. Windows ARM e Linux non sono ancora verificati per questa distribuzione.',
-                            'Windows supporta Intel e AMD a 64 bit. Linux richiede Ubuntu 24.04 o successivo a 64 bit con GTK 3 e portachiavi di sistema. La disponibilità per Mac è indicata nella scheda macOS.')
+                            'Windows supporta Intel e AMD a 64 bit. Per Linux, la versione minima di Ubuntu è indicata nella scheda di download. La disponibilità per Mac è indicata nella scheda macOS.')
         text = text.replace('Scarica Daylex — App per Windows e macOS', 'Scarica Daylex — App desktop')
+    text = text.replace('Apri il file e segui la procedura. Se manca Microsoft Visual C++, il setup ne propone l’installazione con autorizzazione amministrativa.',
+                        'Apri il file e segui la procedura. I componenti Microsoft Visual C++ necessari sono inclusi nel pacchetto.')
     if any(p['platform'] == 'macos' for p in packages):
         text = text.replace('La guida macOS sarà pubblicata insieme al relativo installer.',
                             'Su macOS, apri il DMG e trascina Daylex in Applicazioni, poi inserisci la chiave API.')

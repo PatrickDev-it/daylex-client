@@ -77,7 +77,7 @@ class DeliveryTests(unittest.TestCase):
         previous = site / 'releases' / 'previous'
         (previous / 'downloads').mkdir(parents=True)
         (previous / 'downloads' / 'old.exe').write_bytes(b'old')
-        original = '<div><a data-platform="macos">macOS</a></div><article id="windows">old</article><article id="macos">unavailable</article>'
+        original = '<div><a href="#guide">guide</a></div>\n<div class="platforms"><a data-platform="macos">macOS</a></div><article id="windows">old</article><article id="macos">unavailable</article>'
         (previous / 'index.html').write_text(original)
         (previous / 'release.json').write_text('{}')
         (previous / 'app.js').write_text('')
@@ -88,6 +88,7 @@ class DeliveryTests(unittest.TestCase):
         self.assertEqual((previous / 'index.html').read_text(), original)
         self.assertEqual((current / 'downloads' / 'old.exe').read_bytes(), b'old')
         self.assertIn('data-platform="linux"', (current / 'index.html').read_text())
+        self.assertIn('<div class="platforms"><a data-platform="macos">macOS</a><a href="#linux" data-platform="linux">Linux</a></div>', (current / 'index.html').read_text())
         self.assertIn(self.package['installer'], (current / 'index.html').read_text())
         self.assertEqual(receiver.verified(self.updates / 'linux.json', self.public), self.manifest)
 
