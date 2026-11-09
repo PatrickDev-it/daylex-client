@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-09T21:05:31.639618+00:00",
+  "generatedAt": "2026-11-09T21:21:06.666005+00:00",
   "title": "Design System: Daylex homepage",
   "extensions": {
     "colorMeta": {
@@ -214,16 +214,16 @@
       "name": "Revision controls",
       "kind": "custom",
       "refersTo": "revision-control",
-      "description": "Three human-selected stages; selected styling uses graphite and mint. This preview shows the states without application scripting.",
-      "html": "<div class=\"ds-stages\" role=\"group\" aria-label=\"Esplora l’esempio di revisione\"><button aria-pressed=\"false\">La bozza</button><button aria-pressed=\"true\">Con l’IA</button><button aria-pressed=\"false\">La tua revisione</button></div>",
-      "css": ".ds-stages{display:flex;gap:3px;background:var(--sheet,#171717);padding:12px}.ds-stages button{font-family:Archivo,sans-serif;border:0;border-radius:0;background:transparent;color:var(--muted,#b5b5b5);padding:11px 13px;min-height:44px;font-size:14px;line-height:1.55;cursor:pointer;transition:background .2s,color .2s}.ds-stages button:hover{color:var(--ink,#f3f3f3);background:var(--layer,#242424)}.ds-stages button[aria-pressed=true]{background:var(--layer,#242424);color:var(--mint,#dff4e2)}.ds-stages button:focus-visible{outline:3px solid var(--cyan,#00aeb3);outline-offset:5px;outline-offset:-3px}@media(prefers-reduced-motion:reduce){.ds-stages button{transition:none}}"
+      "description": "One next-step action for the optional draft, AI proposal and final human revision sequence; final state offers replay.",
+      "html": "<div class=\"ds-stages\"><button type=\"button\">Vedi la proposta dell’IA</button></div>",
+      "css": ".ds-stages{display:flex;gap:3px;background:var(--sheet,#171717);padding:12px}.ds-stages button{font-family:Archivo,sans-serif;border:0;border-radius:0;background:var(--layer,#242424);color:var(--mint,#dff4e2);padding:11px 14px;min-height:44px;font-size:14px;line-height:1.55;cursor:pointer;transition:background .2s,color .2s}.ds-stages button:hover{color:var(--black,#000);background:var(--mint,#dff4e2)}.ds-stages button:focus-visible{outline:3px solid var(--cyan,#00aeb3);outline-offset:5px;outline-offset:-3px}@media(prefers-reduced-motion:reduce){.ds-stages button{transition:none}}"
     },
     {
       "name": "Folio sheet",
       "kind": "card",
       "refersTo": "folio-sheet",
       "description": "Opposed square steps and readable illustrative document wording.",
-      "html": "<article class=\"ds-folio\"><h2>Oggetto dell’incarico</h2><p>L’incarico comprende <mark>l’analisi della documentazione</mark> e la redazione di una relazione conclusiva.</p><small>Esempio guidato di revisione.</small></article>",
+      "html": "<article class=\"ds-folio\"><h2>Oggetto dell’incarico</h2><p>Ci occupiamo dell’analisi dei documenti e vi inviamo una relazione con quanto emerso.</p><small>Esempio guidato di revisione.</small></article>",
       "css": ".ds-folio{font-family:Archivo,sans-serif;padding:28px;background:var(--sheet,#171717);color:var(--ink,#f3f3f3);clip-path:polygon(0 0,calc(100% - var(--cut,24px)) 0,calc(100% - var(--cut,24px)) var(--cut,24px),100% var(--cut,24px),100% 100%,var(--cut,24px) 100%,var(--cut,24px) calc(100% - var(--cut,24px)),0 calc(100% - var(--cut,24px)));max-width:520px}.ds-folio h2{font-size:22px;font-weight:550;line-height:1.25;letter-spacing:-.025em;margin:0}.ds-folio p{font-size:22px;line-height:1.5;letter-spacing:-.02em;margin:24px 0 20px;max-width:29ch}.ds-folio mark{background:transparent;color:var(--mint,#dff4e2)}.ds-folio small{font-size:14px;line-height:1.5;color:var(--muted,#b5b5b5)}@media(max-width:600px){.ds-folio{--cut:18px}}"
     },
     {
@@ -278,7 +278,7 @@
     ],
     "donts": [
       "Don't add colorful section fills, gradients, glass, shadows, pill controls or decorative feature-card grids.",
-      "Don't introduce entrance animations, scroll reveals, automatic revision loops or particle text.",
+      "Don't expand the owner-requested device entrance into page-wide reveals or automatic revision loops.",
       "Don't invent testimonials, adoption metrics, certifications or proof of brand recognition.",
       "Don't turn the background field's diagonal cut into the reusable folio silhouette.",
       "Don't hide downloads behind JavaScript, tabs or a carousel, or remove the existing release hooks."

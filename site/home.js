@@ -9,17 +9,21 @@ const stages = {
   review: {text: 'L’incarico comprende l’analisi della documentazione e la redazione di una relazione conclusiva.', note: 'Una formulazione più precisa, da rivedere con il tuo criterio.', label: 'La proposta dell’intelligenza artificiale'},
   final: {text: 'L’incarico comprende l’analisi della documentazione fornita dal cliente e la redazione di una relazione conclusiva.', note: 'Aggiungi il dettaglio che conta. La decisione finale è tua.', label: 'La tua revisione finale'}
 };
+const stageOrder = ['draft', 'review', 'final'];
+const nextLabels = ['Vedi la proposta dell’IA', 'Vedi la revisione finale', 'Rivedi l’esempio'];
+let exampleStage = 0;
 if (controls && sheet && text && note && status) {
   controls.hidden = false;
   controls.addEventListener('click', event => {
-    const button = event.target.closest('button[data-stage]');
-    if (!button || button.getAttribute('aria-pressed') === 'true') return;
-    const stage = stages[button.dataset.stage];
-    if (!stage) return;
-    controls.querySelectorAll('button').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+    const button = event.target.closest('#example-next');
+    if (!button) return;
+    exampleStage = (exampleStage + 1) % stageOrder.length;
+    const stageKey = stageOrder[exampleStage];
+    const stage = stages[stageKey];
+    button.textContent = nextLabels[exampleStage];
     text.replaceChildren();
     const phrase = 'l’analisi della documentazione';
-    const at = button.dataset.stage === 'review' ? stage.text.indexOf(phrase) : -1;
+    const at = stageKey === 'review' ? stage.text.indexOf(phrase) : -1;
     if (at >= 0) {
       text.append(stage.text.slice(0, at));
       const highlighted = document.createElement('mark');
@@ -43,9 +47,9 @@ function downloadChoice(hints = {}) {
   const ua = navigator.userAgent || '';
   const platform = hints.platform || navigator.userAgentData?.platform || navigator.platform || '';
   const appleTouch = /Mac/i.test(platform) && navigator.maxTouchPoints > 1;
-  if (/iPad/i.test(ua) || appleTouch) return {id: 'ios', label: 'Installa su iPad'};
-  if (/iPhone|iPod/i.test(ua)) return {id: 'ios', label: 'Installa su iPhone'};
-  if (/Android/i.test(ua + platform)) return {id: 'pwa', label: 'Installa su Android'};
+  if (/iPad/i.test(ua) || appleTouch) return {id: 'ios', label: 'Guida per iPad'};
+  if (/iPhone|iPod/i.test(ua)) return {id: 'ios', label: 'Guida per iPhone'};
+  if (/Android/i.test(ua + platform)) return {id: 'pwa', label: 'Guida per Android'};
   if (/CrOS/i.test(ua)) return {id: 'pwa', label: 'Installa l’app web'};
   if (/Windows|Win32|Win64/i.test(ua + platform)) {
     const version = parseInt(hints.platformVersion, 10);
@@ -72,16 +76,20 @@ function showDownloadChoice(choice) {
   if (!choice) return;
   const target = document.getElementById(choice.id);
   if (!target) return;
+  let primaryRecommended = false;
   document.querySelectorAll('[data-smart-download]').forEach(action => {
     // Do not change a target once the person is interacting with that action.
     if (action.matches(':hover, :focus')) return;
     action.href = target.href;
+    action.dataset.downloadTarget = choice.id;
     action.toggleAttribute('download', target.hasAttribute('download'));
     action.querySelector('.cta-label').textContent = choice.label;
     const icon = action.querySelector('.cta-os');
     icon.src = target.querySelector('img').src;
     icon.hidden = false;
+    if (action.classList.contains('hero-action')) primaryRecommended = true;
   });
+  if (primaryRecommended) document.getElementById('device-heading').textContent = 'Altre versioni disponibili.';
 }
 
 async function personalizeDownloads() {
@@ -99,6 +107,56 @@ async function personalizeDownloads() {
   showDownloadChoice(downloadChoice(hints));
 }
 personalizeDownloads();
+
+const installGuides = {
+  windows: {name: 'Windows', help: 'assistenza.html#windows', steps: [
+    'Quando il download termina, apri il file ricevuto.',
+    'Segui la procedura di installazione e apri Daylex dal menu Start.',
+    'Inserisci il codice fornito dal referente del tuo studio.'
+  ]},
+  macos: {name: 'macOS', help: 'assistenza.html#macos', steps: [
+    'Quando il download termina, apri il file ricevuto.',
+    'Trascina Daylex in Applicazioni, poi aprilo. Se il Mac ne blocca l’apertura, segui la guida per macOS.',
+    'Inserisci il codice fornito dal referente del tuo studio.'
+  ]},
+  linux: {name: 'Linux', help: 'tecnica.html#linux', steps: [
+    'Quando il download termina, estrai il file in una cartella.',
+    'Segui la guida per Linux per verificare i requisiti e avviare Daylex.',
+    'Inserisci il codice fornito dal referente del tuo studio.'
+  ]}
+};
+const nextSteps = document.getElementById('download-next');
+const retryDownload = document.getElementById('retry-download');
+document.addEventListener('click', event => {
+  if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+  const link = event.target.closest('a');
+  if (!link || !nextSteps || !retryDownload) return;
+  const targetId = link.dataset.downloadTarget;
+  const target = targetId ? document.getElementById(targetId) : link;
+  const guide = installGuides[target?.dataset.download];
+  if (!guide || !link.hasAttribute('download')) return;
+  // Preserve the native download. The page can acknowledge a request, not completion.
+  nextSteps.hidden = false;
+  document.getElementById('download-next-title').textContent = 'Prosegui su ' + guide.name + '.';
+  document.getElementById('download-feedback').replaceChildren(document.createTextNode(
+    link === retryDownload ? 'Nuova richiesta inviata al browser. Cerca il file nei download.' : 'Richiesta inviata al browser. Cerca il file nei download.'
+  ));
+  const list = document.getElementById('installation-steps');
+  list.replaceChildren(...guide.steps.map(instruction => {
+    const item = document.createElement('li');
+    item.textContent = instruction;
+    return item;
+  }));
+  retryDownload.href = target.href;
+  retryDownload.dataset.downloadTarget = target.id;
+  const help = document.getElementById('installation-help');
+  help.href = guide.help;
+  help.textContent = 'Guida per ' + guide.name;
+  if (link !== retryDownload) {
+    document.getElementById('download-next-title').focus({preventScroll: true});
+    nextSteps.scrollIntoView({behavior: reducedMotion.matches ? 'instant' : 'smooth', block: 'nearest'});
+  }
+});
 
 // One bounded entrance for the device choices; links stay visible if JS fails.
 const downloadList = document.querySelector('.download-list');

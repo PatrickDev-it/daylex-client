@@ -28,3 +28,19 @@
 .primary-action:hover .cta-os{filter:brightness(0)}
 @media(max-width:1250px){.hero-action{display:inline-flex;margin-top:22px}}
 @media(max-width:600px){.primary-action{font-size:14px;padding-inline:16px;gap:12px}}
+
+/* Explain prerequisites before download; disclose OS instructions after the request. */
+.hero-copy .access-note{max-width:410px;margin-top:16px}
+.access-note a,.download-next a{text-decoration:underline;text-decoration-thickness:1px}
+.access-note a:hover,.download-next a:hover{color:var(--mint)}
+.example-controls #example-next{color:var(--mint);background:var(--layer);text-align:left;font-size:var(--small);padding-inline:14px}
+.example-controls #example-next:hover{background:var(--mint);color:var(--black)}
+.download-next{margin-top:32px;padding:28px 8px 8px;scroll-margin-block:24px}
+.download-next h3:focus-visible{outline:3px solid var(--cyan);outline-offset:5px}
+#download-feedback{margin-top:12px;color:var(--muted)}
+.download-next ol{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;margin:24px 0;padding-left:24px}
+.download-next li{padding-left:4px}
+.download-next-actions{display:flex;flex-wrap:wrap;gap:12px 28px}
+.download-next-actions a{display:inline-flex;align-items:center;min-height:44px}
+.download-recovery{font-size:var(--small);color:var(--muted);max-width:70ch;margin-top:12px}
+@media(max-width:600px){.hero-copy .access-note{font-size:13px;margin-top:12px}.download-next{padding-inline:4px}.download-next ol{display:block;margin-block:20px}.download-next li+li{margin-top:16px}.download-next-actions{display:block}.download-next-actions a{display:flex}.example-controls #example-next{font-size:13px}}

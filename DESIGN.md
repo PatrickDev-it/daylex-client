@@ -87,13 +87,13 @@ components:
   download-link-hover:
     backgroundColor: "{colors.layer}"
   revision-control:
-    backgroundColor: "transparent"
-    textColor: "{colors.muted}"
-    rounded: "{rounded.square}"
-    padding: "11px 13px"
-  revision-control-selected:
     backgroundColor: "{colors.layer}"
     textColor: "{colors.mint}"
+    rounded: "{rounded.square}"
+    padding: "11px 14px"
+  revision-control-hover:
+    backgroundColor: "{colors.mint}"
+    textColor: "{colors.black}"
   folio-sheet:
     backgroundColor: "{colors.sheet}"
     textColor: "{colors.ink}"
@@ -129,7 +129,7 @@ Neutral black and graphite carry the composition; color identifies an action, fo
 - **Control cyan** (`cyan`): keyboard focus outlines and the AI margin symbol.
 
 ### Secondary
-- **Revision mint** (`mint`): selected revision controls, marked wording, action/link hover, text selection and the favicon mark. It is a local emphasis, never a large section fill.
+- **Revision mint** (`mint`): the next-step revision control, marked wording, action/link hover, text selection and the favicon mark. It is a local emphasis, never a large section fill.
 
 ### Neutral
 - **Black field** (`black`): the page and opening ground; dark text on mint.
@@ -176,7 +176,7 @@ The Daylex mark repeats opposed rectilinear strokes. Its navigation form uses cu
 
 ### Primary action
 
-A rounded, compact green action with a 54px minimum height, 14px text/icon gap and frontmatter padding. Hover changes to mint with black text; active press moves down 2px. State transitions last 0.2s; the transform uses the shared easing. The cyan keyboard outline is 3px with a 5px offset. The opening and closing actions both remain available on mobile. Local OS detection names the destination and copies its current release-managed anchor; iOS/Android use the guided PWA. Windows 10/11 are distinguished only with reliable Client Hints; otherwise the label is Windows. Known unsupported CPU targets use the PWA; unknown platforms retain manual selection. This is platform routing, not a hardware compatibility certification. No download starts without a click.
+A rounded, compact green action with a 54px minimum height, 14px text/icon gap and frontmatter padding. Hover changes to mint with black text; active press moves down 2px. State transitions last 0.2s; the transform uses the shared easing. The cyan keyboard outline is 3px with a 5px offset. The opening and closing actions both remain available on mobile. Put the studio-code prerequisite and direct access-help link beside the opening action. After a native request, reveal the selected OS installation steps inline, focus their heading, and expose retry plus specific help. The native download is not intercepted, no modal or confirmation is added, and the page never claims it observed completion. Local OS detection names the destination and copies its current release-managed anchor; iOS/Android use the guided PWA. Windows 10/11 are distinguished only with reliable Client Hints; otherwise the label is Windows. Known unsupported CPU targets use the PWA; unknown platforms retain manual selection. This is platform routing, not a hardware compatibility certification. No download starts without a click.
 
 ### Device routes
 
@@ -186,9 +186,9 @@ Keep all six routes as direct HTML anchors usable without JavaScript. Release in
 
 ### Revision folio
 
-The sheet uses the stepped geometry, a muted backing layer, a short document title, readable document wording, a cyan AI-margin symbol and muted explanation. Mint marks the changed phrase only in the AI stage. Its three real buttons use `aria-pressed`, with a graphite/mint selected state and a cyan inset focus outline. An explicit caption identifies an illustrative guided example; it is not presented as a live AI response.
+The sheet uses the stepped geometry, a muted backing layer, a short document title, readable document wording, a cyan AI-margin symbol and muted explanation. Mint marks the changed phrase only in the AI stage. A single action names the next stage: AI proposal, final human revision, then replay. It uses graphite/mint with a cyan inset keyboard focus outline. Start from the draft; do not suggest a live AI request is running. An explicit caption identifies an illustrative guided example; it is not presented as a live AI response.
 
-JavaScript reveals the controls and changes between the initial draft, AI suggestion and human revision. A polite status region announces the selected text. Without JavaScript the labeled example remains readable and the inactive controls remain hidden. The document animation is the user-triggered 0.38s revision: text moves from 8px below at 0.5 opacity to its resting position. The owner explicitly requests one progressive entrance for the six device choices: 640ms per item, 110ms stagger, 1190ms total, once on entering view. Focus or pointer entry immediately reveals that item. All links are visible by default without JavaScript; reduced motion skips and cancels the sequence. No other scroll reveals, auto-cycling states or continuous animation. Reduced motion disables animations and transitions and changes smooth anchor scrolling to immediate scrolling.
+JavaScript reveals the next-step control and progresses between the initial draft, AI suggestion and human revision. A polite status region announces each stage and its text. Without JavaScript the labeled example remains readable and the inactive controls remain hidden. The document animation is the user-triggered 0.38s revision: text moves from 8px below at 0.5 opacity to its resting position. The owner explicitly requests one progressive entrance for the six device choices: 640ms per item, 110ms stagger, 1190ms total, once on entering view. Focus or pointer entry immediately reveals that item. All links are visible by default without JavaScript; reduced motion skips and cancels the sequence. No other scroll reveals, auto-cycling states or continuous animation. Reduced motion disables animations and transitions and changes smooth anchor scrolling to immediate scrolling.
 
 ### Navigation and wordmark
 

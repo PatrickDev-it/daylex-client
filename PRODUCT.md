@@ -37,3 +37,6 @@ The working application, real public releases, the client's actual document temp
 - Explain setup in ordinary language; retain truthful installation help.
 - Keep release automation, existing downloads and the browser app working.
 - Use movement to explain the document workflow; respect reduced motion.
+
+## Homepage experience commitments
+Recommend a platform without removing manual choice. Explain the studio code before download; reveal installation help after the native request. Acknowledge requests without claiming download or installation completion. The homepage never collects credentials or pretends its static AI example is a live result. See UX_STRATEGY.md for the journey audit.
