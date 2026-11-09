@@ -6,9 +6,9 @@ The user's black/charcoal, cyan and green reference is the visual authority. Pri
 
 ## Direction
 
-An editorial opening paired with a document taking shape. Large white type establishes the benefit, the green download action is next, and a pale document surface makes the result tangible. Cyan marks the guided onboarding section; charcoal carries supporting information. The technical details have their own route.
+A premium download gateway: a large white/cyan statement on near-black, immediately paired with six platform choices. Green emphasizes the two Windows installers; charcoal and subdued cyan distinguish desktop and web entry points. OS marks sit to the left of each label. On mobile the same six choices fit the opening viewport, before product detail. All download choices are visible without JavaScript; no carousel, hidden tabs or FAQ.
 
-The direction exploration used Impeccable seed `f38da45085702a1e7b9faa0b270b8446` and Taste's `type-only-statement` draw. The user-pinned reference overrides the unrelated challenger materials and the draw's image-free hero: an actual document example is necessary product proof. Retain the challengers' discipline of distinct states and sequential reading, not tile motifs, phosphor type or ornamental folds. UI/UX Pro Max confirmed product demonstration and progressive disclosure; its orange/light palette is superseded by the owner's explicit colors.
+The real workspace capture follows the download gateway. Supporting content stays concise. The PWA installation route at `/app/installa.html` shares the app's manifest identity and existing service-worker scope, with a native install prompt when offered by the browser and device-specific fallback instructions.
 
 ## Tokens
 
@@ -21,7 +21,7 @@ The direction exploration used Impeccable seed `f38da45085702a1e7b9faa0b270b8446
 
 ## Motion
 
-The hero request leads into the example document; its paragraphs arrive in reading order. A visitor can switch between asking, revising and preparing, or replay the short sequence. Sections enter once, with their title preceding supporting content. Buttons respond immediately. No endless loop, scroll lock or invented live generation. Reduced motion shows stable content and preserves interaction.
+Content arrives once on scroll; the main statement has a short entrance. Download controls are visible immediately and respond to pointer/focus, without delaying the primary action. Reduced motion keeps the page still and fully functional.
 
 ## Language
 
@@ -29,16 +29,16 @@ Public copy: `codice di attivazione`, `referente dello studio`, `scarica`, `apri
 
 ## Release integration
 
-`data-site-version="2"` selects the concise download renderer. Desktop releases update home download links and technical metadata together. Public pages remain usable without JavaScript. Never replace the PWA or remove historical installers during a site deployment.
+`data-site-version="3"` refreshes every `data-download` link, including both Windows entry points, while preserving icons and labels. Desktop releases update home download links and technical metadata together. Public pages remain usable without JavaScript. Never replace the PWA or remove historical installers during a site deployment.
 
 
 ## Verification and scoped choices
 
 Browser checks cover 1440, 768, 390 and 320px, keyboard selection, direct platform links,
-replay/pause, reduced motion, and the no-JavaScript fallback. Delivery tests cover future release
+native PWA prompt states, reduced motion, and the no-JavaScript fallback. Delivery tests cover future release
 rendering and preservation of the previous technical page.
 The host OS requests reduced motion in the inspection browser; normal-motion inspection explicitly
-emulates no-preference, while keeping the separate reduced-motion pass. Two purposeful product
-visuals (a controlled illustrative document and a real workspace capture) replace stock imagery and
-video. Inter preserves continuity with the product. The full-width cyan section's inner frame has
+emulates no-preference, while keeping the separate reduced-motion pass. One real workspace capture replaces stock imagery and video; the opening visual priority is the download selection. Inter preserves continuity with the product. The full-width cyan section's inner frame has
 symmetric gutters; automatic padding and text-ink margin warnings do not indicate clipped content.
+
+The platform grid is a deliberate exception to generic icon-card avoidance: the owner explicitly requests OS icons and immediately visible choices. These are direct download controls, not decorative feature cards. The footer wordmark is branding; the preceding conversion button is not an eyebrow label. Nine one-time content entrances are sufficient; controls remain visible immediately.

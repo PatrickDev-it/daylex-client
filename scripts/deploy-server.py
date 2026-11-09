@@ -129,14 +129,20 @@ def marketing_article(p):
 def render_site(dest, packages):
     index = dest / 'index.html'
     text = index.read_text(encoding='utf-8')
-    marketing = 'data-site-version="2"' in text
+    gateway = 'data-site-version="3"' in text
+    marketing = gateway or 'data-site-version="2"' in text
     technical = dest / 'tecnica.html'
     technical_text = technical.read_text(encoding='utf-8') if marketing else None
     info = json.loads((dest / 'release.json').read_text())
     for p in packages:
         platform = p['platform']
         pattern = rf'<article id="{platform}">.*?</article>'
-        if re.search(pattern, text, re.S):
+        if gateway:
+            link_pattern = rf'(<a\b[^>]*data-download="{platform}"[^>]*\bhref=")[^"]*(")'
+            text, count = re.subn(link_pattern, lambda match: match[1] + 'downloads/' + html.escape(p['installer'], quote=True) + match[2], text)
+            if not count:
+                raise ValueError('Website download link missing')
+        elif re.search(pattern, text, re.S):
             text = re.sub(pattern, lambda _: marketing_article(p) if marketing else article(p), text, count=1, flags=re.S)
         elif platform == 'linux':
             text = text.replace('</article>', '</article>' + article(p), 1)

@@ -70,6 +70,18 @@ Installed clients check `https://api.daylex.it/updates` at startup, every 30 min
 Downloads are automatic. Installation follows the user's restart action so ongoing work is saved.
 Linux installs into a user-owned bundle with `bash install.sh`; system-managed folders cannot self-update.
 
+## Guided PWA installation
+
+`/app/installa.html` is the public installation entry point for iPhone/iPad and the general PWA.
+It uses the existing `/app/manifest.json` identity and start URL, so it installs Daylex rather than
+creating a second application. `install.js` listens for `beforeinstallprompt`, invokes it only after
+a user click, handles dismissal/failure, and reports completion only on `appinstalled` or when
+already in standalone mode. Safari and unsupported browsers receive platform-specific instructions.
+See [MDN install prompt guidance](https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeinstallprompt_event)
+and [Apple's iPhone installation guide](https://support.apple.com/it-it/guide/iphone/iphea86e5236/ios).
+The web workflow packages and signs these files together with the PWA; native rebuilds are unnecessary
+for changes limited to the website and these static web resources.
+
 ## Production setup
 
 The companion PWA lives at `https://daylex.it/app/`. Its separate `Build and publish PWA` workflow

@@ -156,6 +156,32 @@ class DeliveryTests(unittest.TestCase):
         self.assertEqual((previous / 'tecnica.html').read_text(), original)
         self.assertIn(self.package['installer'], (site / 'current/tecnica.html').read_text())
 
+    def test_gateway_updates_both_windows_choices_without_losing_icons(self):
+        site = self.root / 'gateway'
+        site.mkdir()
+        link = '<a data-download="windows" href="downloads/old.exe"><img src="windows.svg">Windows {}</a>'
+        (site / 'index.html').write_text('<html data-site-version="3">' + link.format(11) + link.format(10) + '<a href="/app/installa.html">PWA</a></html>')
+        (site / 'tecnica.html').write_text('<!-- release:windows -->old<!-- /release:windows -->')
+        (site / 'release.json').write_text('{}')
+        (site / 'app.js').write_text('')
+        package = dict(self.package, platform='windows', installer='Daylex-Setup-new.exe')
+        receiver.render_site(site, [package])
+        home = (site / 'index.html').read_text()
+        self.assertEqual(home.count('downloads/Daylex-Setup-new.exe'), 2)
+        self.assertEqual(home.count('<img src="windows.svg">'), 2)
+        self.assertIn('/app/installa.html', home)
+        self.assertNotIn('SHA-256', home)
+        self.assertIn('Daylex-Setup-new.exe', (site / 'tecnica.html').read_text())
+
+    def test_gateway_refuses_missing_download_instead_of_silent_stale_link(self):
+        site = self.root / 'invalid-gateway'
+        site.mkdir()
+        (site / 'index.html').write_text('<html data-site-version="3"></html>')
+        (site / 'tecnica.html').write_text('<!-- release:linux -->old<!-- /release:linux -->')
+        (site / 'release.json').write_text('{}')
+        with self.assertRaisesRegex(ValueError, 'download link missing'):
+            receiver.render_site(site, [self.package])
+
     def test_unsafe_release_directory_rejected(self):
         self.write_signed(self.src / 'delivery.json', dict(packages=[dict(self.package, commit='../../escape')]))
         with self.assertRaises(ValueError): receiver.validate(self.src, self.updates, self.public)

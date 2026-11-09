@@ -1,0 +1,1 @@
+Apple and Linux icons: Simple Icons 16.1.0, https://github.com/simple-icons/simple-icons/tree/16.1.0, CC0 (LICENSE.md). Marks identify compatible platforms; they do not imply endorsement. Windows geometry and PWA installation icon are authored SVG.
