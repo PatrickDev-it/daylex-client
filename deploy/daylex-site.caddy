@@ -7,7 +7,16 @@ daylex.it {
         Referrer-Policy no-referrer
     }
     redir /app /app/ 308
-    handle /v1/* {
+    # Never expose the management plane through the public site or PWA origin.
+    @management path /admin /admin/* /v1/admin /v1/admin/*
+    handle @management {
+        respond 404
+    }
+    @clientApi {
+        path /v1/*
+        not path /v1/admin /v1/admin/*
+    }
+    handle @clientApi {
         reverse_proxy 127.0.0.1:8787 {
             flush_interval -1
         }
