@@ -22,7 +22,12 @@ release = json.loads(signed['payload'])
 def check(item):
     name, sha = item
     with fetch('/app/' + urllib.parse.quote(name)) as response:
-        assert hashlib.file_digest(response, 'sha256').hexdigest() == sha, f'Public asset differs: {name}'
+        body = response.read()
+        # What was served, so a rewrite by the edge in front of the origin can be told from a stale file.
+        assert hashlib.sha256(body).hexdigest() == sha, (
+            f'Public asset differs: {name}: {len(body)} bytes, cf-cache-status={response.headers.get("cf-cache-status")}, '
+            f'content-encoding={response.headers.get("Content-Encoding")}'
+            + (f', body: {body[:2000]!r}' if name.endswith('.html') else ''))
         if name.endswith(('.js', '.mjs')): assert 'javascript' in response.headers.get('Content-Type', ''), name
 with ThreadPoolExecutor(max_workers=4) as pool:
     list(pool.map(check, release['assets'].items()))
