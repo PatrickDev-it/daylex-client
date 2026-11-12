@@ -41,8 +41,10 @@ daylex.it {
         }
         # Browsers revalidate every page; Cloudflare may keep it 60 s (s-maxage), so a new release.json shows
         # within a minute without a purge. The edge caches HTML only with a Cache Rule for daylex.it.
+        # no-transform: pages are signed and checked by hash after each publication; Cloudflare must not inject
+        # scripts (Web Analytics), which the CSP above would block anyway.
         @page not path /downloads/*
-        header @page Cache-Control "public, max-age=0, must-revalidate, s-maxage=60"
+        header @page Cache-Control "public, max-age=0, must-revalidate, s-maxage=60, no-transform"
         file_server
     }
     handle_errors {
