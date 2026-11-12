@@ -3,14 +3,12 @@ import hashlib
 import json
 from pathlib import Path
 import re
-import urllib.request
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+from live_http import open_live as get
 
 root = Path(__file__).resolve().parents[1]
 public = re.search(r"releasePublicKey = '([^']+)'", (root / 'app/lib/features/update/update_channel.g.dart').read_text())[1]
 key = Ed25519PublicKey.from_public_bytes(base64.b64decode(public))
-def get(url):
-    return urllib.request.urlopen(urllib.request.Request(url, headers={'Cache-Control': 'no-cache'}), timeout=60)
 for file in (root / 'release-input').glob('*-package.json'):
     package = json.loads(file.read_text())
     with get(f'https://api.daylex.it/updates/{package["platform"]}.json') as response:
