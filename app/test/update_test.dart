@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' show AppExitResponse;
 
 import 'package:cryptography/cryptography.dart';
 import 'package:flutter/material.dart';
@@ -81,6 +82,7 @@ class _FakeInstaller extends Installer {
   _FakeInstaller([this._problem]);
 
   final InstallProblem? _problem;
+  _FakeProcess? started;
 
   @override
   String get target => 'C:\\Daylex';
@@ -89,7 +91,16 @@ class _FakeInstaller extends Installer {
   InstallProblem? problem() => _problem;
 
   @override
-  Future<Process?> launch(File archive, {required Directory work, required File log, required String expectedSha256}) async => null;
+  Future<Process?> launch(File archive, {required Directory work, required File log, required String expectedSha256}) async =>
+      started = _FakeProcess();
+}
+
+/// The installer script: all the app may do to it is stop it.
+class _FakeProcess extends Fake implements Process {
+  var killed = false;
+
+  @override
+  bool kill([ProcessSignal signal = ProcessSignal.sigterm]) => killed = true;
 }
 
 class _FixedUpdate extends UpdateController {
@@ -244,23 +255,51 @@ void main() {
       await dir.delete(recursive: true);
     });
 
-    Future<UpdateState> settle(int installedBuild, {Installer? installer}) async {
+    Future<(ProviderContainer, UpdateState)> start(int installedBuild, {Installer? installer, void Function()? quit}) async {
       final env = UpdateEnvironment(
         source: UpdateSource(channel: channel.url, publicKey: signer.publicKey, platform: 'windows'),
         installer: installer ?? _FakeInstaller(),
         installed: () async => (version: '0.1.0', build: installedBuild),
         dir: dir,
+        quit: quit ?? () => fail('the app quit'),
       );
       final container = ProviderContainer(overrides: [updateEnvironmentProvider.overrideWithValue(env)]);
       addTearDown(container.dispose);
       container.listen(updateProvider, (_, _) {});
       for (var i = 0; i < 200; i++) {
         final state = container.read(updateProvider);
-        if (state.build != null && !state.checking && state.phase != UpdatePhase.downloading) return state;
+        if (state.build != null && !state.checking && state.phase != UpdatePhase.downloading) return (container, state);
         await Future<void>.delayed(const Duration(milliseconds: 20));
       }
       fail('the check did not settle');
     }
+
+    Future<UpdateState> settle(int installedBuild, {Installer? installer}) async =>
+        (await start(installedBuild, installer: installer)).$2;
+
+    /// Restarts to install with the app's exit handlers answering [response], as the close button's would.
+    Future<({_FakeProcess installer, int quits})> restart(AppExitResponse response) async {
+      final listener = AppLifecycleListener(onExitRequested: () async => response);
+      addTearDown(listener.dispose);
+      final installer = _FakeInstaller();
+      var quits = 0;
+      final (container, state) = await start(1, installer: installer, quit: () => quits++);
+      expect(state.phase, UpdatePhase.ready);
+      await container.read(updateProvider.notifier).install();
+      return (installer: installer.started!, quits: quits);
+    }
+
+    test('quits for the installer and leaves it running when the work is saved', () async {
+      final result = await restart(AppExitResponse.exit);
+      expect(result.quits, 1);
+      expect(result.installer.killed, isFalse);
+    });
+
+    test('stays open and stops the installer when the lawyer keeps unsaved work', () async {
+      final result = await restart(AppExitResponse.cancel);
+      expect(result.quits, 0);
+      expect(result.installer.killed, isTrue);
+    });
 
     test('downloads a newer release and offers the restart', () async {
       final state = await settle(1);

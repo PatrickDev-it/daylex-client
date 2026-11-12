@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui' show AppExitResponse, AppExitType;
+import 'dart:ui' show AppExitResponse;
 
-import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -111,7 +110,13 @@ typedef InstalledVersion = ({String version, int build});
 
 /// What the update checks need from this computer, overridden in tests.
 class UpdateEnvironment {
-  const UpdateEnvironment({required this.source, required this.installer, required this.installed, required this.dir});
+  const UpdateEnvironment({
+    required this.source,
+    required this.installer,
+    required this.installed,
+    required this.dir,
+    this.quit = _quitNow,
+  });
 
   /// Null where this build does not update itself: no release key built in, a platform without releases, tests.
   static UpdateEnvironment? forThisComputer() {
@@ -138,7 +143,12 @@ class UpdateEnvironment {
 
   /// The downloads, the installer's work folder and the record of the last installation.
   final Directory dir;
+
+  /// Ends this process once the work is saved, so the installer can replace the app and start the new one.
+  final void Function() quit;
 }
+
+void _quitNow() => exit(0);
 
 final updateEnvironmentProvider = Provider<UpdateEnvironment?>((ref) {
   final env = UpdateEnvironment.forThisComputer();
@@ -298,9 +308,11 @@ class UpdateController extends Notifier<UpdateState> {
       if (ref.mounted) _settle(env, release);
       return;
     }
-    // The way the window's close button quits: everything waiting to be saved is written first.
-    final response = await ServicesBinding.instance.exitApplication(AppExitType.cancelable);
-    if (response == AppExitResponse.exit) exit(0);
+    // The app's own exit handlers decide, as for the window's close button: they save the work and, if it cannot
+    // be saved, ask the lawyer. Not exitApplication(cancelable): the Windows engine answers "cancel" to it at once
+    // and quits later by itself, so the installer it had just started was killed and the app never came back.
+    final response = await WidgetsBinding.instance.handleRequestAppExit();
+    if (response == AppExitResponse.exit) return env.quit();
     updater?.kill();
     _log?.add('the app did not quit: the installer gives up and the update waits');
     _forgetAttempt(env);
