@@ -17,12 +17,20 @@ import '../app_actions.dart';
 import 'components/agent_markdown.dart';
 import 'components/component_registry.dart';
 import 'components/source_link.dart';
+import 'components/typed_reply.dart';
 import 'chat_header.dart';
 import 'composer.dart';
 import 'message_actions.dart';
 
-/// A reading column shared by legal answers and the request composer.
-const chatColumnWidth = 760.0;
+/// The reading column shared by legal answers and the request composer: it takes the room the window gives,
+/// less a margin on each side, from [chatColumnMinWidth] up to [chatColumnMaxWidth] (beyond it a line of
+/// prose is too long to read). Below the minimum the window itself is the limit.
+double chatColumnWidth(double available) => (available - 2 * chatColumnMargin)
+    .clamp(chatColumnMinWidth, chatColumnMaxWidth);
+
+const chatColumnMinWidth = 760.0;
+const chatColumnMaxWidth = 1180.0;
+const chatColumnMargin = 32.0;
 
 /// Prompts to try on an open document; the first two are also cards on the new-chat screen.
 List<String> chatSuggestions(AppLocalizations l) => [
@@ -58,53 +66,65 @@ class ChatView extends ConsumerWidget {
         if (running)
           AppShortcut.stopAgent.primary: () => agent.cancel(thread.id),
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ChatHeader(thread: thread),
-          Expanded(
-            child: ListenableBuilder(
-              listenable: chat,
-              builder: (context, _) => chat.messages.isEmpty
-                  ? _EmptyThread(thread: thread)
-                  : _Transcript(
-                      key: ValueKey(thread.id),
-                      chat: chat,
-                      threadId: thread.id,
-                    ),
-            ),
-          ),
-          Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: chatColumnWidth),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 4, 20, 18),
-                child: Composer(
-                  sessionId: thread.id,
-                  documentId: thread.documentId,
-                  projectId: thread.projectId,
-                  onPickDocument: (id) {
-                    if (id == null) return;
-                    ref
-                        .read(workspaceProvider.notifier)
-                        .openTab(PanelTab.preview(id));
-                  },
-                  onSend: (prompt) => agent.send(thread.id, prompt),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final column = chatColumnWidth(constraints.maxWidth);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ChatHeader(thread: thread),
+              Expanded(
+                child: ListenableBuilder(
+                  listenable: chat,
+                  builder: (context, _) => chat.messages.isEmpty
+                      ? _EmptyThread(thread: thread)
+                      : _Transcript(
+                          key: ValueKey(thread.id),
+                          chat: chat,
+                          threadId: thread.id,
+                          column: column,
+                        ),
                 ),
               ),
-            ),
-          ),
-        ],
+              Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: column),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 4, 20, 18),
+                    child: Composer(
+                      sessionId: thread.id,
+                      documentId: thread.documentId,
+                      projectId: thread.projectId,
+                      onPickDocument: (id) {
+                        if (id == null) return;
+                        ref
+                            .read(workspaceProvider.notifier)
+                            .openTab(PanelTab.preview(id));
+                      },
+                      onSend: (prompt) => agent.send(thread.id, prompt),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 }
 
 class _Transcript extends ConsumerWidget {
-  const _Transcript({super.key, required this.chat, required this.threadId});
+  const _Transcript({
+    super.key,
+    required this.chat,
+    required this.threadId,
+    required this.column,
+  });
 
   final ChatMessagesController chat;
   final String threadId;
+  final double column;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -121,7 +141,7 @@ class _Transcript extends ConsumerWidget {
             .toList(),
         onSendMessage: (_) {},
         readOnly: true,
-        maxWidth: chatColumnWidth,
+        maxWidth: column,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         enableMarkdownStreaming: false,
         resultRenderers: componentRenderers,
@@ -222,7 +242,7 @@ class _AgentMessage extends StatelessWidget {
     }
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 12),
-      child: AgentMarkdown(
+      child: TypedReply(
         message.text,
         streaming: message.customProperties?[ChatProps.streaming] == true,
       ),
