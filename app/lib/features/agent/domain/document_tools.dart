@@ -4,6 +4,7 @@ import 'dart:convert';
 import '../../../l10n/app_localizations.dart';
 import '../../document/model/document.dart';
 import '../../document/model/operations.dart';
+import '../../document/render/page_fit.dart';
 import '../../document/service/document_service.dart';
 import 'agent_protocol.dart';
 
@@ -70,6 +71,9 @@ abstract interface class ToolHost {
   void applyOperations(List<DocOperation> ops, {required String label});
 
   void openNewDocument(PaperDocument doc);
+
+  /// [doc] with every page the PDF cannot hold split into pages it can ([PageFitter]).
+  Future<FittedDocument> fitPages(PaperDocument doc);
 
   /// Returns the saved path, or null if the user cancelled.
   Future<String?> exportActiveDocument();
@@ -224,13 +228,13 @@ class DocumentToolExecutor {
     if (handler == null) {
       return ToolResult.error('Strumento sconosciuto "$name".');
     }
-    return handler(_Run(host, doc, a));
+    return handler(_Run(host, doc, a, service));
   }
 
   ToolResult _read(_Run r) =>
       ToolResult.ok('Lette ${r.doc.pages.length} pagine', data: r.doc.toJson());
 
-  ToolResult _addPage(_Run r) {
+  Future<ToolResult> _addPage(_Run r) async {
     final page = DocPage.fromJson(_map(r.args['page']));
     final at = r.position() ?? r.doc.pages.length;
     return r.apply(
@@ -240,7 +244,7 @@ class DocumentToolExecutor {
     );
   }
 
-  ToolResult _deletePage(_Run r) {
+  Future<ToolResult> _deletePage(_Run r) async {
     final i = r.pageIndex();
     // Show the page that preceded the deleted one.
     return r.apply(
@@ -250,7 +254,7 @@ class DocumentToolExecutor {
     );
   }
 
-  ToolResult _updatePage(_Run r) {
+  Future<ToolResult> _updatePage(_Run r) async {
     final a = r.args;
     final i = r.pageIndex();
     return r.apply(
@@ -267,14 +271,14 @@ class DocumentToolExecutor {
     );
   }
 
-  ToolResult _replaceText(_Run r) {
+  Future<ToolResult> _replaceText(_Run r) async {
     final a = r.args;
     final find = a['find'] as String? ?? '';
     final i = a['page'] == null ? null : r.pageIndex();
     final count = service.countOccurrences(r.doc, find, pageIndex: i);
     if (count == 0) return ToolResult.error(_notFound(r.doc, find, i));
     final replace = a['replace'] as String? ?? '';
-    final done = r.apply(
+    final done = await r.apply(
       [ReplaceText(find, replace, pageIndex: i)],
       count == 1 ? 'Sostituita 1 occorrenza' : 'Sostituite $count occorrenze',
       focus: i == null ? null : i + 1,
@@ -291,7 +295,7 @@ class DocumentToolExecutor {
           );
   }
 
-  ToolResult _insertBlock(_Run r) {
+  Future<ToolResult> _insertBlock(_Run r) async {
     final i = r.pageIndex();
     final block = DocBlock.fromJson(_map(r.args['block']));
     return r.apply(
@@ -301,7 +305,7 @@ class DocumentToolExecutor {
     );
   }
 
-  ToolResult _updateBlock(_Run r) {
+  Future<ToolResult> _updateBlock(_Run r) async {
     final (i, b, current) = _locateBlock(r);
     final block = DocBlock.fromJson({
       ..._map(r.args['content']),
@@ -314,7 +318,7 @@ class DocumentToolExecutor {
     );
   }
 
-  ToolResult _removeBlock(_Run r) {
+  Future<ToolResult> _removeBlock(_Run r) async {
     final (i, b, current) = _locateBlock(r);
     return r.apply(
       [RemoveBlock(current.id)],
@@ -341,7 +345,7 @@ class DocumentToolExecutor {
     return (i, b, blocks[b]);
   }
 
-  ToolResult _addTable(_Run r) {
+  Future<ToolResult> _addTable(_Run r) async {
     final i = r.pageIndex();
     final columns = [
       for (final c in r.args['columns'] as List? ?? const []) '$c',
@@ -367,7 +371,7 @@ class DocumentToolExecutor {
     );
   }
 
-  ToolResult _addImage(_Run r) {
+  Future<ToolResult> _addImage(_Run r) async {
     final a = r.args;
     final i = r.pageIndex();
     final attachment = a['attachment'] as String?;
@@ -388,7 +392,7 @@ class DocumentToolExecutor {
     );
   }
 
-  ToolResult _changeLayout(_Run r) {
+  Future<ToolResult> _changeLayout(_Run r) async {
     final i = r.pageIndex();
     final layout = PageLayout.parse(r.args['layout']);
     return r.apply(
@@ -398,7 +402,7 @@ class DocumentToolExecutor {
     );
   }
 
-  ToolResult _setTheme(_Run r) {
+  Future<ToolResult> _setTheme(_Run r) async {
     final a = r.args;
     final accent = parseColor(a['accent']);
     if (a['accent'] != null && accent == null) {
@@ -414,7 +418,7 @@ class DocumentToolExecutor {
     ], 'Tema aggiornato');
   }
 
-  ToolResult _updateMetadata(_Run r) {
+  Future<ToolResult> _updateMetadata(_Run r) async {
     final a = r.args;
     return r.apply([
       UpdateMetadata(
@@ -436,7 +440,7 @@ class DocumentToolExecutor {
         : ToolResult.ok('Salvato in $path', data: {'path': path});
   }
 
-  ToolResult _create(Map<String, dynamic> a) {
+  Future<ToolResult> _create(Map<String, dynamic> a) async {
     final title = (a['title'] as String?)?.trim();
     if (title == null || title.isEmpty) {
       throw _ArgumentError('Manca il titolo.');
@@ -466,11 +470,17 @@ class DocumentToolExecutor {
       ),
       pages: pages,
     );
-    host.openNewDocument(doc);
+    final fit = await host.fitPages(doc);
+    if (fit.overflowing.isNotEmpty) throw _ArgumentError(_tooLarge(fit));
+    host.openNewDocument(fit.document);
+    final count = fit.document.pages.length;
     return ToolResult.ok(
-      pages.length == 1
-          ? 'Creato un documento di 1 pagina'
-          : 'Creato un documento di ${pages.length} pagine',
+      fitSummary(
+        count == 1
+            ? 'Creato un documento di 1 pagina'
+            : 'Creato un documento di $count pagine',
+        fit,
+      ),
       focusPage: 1,
       data: {'documentId': doc.id},
     );
@@ -510,6 +520,24 @@ class DocumentToolExecutor {
     ].join(', ');
   }
 
+  /// What the agent is told of pages split to fit A4: the page numbers it works with have changed.
+  static String fitSummary(String summary, FittedDocument fit) {
+    if (!fit.changed) return summary;
+    final moved = [
+      for (final s in fit.splits)
+        'il contenuto della pagina ${s.page} supera una pagina A4 ed è stato distribuito sulle pagine '
+            '${s.first}-${s.first + s.count - 1}, senza togliere testo',
+    ];
+    return '$summary. Attenzione: ${moved.join('; ')}. Le pagine sono rinumerate: il documento ora ha '
+        '${fit.document.pages.length} pagine. Usa questa numerazione per le prossime modifiche';
+  }
+
+  /// Why an edit is refused when a page would not fit and cannot be split.
+  static String _tooLarge(FittedDocument fit) =>
+      'Modifica non applicata: a pagina ${fit.overflowing.join(', ')} un blocco da solo supera lo spazio di una '
+      'pagina A4 e non si può dividere (titolo, immagine, indicatori o testo senza spazi). Accorcialo o '
+      'riducine l’altezza e riprova.';
+
   static Map<String, dynamic> _map(Object? value) {
     if (value is Map) return value.cast<String, dynamic>();
     throw _ArgumentError('Atteso un oggetto, ricevuto ${value.runtimeType}.');
@@ -522,11 +550,12 @@ class DocumentToolExecutor {
 
 /// One tool call on the open document: the arguments to read and the one way to apply a change.
 class _Run {
-  _Run(this.host, this.doc, this.args);
+  _Run(this.host, this.doc, this.args, this.service);
 
   final ToolHost host;
   final PaperDocument doc;
   final Map<String, dynamic> args;
+  final DocumentService service;
 
   /// The 0-based index of the page `args[key]` names.
   int pageIndex([String key = 'page']) {
@@ -547,9 +576,27 @@ class _Run {
     return value is num ? value.toInt() - 1 : null;
   }
 
-  ToolResult apply(List<DocOperation> ops, String summary, {int? focus}) {
-    host.applyOperations(ops, label: summary);
-    return ToolResult.ok(summary, focusPage: focus);
+  /// Applies [ops] together with the page splits they make necessary, as one undo step: no edit leaves a page
+  /// the PDF cannot hold.
+  Future<ToolResult> apply(
+    List<DocOperation> ops,
+    String summary, {
+    int? focus,
+  }) async {
+    final fit = await host.fitPages(service.applyAll(doc, ops));
+    if (fit.overflowing.isNotEmpty) {
+      throw _ArgumentError(DocumentToolExecutor._tooLarge(fit));
+    }
+    if (!identical(host.activeDocument, doc)) {
+      throw _ArgumentError(
+        'Il documento è cambiato durante la modifica. Nessuna modifica applicata: rileggilo e riprova.',
+      );
+    }
+    host.applyOperations([...ops, ...fit.operations], label: summary);
+    return ToolResult.ok(
+      DocumentToolExecutor.fitSummary(summary, fit),
+      focusPage: focus,
+    );
   }
 }
 

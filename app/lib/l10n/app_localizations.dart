@@ -1376,6 +1376,36 @@ abstract class AppLocalizations {
   /// **'Impossibile generare l\'anteprima del documento'**
   String get previewRenderFailed;
 
+  /// Why the PDF cannot be made: a page holds more than one A4 page
+  ///
+  /// In it, this message translates to:
+  /// **'La pagina {page} contiene più testo di quanto ne entri in una pagina A4.'**
+  String pdfPageTooLong(int page);
+
+  /// Action, and its undo history label: splits overlong pages into consecutive pages without removing text
+  ///
+  /// In it, this message translates to:
+  /// **'Dividi le pagine troppo lunghe'**
+  String get pdfSplitPages;
+
+  /// No description provided for @pdfPagesSplit.
+  ///
+  /// In it, this message translates to:
+  /// **'Pagine divise senza togliere testo: ora il documento ha {count} pagine.'**
+  String pdfPagesSplit(int count);
+
+  /// No description provided for @pdfBlockTooLarge.
+  ///
+  /// In it, this message translates to:
+  /// **'Un blocco da solo supera una pagina A4 (titolo, immagine o indicatori): accorcialo nella modifica.'**
+  String get pdfBlockTooLarge;
+
+  /// No description provided for @pdfFitChanged.
+  ///
+  /// In it, this message translates to:
+  /// **'Il documento è cambiato nel frattempo: riprova.'**
+  String get pdfFitChanged;
+
   /// No description provided for @reviewEmptyTitle.
   ///
   /// In it, this message translates to:

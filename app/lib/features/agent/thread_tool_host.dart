@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/l10n.dart';
 import '../document/model/document.dart';
 import '../document/model/operations.dart';
+import '../document/render/page_fit.dart';
 import '../workspace/pdf_export.dart';
 import '../workspace/workspace_state.dart';
 import 'domain/agent_protocol.dart';
@@ -35,6 +36,10 @@ class ThreadToolHost implements ToolHost {
   @override
   void openNewDocument(PaperDocument doc) =>
       _ref.read(workspaceProvider.notifier).addDocument(doc, threadId: threadId);
+
+  @override
+  Future<FittedDocument> fitPages(PaperDocument doc) =>
+      _ref.read(pageFitProvider)(doc);
 
   @override
   Future<String?> exportActiveDocument() async {

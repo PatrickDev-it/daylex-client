@@ -10,6 +10,7 @@ import '../../features/workspace/viewer_state.dart';
 import '../../features/workspace/pdf_export.dart';
 import '../../features/workspace/workspace_state.dart';
 import '../../l10n/l10n.dart';
+import '../app_actions.dart';
 import '../common/widgets.dart';
 import '../shortcuts.dart';
 
@@ -35,10 +36,19 @@ class PdfPreview extends ConsumerWidget {
     });
 
     final pdf = rendered.pagesOf(active);
+    final failure = rendered.hasError ? describePdfFailure(l, rendered.error) : '';
+    // A page too long for A4 is the one failure the lawyer can fix in one step.
+    final split = active != null && rendered.error is PdfLayoutException
+        ? FilledButton.icon(
+            onPressed: () => AppActions(ref).fitPages(active),
+            icon: const Icon(LucideIcons.split, size: 16),
+            label: Text(l.pdfSplitPages),
+          )
+        : null;
     final Widget body;
     if (pdf == null) {
       body = rendered.hasError
-          ? EmptyState(icon: LucideIcons.alertTriangle, title: l.previewRenderFailed, message: '${rendered.error}')
+          ? EmptyState(icon: LucideIcons.alertTriangle, title: l.previewRenderFailed, message: failure, actions: [?split])
           : const _PageSkeleton();
     } else {
       final state = ref.read(viewerProvider);
@@ -81,9 +91,15 @@ class PdfPreview extends ConsumerWidget {
             Positioned(
               top: 12,
               right: 16,
-              child: Tooltip(
-                message: '${rendered.error}',
-                child: Pill(l.previewOutdated, icon: LucideIcons.alertTriangle, color: tokens.warning, outlined: true),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Tooltip(
+                    message: failure,
+                    child: Pill(l.previewOutdated, icon: LucideIcons.alertTriangle, color: tokens.warning, outlined: true),
+                  ),
+                  if (split != null) ...[const SizedBox(width: 8), split],
+                ],
               ),
             ),
           if (pdf != null) const Positioned(left: 0, right: 0, bottom: 16, child: Center(child: _ViewerControls())),

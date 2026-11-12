@@ -216,8 +216,30 @@ class AppActions {
       if (path != null) toast(_l.exportedTo(path));
     } catch (e) {
       debugPrint('PaperAgent export: $e');
-      toast(_l.exportFailed(_l.failureUnexpected));
+      toast(_l.exportFailed(describePdfFailure(_l, e)));
     }
+  }
+
+  /// Splits the pages of a document too long for the PDF into consecutive pages, as one undo step.
+  Future<void> fitPages(String documentId) async {
+    final doc = ref.read(workspaceProvider).documents[documentId];
+    if (doc == null) return;
+    final fit = await ref.read(pageFitProvider)(doc);
+    if (!identical(ref.read(workspaceProvider).documents[documentId], doc)) {
+      return toast(_l.pdfFitChanged);
+    }
+    if (fit.changed) {
+      _workspace.apply(
+        fit.operations,
+        documentId: documentId,
+        label: _l.pdfSplitPages,
+      );
+    }
+    toast(
+      fit.overflowing.isNotEmpty
+          ? _l.pdfBlockTooLarge
+          : _l.pdfPagesSplit(fit.document.pages.length),
+    );
   }
 
   void undo() {

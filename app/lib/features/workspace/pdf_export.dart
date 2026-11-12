@@ -2,11 +2,16 @@ import 'dart:io';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
+
 import '../../core/platform/browser_runtime.dart' as browser;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../l10n/app_localizations.dart';
 
 import '../document/model/document.dart';
 import '../document/model/document_review.dart';
+import '../document/render/page_fit.dart';
 import '../document/render/pdf_renderer.dart';
 import 'workspace_state.dart';
 import 'document_review.dart';
@@ -34,9 +39,21 @@ final pdfRenderProvider = Provider<Future<Uint8List> Function(PaperDocument)>(
               .renderInBackground(doc),
 );
 
+/// Never retried: the same document always renders the same way, so a failed render ([PdfLayoutException])
+/// only fails again — and every attempt would re-run what depends on it, the server's language review included.
 final documentPdfBytesProvider = FutureProvider.autoDispose
     .family<Uint8List, PaperDocument>(
       (ref, doc) => ref.watch(pdfRenderProvider)(doc),
+      retry: (_, _) => null,
+    );
+
+/// A document with its overlong pages split so the PDF can hold them ([PageFitter]), on a background isolate.
+final pageFitProvider =
+    Provider<Future<FittedDocument> Function(PaperDocument)>(
+      (ref) =>
+          (doc) async =>
+              PageFitter(PdfRenderer(await ref.read(pdfFontsProvider.future)))
+                  .fitInBackground(doc),
     );
 
 /// How long the preview waits for the document to stop changing before rendering it again: an agent run
@@ -86,6 +103,15 @@ extension RenderedPdfView on AsyncValue<RenderedPdf?> {
       ? PreviewStatus.outdated
       : PreviewStatus.upToDate;
 }
+
+/// What the lawyer reads when the PDF cannot be made, by preview or export: what to do about it, never a stack
+/// trace.
+String describePdfFailure(AppLocalizations l, Object? error) =>
+    switch (error) {
+      PdfLayoutException(:final page) => l.pdfPageTooLong(page),
+      DocumentReviewFailure(:final message) => message,
+      _ => l.failureUnexpected,
+    };
 
 final exportServiceProvider = Provider((ref) => ExportService(ref));
 

@@ -6,6 +6,7 @@ import 'package:paper_agent/features/agent/domain/agent_protocol.dart';
 import 'package:paper_agent/features/agent/domain/document_tools.dart';
 import 'package:paper_agent/features/document/model/document.dart';
 import 'package:paper_agent/features/document/model/operations.dart';
+import 'package:paper_agent/features/document/render/page_fit.dart';
 import 'package:paper_agent/features/document/service/document_service.dart';
 
 /// The contract shared with the server: what the executor does with each
@@ -32,6 +33,9 @@ class _Host implements ToolHost {
 
   @override
   Future<String?> exportActiveDocument() async => null;
+
+  @override
+  Future<FittedDocument> fitPages(PaperDocument doc) async => FittedDocument(doc);
 
   @override
   AgentAttachment? attachment(String name) => null;

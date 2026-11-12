@@ -786,6 +786,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get previewRenderFailed => 'Could not render the document';
 
   @override
+  String pdfPageTooLong(int page) {
+    return 'Page $page holds more text than fits on an A4 page.';
+  }
+
+  @override
+  String get pdfSplitPages => 'Split overlong pages';
+
+  @override
+  String pdfPagesSplit(int count) {
+    return 'Pages split without removing any text: the document now has $count pages.';
+  }
+
+  @override
+  String get pdfBlockTooLarge =>
+      'A single block is larger than an A4 page (heading, image or metrics): shorten it in the editor.';
+
+  @override
+  String get pdfFitChanged => 'The document changed meanwhile: try again.';
+
+  @override
   String get reviewEmptyTitle => 'No changes yet';
 
   @override

@@ -787,6 +787,26 @@ class AppLocalizationsIt extends AppLocalizations {
       'Impossibile generare l\'anteprima del documento';
 
   @override
+  String pdfPageTooLong(int page) {
+    return 'La pagina $page contiene più testo di quanto ne entri in una pagina A4.';
+  }
+
+  @override
+  String get pdfSplitPages => 'Dividi le pagine troppo lunghe';
+
+  @override
+  String pdfPagesSplit(int count) {
+    return 'Pagine divise senza togliere testo: ora il documento ha $count pagine.';
+  }
+
+  @override
+  String get pdfBlockTooLarge =>
+      'Un blocco da solo supera una pagina A4 (titolo, immagine o indicatori): accorcialo nella modifica.';
+
+  @override
+  String get pdfFitChanged => 'Il documento è cambiato nel frattempo: riprova.';
+
+  @override
   String get reviewEmptyTitle => 'Ancora nessuna modifica';
 
   @override

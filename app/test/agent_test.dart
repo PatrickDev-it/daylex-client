@@ -5,6 +5,7 @@ import 'package:paper_agent/features/agent/domain/agent_protocol.dart';
 import 'package:paper_agent/features/agent/domain/document_tools.dart';
 import 'package:paper_agent/features/document/model/document.dart';
 import 'package:paper_agent/features/document/model/operations.dart';
+import 'package:paper_agent/features/document/render/page_fit.dart';
 import 'package:paper_agent/features/document/service/document_service.dart';
 import 'package:paper_agent/features/workspace/workspace_state.dart';
 
@@ -12,7 +13,10 @@ import 'demo_fixture.dart';
 
 /// In-memory [ToolHost] that applies operations directly.
 class FakeHost implements ToolHost {
-  FakeHost(this.activeDocument);
+  FakeHost(this.activeDocument, {this.fitter});
+
+  /// Pages are left as they are without one.
+  final PageFitter? fitter;
 
   @override
   PaperDocument? activeDocument;
@@ -29,6 +33,10 @@ class FakeHost implements ToolHost {
 
   @override
   Future<String?> exportActiveDocument() async => 'C:/out.pdf';
+
+  @override
+  Future<FittedDocument> fitPages(PaperDocument doc) async =>
+      await fitter?.fit(doc) ?? FittedDocument(doc);
 
   @override
   AgentAttachment? attachment(String name) => null;
