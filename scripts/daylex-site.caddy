@@ -2,11 +2,21 @@ daylex.it {
     encode zstd gzip
     header {
         -Server
+        X-Robots-Tag "noindex, nofollow, nosnippet, noimageindex"
         X-Content-Type-Options nosniff
         Referrer-Policy no-referrer
     }
     redir /app /app/ 308
-    handle /v1/* {
+    # Never expose the management plane through the public site or PWA origin.
+    @management path /admin /admin/* /v1/admin /v1/admin/*
+    handle @management {
+        respond 404
+    }
+    @clientApi {
+        path /v1/*
+        not path /v1/admin /v1/admin/*
+    }
+    handle @clientApi {
         reverse_proxy 127.0.0.1:8787 {
             flush_interval -1
         }
@@ -14,7 +24,9 @@ daylex.it {
     handle_path /app/* {
         root * /srv/daylex-pwa/current
         header {
-            Cache-Control no-cache
+            # no-transform: Cloudflare must not inject scripts (Web Analytics) into the signed PWA; the
+            # delivery check compares every file with its signed hash, and the CSP would block them anyway.
+            Cache-Control "no-cache, no-transform"
             Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-eval' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; frame-src 'self' blob:; base-uri 'self'; frame-ancestors 'none'"
         }
         file_server
@@ -27,11 +39,14 @@ daylex.it {
             Content-Disposition attachment
             Cache-Control "public, max-age=31536000, immutable"
         }
+        # Browsers revalidate every page; Cloudflare may keep it 60 s (s-maxage), so a new release.json shows
+        # within a minute without a purge. The edge caches HTML only with a Cache Rule for daylex.it.
         @page not path /downloads/*
-        header @page Cache-Control no-cache
+        header @page Cache-Control "public, max-age=0, must-revalidate, s-maxage=60"
         file_server
     }
     handle_errors {
+        header X-Robots-Tag "noindex, nofollow, nosnippet, noimageindex"
         @down expression `{err.status_code} == 502 || {err.status_code} == 503 || {err.status_code} == 504`
         handle @down {
             header Content-Type "application/json; charset=utf-8"
@@ -40,5 +55,6 @@ daylex.it {
     }
 }
 www.daylex.it {
+    header X-Robots-Tag "noindex, nofollow, nosnippet, noimageindex"
     redir https://daylex.it{uri} permanent
 }
