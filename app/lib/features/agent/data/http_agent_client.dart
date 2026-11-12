@@ -161,8 +161,12 @@ class AgentServerConfig {
   }
 }
 
-HttpClient _newHttpClient() =>
-    HttpClient()..connectionTimeout = const Duration(seconds: 10);
+/// One connection kept across messages: Dart drops an idle one after 15 s, and a lawyer reading the reply takes
+/// longer, so the next message paid a new TLS handshake (~100 ms). Two minutes stays under Caddy's 5-minute idle
+/// timeout, so the server never closes a connection the app still counts as reusable.
+HttpClient _newHttpClient() => HttpClient()
+  ..connectionTimeout = const Duration(seconds: 10)
+  ..idleTimeout = const Duration(minutes: 2);
 
 /// The token, and the protocol version: a server that speaks another one
 /// refuses the request instead of misreading it.

@@ -13,6 +13,8 @@ class HttpClient {
   final http.Client _client;
   final _pending = <Completer<void>>{};
   Duration? connectionTimeout;
+  /// Unused: the browser pools Fetch connections itself. Kept so call sites stay shared with dart:io.
+  Duration idleTimeout = const Duration(seconds: 15);
   bool _closed = false;
   Future<HttpClientRequest> openUrl(String method, Uri uri) async {
     if (_closed) throw const HttpException('Client closed');
