@@ -57,9 +57,13 @@ foreach ($mode in @('valid','tampered','rollback','cancelled')) {
   if ($actual -ne $(if ($mode -eq 'valid') {'new'} else {'old'})) { throw "Wrong installed content: $mode" }
   if (!(Test-Path -LiteralPath (Join-Path $app 'unins000.dat')) -or (Get-Content -LiteralPath (Join-Path $app 'unins000.dat') -Raw).Trim() -ne 'installer-owned') { throw 'Updater removed installer metadata' }
   if ($mode -eq 'valid' -and (Test-Path -LiteralPath (Join-Path $app 'stale.dll'))) { throw 'Stale binary remained' }
+  if ($mode -eq 'valid' -and !(Test-Path -LiteralPath (Join-Path $root 'work/splash-ready'))) {
+    if (Test-Path -LiteralPath (Join-Path $root 'work/splash.log')) { Get-Content -LiteralPath (Join-Path $root 'work/splash.log') }
+    throw 'The update window did not load'
+  }
   if ($mode -eq 'rollback' -and !(Get-Content -LiteralPath (Join-Path $root 'install.log') -Raw).Contains('the previous one is back')) { throw 'Rollback was not exercised' }
   $results += @{mode=$mode;version=$actual;restarted=$true;log=(Get-Content -LiteralPath (Join-Path $root 'install.log') -Raw)}
 }
 $results | ConvertTo-Json -Depth 3 | Set-Content -LiteralPath (Join-Path $workspace 'app/dist/desktop-installer-smoke.json')
-Write-Output 'PASS: actual Windows updater replaced files, restarted, rejected tampering, restored after failure and honoured cancellation.'
+Write-Output 'PASS: actual Windows updater replaced files, restarted, showed its window, rejected tampering, restored after failure and honoured cancellation.'
 

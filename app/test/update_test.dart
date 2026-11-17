@@ -9,8 +9,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:paper_agent/features/update/installer.dart';
 import 'package:paper_agent/features/update/release.dart';
 import 'package:paper_agent/features/update/update_controller.dart';
+import 'package:paper_agent/core/theme/app_theme.dart';
 import 'package:paper_agent/features/update/update_source.dart';
+import 'package:paper_agent/l10n/l10n.dart';
+import 'package:paper_agent/ui/app_actions.dart';
 import 'package:paper_agent/ui/sidebar/update_button.dart';
+import 'package:paper_agent/ui/update/update_screen.dart';
 
 import 'test_app.dart';
 
@@ -43,6 +47,7 @@ Map<String, Object?> _payload({
   String? file,
   required List<int> archive,
   required String sha,
+  String notes = 'Novità di prova',
 }) => {
   'platform': platform,
   'version': '0.2.0',
@@ -50,7 +55,7 @@ Map<String, Object?> _payload({
   'file': file ?? 'daylex-$platform-0.2.0-b$build.zip',
   'size': archive.length,
   'sha256': sha,
-  'notes': 'Novità di prova',
+  'notes': notes,
   'published': '2026-10-27T10:00:00Z',
 };
 
@@ -83,6 +88,7 @@ class _FakeInstaller extends Installer {
 
   final InstallProblem? _problem;
   _FakeProcess? started;
+  UpdateSplash? splash;
 
   @override
   String get target => 'C:\\Daylex';
@@ -91,8 +97,16 @@ class _FakeInstaller extends Installer {
   InstallProblem? problem() => _problem;
 
   @override
-  Future<Process?> launch(File archive, {required Directory work, required File log, required String expectedSha256}) async =>
-      started = _FakeProcess();
+  Future<Process?> launch(
+    File archive, {
+    required Directory work,
+    required File log,
+    required String expectedSha256,
+    UpdateSplash? splash,
+  }) async {
+    this.splash = splash;
+    return started = _FakeProcess();
+  }
 }
 
 /// The installer script: all the app may do to it is stop it.
@@ -107,9 +121,16 @@ class _FixedUpdate extends UpdateController {
   _FixedUpdate(this._state);
 
   final UpdateState _state;
+  var seenCalls = 0;
 
   @override
   UpdateState build() => _state;
+
+  @override
+  void seen() {
+    seenCalls++;
+    state = state.copyWith(whatsNew: () => null);
+  }
 }
 
 void main() {
@@ -124,6 +145,11 @@ void main() {
     setUpAll(() async {
       signer = await _Signer.create();
       sha = await _sha(archive);
+    });
+
+    test('reads the improvements from the notes\' "- " lines', () {
+      expect(Release.improvementsOf('Daylex 0.2\n- Primo\n  - Secondo  \n-\n- \nfine'), ['Primo', 'Secondo']);
+      expect(Release.improvementsOf('Aggiornamento automatico Daylex'), isEmpty);
     });
 
     test('accepts a manifest the release key signed', () async {
@@ -255,13 +281,19 @@ void main() {
       await dir.delete(recursive: true);
     });
 
-    Future<(ProviderContainer, UpdateState)> start(int installedBuild, {Installer? installer, void Function()? quit}) async {
+    Future<(ProviderContainer, UpdateState)> start(
+      int installedBuild, {
+      Installer? installer,
+      void Function()? quit,
+      Duration launchWait = Duration.zero,
+    }) async {
       final env = UpdateEnvironment(
         source: UpdateSource(channel: channel.url, publicKey: signer.publicKey, platform: 'windows'),
         installer: installer ?? _FakeInstaller(),
         installed: () async => (version: '0.1.0', build: installedBuild),
         dir: dir,
         quit: quit ?? () => fail('the app quit'),
+        launchWait: launchWait,
       );
       final container = ProviderContainer(overrides: [updateEnvironmentProvider.overrideWithValue(env)]);
       addTearDown(container.dispose);
@@ -328,6 +360,78 @@ void main() {
       expect(state.installFailed, isTrue);
     });
 
+    File file(String name) => File('${dir.path}${Platform.pathSeparator}$name');
+
+    Future<void> publish(String notes) async => channel.files['windows.json'] = utf8.encode(
+      await signer.manifest(_payload(archive: archive, sha: await _sha(archive), notes: notes)),
+    );
+
+    test('installs at once, before the app is used, a newer release found as it opens', () async {
+      await publish('- Uno\n- Due');
+      final listener = AppLifecycleListener(onExitRequested: () async => AppExitResponse.exit);
+      addTearDown(listener.dispose);
+      final installer = _FakeInstaller();
+      var quits = 0;
+      final (container, _) = await start(
+        1,
+        installer: installer,
+        quit: () => quits++,
+        launchWait: const Duration(seconds: 5),
+      );
+      for (var i = 0; i < 100 && quits == 0; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+      }
+      expect(quits, 1);
+      expect(container.read(updateProvider).phase, UpdatePhase.installing);
+      expect(container.read(updateProvider).covering, isTrue);
+      expect(installer.splash?.message, itL10n.updateSplashNews(2));
+      final record = jsonDecode(file('state.json').readAsStringSync()) as Map;
+      expect(record, {'attempted': 2, 'version': '0.2.0', 'notes': '- Uno\n- Due'});
+    });
+
+    test('opens the app when nothing newer exists', () async {
+      final (_, state) = await start(2, launchWait: const Duration(seconds: 5));
+      expect(state.phase, UpdatePhase.idle);
+      expect(state.launching, isFalse);
+      expect(state.covering, isFalse);
+    });
+
+    test('leaves a release found later for the lawyer\'s restart', () async {
+      final state = await settle(1);
+      expect(state.phase, UpdatePhase.ready);
+      expect(state.atLaunch, isFalse);
+      expect(state.covering, isFalse);
+    });
+
+    test('says once what the new version improves', () async {
+      file('state.json').writeAsStringSync(jsonEncode({'attempted': 2, 'version': '0.2.0', 'notes': '- Uno\n- Due'}));
+      final (container, state) = await start(2);
+      expect(state.whatsNew?.version, '0.2.0');
+      expect(state.whatsNew?.improvements, ['Uno', 'Due']);
+      container.read(updateProvider.notifier).seen();
+      expect(container.read(updateProvider).whatsNew, isNull);
+      expect(jsonDecode(file('seen.json').readAsStringSync()), {'notes': '- Uno\n- Due'});
+    });
+
+    test('after an update from a version that kept no notes, says what the running release improves', () async {
+      await publish('- Uno');
+      file('state.json').writeAsStringSync(jsonEncode({'attempted': 2}));
+      expect((await settle(2)).whatsNew?.improvements, ['Uno']);
+    });
+
+    test('does not announce again improvements this computer was already shown', () async {
+      await publish('- Uno');
+      file('seen.json').writeAsStringSync(jsonEncode({'notes': '- Uno'}));
+      file('state.json').writeAsStringSync(jsonEncode({'attempted': 2, 'notes': '- Uno'}));
+      expect((await settle(2)).whatsNew, isNull);
+    });
+
+    test('names no news a newer release repeats', () async {
+      await publish('- Uno');
+      file('seen.json').writeAsStringSync(jsonEncode({'notes': '- Uno'}));
+      expect((await settle(1)).news, isEmpty);
+    });
+
     test('forgets the attempt once the new version runs', () async {
       final record = File('${dir.path}${Platform.pathSeparator}state.json')
         ..writeAsStringSync(jsonEncode({'attempted': 2}));
@@ -366,6 +470,57 @@ void main() {
 
       await tester.pumpWidget(button(const UpdateState(phase: UpdatePhase.ready, release: release, progress: 1)));
       expect(find.text(itL10n.updateReady), findsOneWidget);
+    });
+
+    /// The app's own arrangement: the gate above the navigator, the dialogs on the app's navigator.
+    Widget gated(UpdateController Function() update, Widget home) => ProviderScope(
+      overrides: [updateProvider.overrideWith(update)],
+      child: MaterialApp(
+        navigatorKey: navigatorKey,
+        theme: AppTheme.light(),
+        locale: const Locale('it'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        builder: (context, child) => UpdateGate(child: child!),
+        home: home,
+      ),
+    );
+
+    testWidgets('covers the app while the update found at opening installs', (tester) async {
+      var taps = 0;
+      await tester.pumpWidget(
+        gated(
+          () => _FixedUpdate(
+            const UpdateState(
+              phase: UpdatePhase.downloading,
+              release: release,
+              progress: 0.42,
+              atLaunch: true,
+              news: ['Uno', 'Due'],
+            ),
+          ),
+          Scaffold(body: TextButton(onPressed: () => taps++, child: const Text('x'))),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.text(itL10n.updateScreenNews(2)), findsOneWidget);
+      expect(find.text(itL10n.updateDownloading(42)), findsOneWidget);
+      await tester.tap(find.text('x'), warnIfMissed: false);
+      expect(taps, 0);
+    });
+
+    testWidgets('shows the improvements once the app is in use, and remembers they were read', (tester) async {
+      final update = _FixedUpdate(const UpdateState(phase: UpdatePhase.idle));
+      await tester.pumpWidget(gated(() => update, const Scaffold(body: SizedBox())));
+      update.state = update.state.copyWith(whatsNew: () => const WhatsNew(version: '0.2.0', notes: '- Uno\n- Due'));
+      await tester.pumpAndSettle();
+      expect(find.text(itL10n.whatsNewTitle('0.2.0')), findsOneWidget);
+      expect(find.text('Uno'), findsOneWidget);
+      expect(find.text('Due'), findsOneWidget);
+      await tester.tap(find.text(itL10n.gotIt));
+      await tester.pumpAndSettle();
+      expect(find.text(itL10n.whatsNewTitle('0.2.0')), findsNothing);
+      expect(update.seenCalls, 1);
     });
 
     testWidgets('says when the update needs the lawyer', (tester) async {

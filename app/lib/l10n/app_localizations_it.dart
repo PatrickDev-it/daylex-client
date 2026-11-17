@@ -1792,6 +1792,51 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
+  String get updateScreenTitle => 'Aggiornamento in corso';
+
+  @override
+  String updateScreenNews(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'È disponibile una nuova versione di Daylex con $count miglioramenti: la installo prima di aprire.',
+      one: 'È disponibile una nuova versione di Daylex con 1 miglioramento: la installo prima di aprire.',
+      zero: 'È disponibile una nuova versione di Daylex: la installo prima di aprire.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get updateScreenInstalling =>
+      'Installo e riavvio: Daylex si riapre da solo tra pochi secondi.';
+
+  @override
+  String get updateSplashMessage =>
+      'Installo la nuova versione: Daylex si riapre da solo tra pochi secondi.';
+
+  @override
+  String updateSplashNews(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Installo la nuova versione con $count miglioramenti: Daylex si riapre da solo tra pochi secondi.',
+      one: 'Installo la nuova versione con 1 miglioramento: Daylex si riapre da solo tra pochi secondi.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String whatsNewTitle(String version) {
+    return 'Novità di Daylex $version';
+  }
+
+  @override
+  String get whatsNewIntro =>
+      'Daylex è stato aggiornato. Ecco cosa abbiamo migliorato:';
+
+  @override
   String get sourceTitle => 'Fonte';
 
   @override

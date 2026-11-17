@@ -462,6 +462,34 @@
   "updateStatusUpToDate": "The app is up to date: it checks by itself every half hour.",
   "updateStatusCheckFailed": "Cannot reach the update server: trying again later.",
   "updateStatusReady": "Version {version} is ready: restart the app to install it.",
+  "updateScreenTitle": "Updating Daylex",
+  "updateScreenNews": "{count, plural, =0{A new version of Daylex is available: installing it before opening.} =1{A new version of Daylex with 1 improvement is available: installing it before opening.} other{A new version of Daylex with {count} improvements is available: installing it before opening.}}",
+  "@updateScreenNews": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "updateScreenInstalling": "Installing and restarting: Daylex reopens by itself in a few seconds.",
+  "updateSplashMessage": "Installing the new version: Daylex reopens by itself in a few seconds.",
+  "updateSplashNews": "{count, plural, =1{Installing the new version with 1 improvement: Daylex reopens by itself in a few seconds.} other{Installing the new version with {count} improvements: Daylex reopens by itself in a few seconds.}}",
+  "@updateSplashNews": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "whatsNewTitle": "What's new in Daylex {version}",
+  "@whatsNewTitle": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "whatsNewIntro": "Daylex has been updated. Here is what we improved:",
   "sourceTitle": "Source",
   "sourcePage": "{name}, page {page}",
   "@sourcePage": {

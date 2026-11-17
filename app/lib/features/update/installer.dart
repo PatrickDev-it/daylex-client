@@ -1,4 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
+
+/// What the update window says while the app is closed for the update: from the moment the app quits until the new
+/// version's window is on screen, so the lawyer is never left looking at nothing.
+class UpdateSplash {
+  const UpdateSplash({required this.title, required this.message});
+
+  final String title;
+  final String message;
+}
 
 /// Why this copy of the app cannot replace itself.
 enum InstallProblem {
@@ -29,8 +39,15 @@ abstract class Installer {
   InstallProblem? problem();
 
   /// Starts the script for [archive] (a release zip, already verified) and returns; the app must then quit.
-  /// [work] is the script's own folder, emptied as it needs.
-  Future<Process?> launch(File archive, {required Directory work, required File log, required String expectedSha256});
+  /// [work] is the script's own folder, emptied as it needs. [splash]: the window shown while the app is closed
+  /// (Windows; elsewhere the app is gone for a few seconds without one).
+  Future<Process?> launch(
+    File archive, {
+    required Directory work,
+    required File log,
+    required String expectedSha256,
+    UpdateSplash? splash,
+  });
 
   /// Whether a file can be created in [dir], which is all the swap needs.
   static bool canWrite(Directory dir) {
@@ -57,8 +74,17 @@ class WindowsInstaller extends Installer {
   @override
   InstallProblem? problem() => Installer.canWrite(executable.parent) ? null : InstallProblem.notWritable;
 
+  /// How long the app waits for the update window to be ready before it quits anyway.
+  static const _splashWait = Duration(seconds: 4);
+
   @override
-  Future<Process?> launch(File archive, {required Directory work, required File log, required String expectedSha256}) async {
+  Future<Process?> launch(
+    File archive, {
+    required Directory work,
+    required File log,
+    required String expectedSha256,
+    UpdateSplash? splash,
+  }) async {
     work.createSync(recursive: true);
     log.parent.createSync(recursive: true);
     final script = File('${work.path}\\install.ps1')..writeAsStringSync(_windowsScript);
@@ -82,11 +108,67 @@ class WindowsInstaller extends Installer {
     process.stdout.listen(capture);
     process.stderr.listen(capture);
     for (var i = 0; i < 100; i++) {
-      if (ready.existsSync()) { ready.deleteSync(); return process; }
+      if (ready.existsSync()) {
+        ready.deleteSync();
+        if (splash != null) await _showSplash(splash, work: work, log: log, installer: process.pid);
+        return process;
+      }
       await Future<void>.delayed(const Duration(milliseconds: 100));
     }
     process.kill();
     throw const ProcessException('powershell.exe', [], 'Updater did not acknowledge startup');
+  }
+
+  /// Starts the update window and waits, [_splashWait] at most, until it is loaded: it appears the moment this app
+  /// quits and closes when the [installer] ends, which is once the new version's window is up. Best effort: without
+  /// it the update still runs. Never on top of this app, so it cannot hide a question the app asks before quitting.
+  Future<void> _showSplash(UpdateSplash splash, {required Directory work, required File log, required int installer}) async {
+    final loaded = File('${work.path}\\splash-ready');
+    try {
+      if (loaded.existsSync()) loaded.deleteSync();
+      // A copy, so the window never holds a file the installer replaces.
+      final logo = File('${executable.parent.path}\\data\\flutter_assets\\assets\\branding\\daylex.png');
+      final copy = File('${work.path}\\splash-logo.png');
+      final hasLogo = logo.existsSync();
+      if (hasLogo) logo.copySync(copy.path);
+      final config = File('${work.path}\\splash.json')
+        ..writeAsStringSync(
+          jsonEncode({
+            'title': splash.title,
+            'message': splash.message,
+            'logo': hasLogo ? copy.path : '',
+            'icon': executable.path,
+          }),
+        );
+      final script = File('${work.path}\\splash.ps1')..writeAsStringSync(_windowsSplash);
+      // Started as the installer is, which outlives the app: started detached, powershell.exe never ran the script.
+      // It writes nothing to its pipes (its failures go to splash.log); they are drained anyway, never left full.
+      final window = await Process.start('powershell.exe', [
+        '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden', //
+        '-File', script.path,
+        '-AppPid', '$pid',
+        '-Watch', '$installer',
+        '-Config', config.path,
+        '-ReadyFile', loaded.path,
+      ]);
+      window.stdout.listen((_) {});
+      window.stderr.listen((_) {});
+      final until = DateTime.now().add(_splashWait);
+      while (!loaded.existsSync() && DateTime.now().isBefore(until)) {
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+      }
+      if (!loaded.existsSync()) _note(log, 'the update window did not load in time: the update runs without it');
+    } catch (e) {
+      _note(log, 'could not show the update window: $e');
+    }
+  }
+
+  static void _note(File log, String message) {
+    try {
+      log.writeAsStringSync('${DateTime.now().toUtc().toIso8601String()} app: $message\n', mode: FileMode.append);
+    } on FileSystemException {
+      // The log is a courtesy here: the update goes on.
+    }
   }
 }
 
@@ -111,7 +193,13 @@ class MacInstaller extends Installer {
   }
 
   @override
-  Future<Process?> launch(File archive, {required Directory work, required File log, required String expectedSha256}) async {
+  Future<Process?> launch(
+    File archive, {
+    required Directory work,
+    required File log,
+    required String expectedSha256,
+    UpdateSplash? splash,
+  }) async {
     work.createSync(recursive: true);
     log.parent.createSync(recursive: true);
     final script = File('${work.path}/install.sh')..writeAsStringSync(_macScript);
@@ -131,7 +219,13 @@ class LinuxInstaller extends Installer {
   InstallProblem? problem() => Installer.canWrite(executable.parent) && Installer.canWrite(executable.parent.parent)
       ? null : InstallProblem.notWritable;
   @override
-  Future<Process?> launch(File archive, {required Directory work, required File log, required String expectedSha256}) async {
+  Future<Process?> launch(
+    File archive, {
+    required Directory work,
+    required File log,
+    required String expectedSha256,
+    UpdateSplash? splash,
+  }) async {
     work.createSync(recursive: true);
     log.parent.createSync(recursive: true);
     final script = File('${work.path}/install-linux.sh')..writeAsStringSync(linuxInstallerScript);
@@ -220,7 +314,124 @@ try {
 } catch {
   Note "failed: $_"
 }
-Start-Process -FilePath (Join-Path $InstallDir $Exe) -WorkingDirectory $InstallDir
+$started = Start-Process -FilePath (Join-Path $InstallDir $Exe) -WorkingDirectory $InstallDir -PassThru
+# The update window lasts as long as this script: end it once the new version's window is on screen (30 s at most).
+try {
+  for ($i = 0; $i -lt 150; $i++) {
+    $started.Refresh()
+    if ($started.HasExited -or $started.MainWindowHandle -ne [IntPtr]::Zero) { break }
+    Start-Sleep -Milliseconds 200
+  }
+} catch {}
+''';
+
+// The update window (ASCII: Windows PowerShell reads a script without a byte-order mark in the local code page; the
+// words come from splash.json, read as UTF-8). Loaded hidden, it appears as the app quits and closes when the
+// installer ends; it also gives up after 10 minutes. A failure here only means no window: the update runs anyway.
+const _windowsSplash = r'''
+param([int]$AppPid, [int]$Watch, [string]$Config, [string]$ReadyFile)
+$ErrorActionPreference = 'Stop'
+$env:PSModulePath = Join-Path $PSHOME 'Modules'
+$failures = Join-Path (Split-Path -Parent $ReadyFile) 'splash.log'
+try {
+  $installer = $null
+  try { $installer = [Diagnostics.Process]::GetProcessById($Watch) } catch [ArgumentException] { exit 0 }
+  $c = [IO.File]::ReadAllText($Config, [Text.Encoding]::UTF8) | ConvertFrom-Json
+  Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+  try {
+    Add-Type -Namespace DaylexUpdate -Name Dpi -MemberDefinition '[DllImport("user32.dll")] public static extern bool SetProcessDPIAware();'
+    [void][DaylexUpdate.Dpi]::SetProcessDPIAware()
+  } catch {}
+  [Windows.Forms.Application]::EnableVisualStyles()
+  [Windows.Forms.Application]::SetUnhandledExceptionMode([Windows.Forms.UnhandledExceptionMode]::CatchException)
+  [Windows.Forms.Application]::add_ThreadException({ [Windows.Forms.Application]::ExitThread() })
+  $g = [Drawing.Graphics]::FromHwnd([IntPtr]::Zero)
+  $scale = $g.DpiX / 96
+  $g.Dispose()
+  function Px([double]$v) { [int][Math]::Round($v * $scale) }
+  $form = New-Object Windows.Forms.Form
+  $form.FormBorderStyle = 'None'
+  $form.StartPosition = 'CenterScreen'
+  $form.ClientSize = New-Object Drawing.Size((Px 360), (Px 300))
+  $form.BackColor = [Drawing.Color]::FromArgb(12, 12, 12)
+  $form.TopMost = $true
+  $form.Text = $c.title
+  try { $form.Icon = [Drawing.Icon]::ExtractAssociatedIcon($c.icon) } catch {}
+  $edge = New-Object Drawing.Pen([Drawing.Color]::FromArgb(38, 38, 38))
+  $form.Add_Paint({ param($sender, $e)
+    try { $e.Graphics.DrawRectangle($edge, 0, 0, $form.ClientSize.Width - 1, $form.ClientSize.Height - 1) } catch {}
+  })
+  # Without its logo the window still shows.
+  if ($c.logo -and (Test-Path -LiteralPath $c.logo)) {
+    try {
+      $stream = New-Object IO.MemoryStream(, [IO.File]::ReadAllBytes($c.logo))
+      $logo = New-Object Windows.Forms.PictureBox
+      $logo.Image = [Drawing.Image]::FromStream($stream)
+      $logo.SizeMode = 'Zoom'
+      $logo.Size = New-Object Drawing.Size((Px 72), (Px 72))
+      $logo.Location = New-Object Drawing.Point((Px 144), (Px 32))
+      $form.Controls.Add($logo)
+    } catch {
+      try { Add-Content -LiteralPath $failures -Value "$(Get-Date -Format o) update window: no logo: $_" } catch {}
+    }
+  }
+  function Add-Text([string]$text, [double]$top, [double]$height, [single]$points, [string]$style, [Drawing.Color]$color) {
+    $label = New-Object Windows.Forms.Label
+    $label.Text = $text
+    $label.AutoSize = $false
+    $label.TextAlign = 'TopCenter'
+    $label.Location = New-Object Drawing.Point((Px 24), (Px $top))
+    $label.Size = New-Object Drawing.Size((Px 312), (Px $height))
+    $label.Font = New-Object Drawing.Font('Segoe UI', $points, [Drawing.FontStyle]$style)
+    $label.ForeColor = $color
+    $form.Controls.Add($label)
+  }
+  Add-Text $c.title 120 30 13 'Bold' ([Drawing.Color]::White)
+  Add-Text $c.message 156 60 9.5 'Regular' ([Drawing.Color]::FromArgb(181, 181, 181))
+  $spinner = New-Object Windows.Forms.PictureBox
+  $spinner.Size = New-Object Drawing.Size((Px 34), (Px 34))
+  $spinner.Location = New-Object Drawing.Point((Px 163), (Px 232))
+  $arc = New-Object Drawing.Pen([Drawing.Color]::FromArgb(0, 174, 179), [single](3 * $scale))
+  $arc.StartCap = 'Round'
+  $arc.EndCap = 'Round'
+  $track = New-Object Drawing.Pen([Drawing.Color]::FromArgb(38, 38, 38), [single](3 * $scale))
+  $script:angle = 0
+  $spinner.Add_Paint({ param($sender, $e)
+    try {
+      $e.Graphics.SmoothingMode = 'AntiAlias'
+      $inset = [single](3 * $scale)
+      $ring = New-Object Drawing.RectangleF($inset, $inset, [single]($spinner.Width - 2 * $inset), [single]($spinner.Height - 2 * $inset))
+      $e.Graphics.DrawEllipse($track, $ring)
+      $e.Graphics.DrawArc($arc, $ring, [single]$script:angle, [single]100)
+    } catch {}
+  })
+  $form.Controls.Add($spinner)
+  $clock = [Diagnostics.Stopwatch]::StartNew()
+  $app = $null
+  try { $app = [Diagnostics.Process]::GetProcessById($AppPid) } catch [ArgumentException] {}
+  $timer = New-Object Windows.Forms.Timer
+  $timer.Interval = 30
+  $timer.Add_Tick({
+    try {
+      if ($installer.HasExited -or $clock.Elapsed.TotalMinutes -ge 10) {
+        $timer.Stop()
+        $form.Close()
+        [Windows.Forms.Application]::ExitThread()
+        return
+      }
+      if (-not $form.Visible -and ($null -eq $app -or $app.HasExited)) { $form.Show(); $form.Activate() }
+      if ($form.Visible) {
+        $script:angle = ($script:angle + 9) % 360
+        $spinner.Invalidate()
+      }
+    } catch { [Windows.Forms.Application]::ExitThread() }
+  })
+  $timer.Start()
+  [IO.File]::WriteAllText($ReadyFile, 'ready')
+  [Windows.Forms.Application]::Run()
+} catch {
+  try { Add-Content -LiteralPath $failures -Value "$(Get-Date -Format o) update window: $_" } catch {}
+}
 ''';
 
 const _macScript = r'''

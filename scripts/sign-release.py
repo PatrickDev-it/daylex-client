@@ -9,6 +9,7 @@ import re
 import tarfile
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+from release_notes import read as release_notes
 
 root = Path(__file__).resolve().parents[1]
 directory = root / 'release-input'
@@ -29,6 +30,7 @@ packages = [json.loads(file.read_text()) for file in sorted(directory.glob('*-pa
 assert {p['platform'] for p in packages} == {'windows', 'linux', 'macos'}, 'Required packages missing'
 assert len({(p['version'], p['build'], p['commit']) for p in packages}) == 1, 'Mixed release builds'
 files = set()
+notes = release_notes(root / 'release-notes.md')
 published = datetime.now(timezone.utc).isoformat()
 for package in packages:
     platform = package['platform']
@@ -42,7 +44,7 @@ for package in packages:
     assert digest(installer) == package['installer_sha256']
     payload = dict(platform=platform, version=package['version'], build=package['build'],
                    file=archive.name, size=archive.stat().st_size, sha256=digest(archive),
-                   notes='Aggiornamento automatico Daylex', published=published)
+                   notes=notes, published=published)
     manifest = directory / f'{platform}.json'
     manifest.write_text(json.dumps(sign(payload), ensure_ascii=False) + '\n', encoding='utf-8')
     files.update((archive.name, installer.name, manifest.name, installer.name + '.sha256', archive.name + '.sha256'))

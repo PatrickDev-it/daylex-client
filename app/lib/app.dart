@@ -18,6 +18,7 @@ import 'ui/panel/panel_tab_specs.dart';
 import 'ui/shell/app_shell.dart';
 import 'ui/shortcuts.dart';
 import 'ui/access/access_gate.dart';
+import 'ui/update/update_screen.dart';
 
 class PaperAgentApp extends ConsumerWidget {
   const PaperAgentApp({super.key});
@@ -41,7 +42,7 @@ class PaperAgentApp extends ConsumerWidget {
       themeAnimationDuration: AppTheme.slow,
       builder: (context, child) => FrameRecovery(
         child: _SaveOnExit(
-          child: _DesktopChrome(child: _StorageNotice(child: child!)),
+          child: _DesktopChrome(child: _StorageNotice(child: UpdateGate(child: child!))),
         ),
       ),
       home: const AccessGate(child: AppShell()),
