@@ -57,6 +57,16 @@ class Release {
   final String notes;
   final DateTime? published;
 
+  /// The improvements the release announces: the lines of [notes] that start with "- " (scripts/sign-release.py
+  /// takes them from release-notes.md), in order. Empty for a release without them.
+  List<String> get improvements => improvementsOf(notes);
+
+  static List<String> improvementsOf(String notes) => [
+    for (final line in const LineSplitter().convert(notes))
+      if (line.trimLeft().startsWith('- ') && line.trimLeft().substring(2).trim().isNotEmpty)
+        line.trimLeft().substring(2).trim(),
+  ];
+
   /// The release [manifest] describes, once its signature verifies with [publicKey] (raw Ed25519, base64) and
   /// it is a well-formed release for [platform]. Anything else throws [ReleaseRejected].
   static Future<Release> verify(String manifest, {required String publicKey, required String platform}) async {

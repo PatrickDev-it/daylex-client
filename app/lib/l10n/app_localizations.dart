@@ -2870,6 +2870,48 @@ abstract class AppLocalizations {
   /// **'La versione {version} è pronta: riavvia l\'app per installarla.'**
   String updateStatusReady(String version);
 
+  /// No description provided for @updateScreenTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiornamento in corso'**
+  String get updateScreenTitle;
+
+  /// Update screen shown as the app opens, while the new version downloads
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =0{È disponibile una nuova versione di Daylex: la installo prima di aprire.} =1{È disponibile una nuova versione di Daylex con 1 miglioramento: la installo prima di aprire.} other{È disponibile una nuova versione di Daylex con {count} miglioramenti: la installo prima di aprire.}}'**
+  String updateScreenNews(int count);
+
+  /// No description provided for @updateScreenInstalling.
+  ///
+  /// In it, this message translates to:
+  /// **'Installo e riavvio: Daylex si riapre da solo tra pochi secondi.'**
+  String get updateScreenInstalling;
+
+  /// No description provided for @updateSplashMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Installo la nuova versione: Daylex si riapre da solo tra pochi secondi.'**
+  String get updateSplashMessage;
+
+  /// The installer's window while the app is closed for the update
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{Installo la nuova versione con 1 miglioramento: Daylex si riapre da solo tra pochi secondi.} other{Installo la nuova versione con {count} miglioramenti: Daylex si riapre da solo tra pochi secondi.}}'**
+  String updateSplashNews(int count);
+
+  /// Popover shown once after an update
+  ///
+  /// In it, this message translates to:
+  /// **'Novità di Daylex {version}'**
+  String whatsNewTitle(String version);
+
+  /// No description provided for @whatsNewIntro.
+  ///
+  /// In it, this message translates to:
+  /// **'Daylex è stato aggiornato. Ecco cosa abbiamo migliorato:'**
+  String get whatsNewIntro;
+
   /// No description provided for @sourceTitle.
   ///
   /// In it, this message translates to:
