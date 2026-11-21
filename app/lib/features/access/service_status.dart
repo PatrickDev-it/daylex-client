@@ -27,7 +27,7 @@ class ServiceStatus extends ChangeNotifier {
   final AppLocalizations l;
   final Uri? endpoint;
   final DesktopCredentials credentials;
-  final _http = HttpClient()..connectionTimeout = const Duration(seconds: 8);
+  final _http = serverHttpClient()..connectionTimeout = const Duration(seconds: 8);
   Timer? _timer;
   AppLifecycleListener? _lifecycle;
   bool maintenance = false;

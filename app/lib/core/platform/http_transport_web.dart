@@ -7,6 +7,9 @@ import 'package:http/http.dart' as http;
 export 'dart:io'
     hide HttpClient, HttpClientRequest, HttpClientResponse, HttpHeaders;
 
+/// A client for Daylex's own server: in a browser, the browser's own trust decides (rfc/053).
+HttpClient serverHttpClient() => HttpClient();
+
 /// Small adapter for the request operations used by the shared agent protocol.
 class HttpClient {
   HttpClient({http.Client? client}) : _client = client ?? http.Client();
