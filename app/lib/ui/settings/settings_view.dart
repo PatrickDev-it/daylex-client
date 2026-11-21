@@ -224,6 +224,17 @@ class SettingsView extends ConsumerWidget {
                           last: true,
                         ),
                       ]),
+                      if (!kIsWeb) section(l.settingsBrowser, [
+                        row(
+                          l.settingsBrowserSignOut,
+                          OutlinedButton(
+                            onPressed: AppActions(ref).signOutOfPortals,
+                            child: Text(l.settingsBrowserSignOutButton),
+                          ),
+                          help: l.settingsBrowserSignOutHelp,
+                          last: true,
+                        ),
+                      ]),
                       section(l.settingsShortcuts, [
                         for (final (i, s) in AppShortcut.values.indexed)
                           row(

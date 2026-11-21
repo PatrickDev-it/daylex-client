@@ -521,7 +521,7 @@ abstract class AppLocalizations {
   /// No description provided for @shortcutCloseTab.
   ///
   /// In it, this message translates to:
-  /// **'Chiudi il scheda'**
+  /// **'Chiudi la scheda'**
   String get shortcutCloseTab;
 
   /// No description provided for @shortcutToggleSidebar.
@@ -941,7 +941,7 @@ abstract class AppLocalizations {
   /// No description provided for @panelOpenTab.
   ///
   /// In it, this message translates to:
-  /// **'Apri un scheda'**
+  /// **'Apri una scheda'**
   String get panelOpenTab;
 
   /// No description provided for @panelNothingOpenTitle.
@@ -959,7 +959,7 @@ abstract class AppLocalizations {
   /// No description provided for @panelNoTabsTitle.
   ///
   /// In it, this message translates to:
-  /// **'Nessun scheda aperto'**
+  /// **'Nessuna scheda aperta'**
   String get panelNoTabsTitle;
 
   /// No description provided for @panelNoTabsMessage.
@@ -1253,7 +1253,7 @@ abstract class AppLocalizations {
   /// No description provided for @previewNotFoundMessage.
   ///
   /// In it, this message translates to:
-  /// **'Potrebbe essere stato eliminato. Chiudi questo scheda o apri un altro documento.'**
+  /// **'Potrebbe essere stato eliminato. Chiudi questa scheda o apri un altro documento.'**
   String get previewNotFoundMessage;
 
   /// Segment that shows the rendered PDF
@@ -3577,6 +3577,462 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'La chiave resta solo in questa sessione: dovrai reinserirla quando ricarichi o riapri Daylex. Documenti e chat rimangono in questo browser; scarica regolarmente una copia dell’archivio.'**
   String get webSessionHelp;
+
+  /// No description provided for @shortcutNewWebTab.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuova scheda web'**
+  String get shortcutNewWebTab;
+
+  /// No description provided for @shortcutReopenTab.
+  ///
+  /// In it, this message translates to:
+  /// **'Riapri la scheda chiusa'**
+  String get shortcutReopenTab;
+
+  /// No description provided for @shortcutNextTab.
+  ///
+  /// In it, this message translates to:
+  /// **'Scheda successiva'**
+  String get shortcutNextTab;
+
+  /// No description provided for @shortcutPreviousTab.
+  ///
+  /// In it, this message translates to:
+  /// **'Scheda precedente'**
+  String get shortcutPreviousTab;
+
+  /// No description provided for @shortcutFocusAddress.
+  ///
+  /// In it, this message translates to:
+  /// **'Vai alla barra degli indirizzi'**
+  String get shortcutFocusAddress;
+
+  /// No description provided for @shortcutReload.
+  ///
+  /// In it, this message translates to:
+  /// **'Ricarica la pagina web'**
+  String get shortcutReload;
+
+  /// No description provided for @shortcutFullPanel.
+  ///
+  /// In it, this message translates to:
+  /// **'Pannello a tutta larghezza'**
+  String get shortcutFullPanel;
+
+  /// No description provided for @browserNewTab.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuova scheda'**
+  String get browserNewTab;
+
+  /// No description provided for @browserBack.
+  ///
+  /// In it, this message translates to:
+  /// **'Indietro'**
+  String get browserBack;
+
+  /// No description provided for @browserForward.
+  ///
+  /// In it, this message translates to:
+  /// **'Avanti'**
+  String get browserForward;
+
+  /// No description provided for @browserReload.
+  ///
+  /// In it, this message translates to:
+  /// **'Ricarica'**
+  String get browserReload;
+
+  /// No description provided for @browserStop.
+  ///
+  /// In it, this message translates to:
+  /// **'Interrompi il caricamento'**
+  String get browserStop;
+
+  /// No description provided for @browserAddressHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Cerca su Google o scrivi un indirizzo'**
+  String get browserAddressHint;
+
+  /// No description provided for @browserNotSecure.
+  ///
+  /// In it, this message translates to:
+  /// **'Non sicuro'**
+  String get browserNotSecure;
+
+  /// No description provided for @browserSecure.
+  ///
+  /// In it, this message translates to:
+  /// **'Connessione cifrata'**
+  String get browserSecure;
+
+  /// No description provided for @browserAttach.
+  ///
+  /// In it, this message translates to:
+  /// **'Allega alla chat'**
+  String get browserAttach;
+
+  /// No description provided for @browserAttachShort.
+  ///
+  /// In it, this message translates to:
+  /// **'Allega'**
+  String get browserAttachShort;
+
+  /// No description provided for @browserAttachHelp.
+  ///
+  /// In it, this message translates to:
+  /// **'Allega questa pagina alla chat: l\'agente la legge come un documento del fascicolo'**
+  String get browserAttachHelp;
+
+  /// No description provided for @browserAttached.
+  ///
+  /// In it, this message translates to:
+  /// **'«{name}» allegato alla chat'**
+  String browserAttached(String name);
+
+  /// No description provided for @browserAttachFailed.
+  ///
+  /// In it, this message translates to:
+  /// **'Non riesco ad allegare questa pagina. Scaricala e trascinala nella chat.'**
+  String get browserAttachFailed;
+
+  /// No description provided for @browserCaptureNote.
+  ///
+  /// In it, this message translates to:
+  /// **'Pagina web acquisita con Daylex il {date} alle {time} da:'**
+  String browserCaptureNote(String date, String time);
+
+  /// No description provided for @browserOpenOutside.
+  ///
+  /// In it, this message translates to:
+  /// **'Apri nel browser'**
+  String get browserOpenOutside;
+
+  /// No description provided for @browserOpenOutsideHelp.
+  ///
+  /// In it, this message translates to:
+  /// **'Apri questa pagina nel browser di sistema'**
+  String get browserOpenOutsideHelp;
+
+  /// No description provided for @browserMore.
+  ///
+  /// In it, this message translates to:
+  /// **'Altre azioni'**
+  String get browserMore;
+
+  /// No description provided for @browserCopyAddress.
+  ///
+  /// In it, this message translates to:
+  /// **'Copia l\'indirizzo'**
+  String get browserCopyAddress;
+
+  /// No description provided for @browserAddressCopied.
+  ///
+  /// In it, this message translates to:
+  /// **'Indirizzo copiato'**
+  String get browserAddressCopied;
+
+  /// No description provided for @browserAddPortal.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi ai portali'**
+  String get browserAddPortal;
+
+  /// No description provided for @browserPortalAdded.
+  ///
+  /// In it, this message translates to:
+  /// **'«{name}» è tra i tuoi portali'**
+  String browserPortalAdded(String name);
+
+  /// No description provided for @browserZoom.
+  ///
+  /// In it, this message translates to:
+  /// **'Zoom {percent}%'**
+  String browserZoom(int percent);
+
+  /// No description provided for @browserRefused.
+  ///
+  /// In it, this message translates to:
+  /// **'Daylex apre solo indirizzi web (http e https).'**
+  String get browserRefused;
+
+  /// No description provided for @browserProblemUnreachableTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Sito non raggiungibile'**
+  String get browserProblemUnreachableTitle;
+
+  /// No description provided for @browserProblemUnreachableMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Controlla la connessione a internet e l\'indirizzo, poi riprova.'**
+  String get browserProblemUnreachableMessage;
+
+  /// No description provided for @browserProblemTimeoutTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Il sito non risponde'**
+  String get browserProblemTimeoutTitle;
+
+  /// No description provided for @browserProblemTimeoutMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Il sito ci sta mettendo troppo. Riprova tra poco.'**
+  String get browserProblemTimeoutMessage;
+
+  /// No description provided for @browserProblemCertificateTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Connessione non sicura'**
+  String get browserProblemCertificateTitle;
+
+  /// No description provided for @browserProblemCertificateMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Il certificato di questo sito non è valido, quindi Daylex non apre la pagina. Se il sito è quello giusto, avvisa chi lo gestisce.'**
+  String get browserProblemCertificateMessage;
+
+  /// No description provided for @browserProblemEngineTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Il browser integrato non è partito'**
+  String get browserProblemEngineTitle;
+
+  /// No description provided for @browserProblemEngineMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Riavvia Daylex. Se succede ancora, apri la pagina nel browser di sistema.'**
+  String get browserProblemEngineMessage;
+
+  /// No description provided for @browserProblemOtherTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'La pagina non si è aperta'**
+  String get browserProblemOtherTitle;
+
+  /// No description provided for @browserProblemOtherMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Riprova, oppure aprila nel browser di sistema.'**
+  String get browserProblemOtherMessage;
+
+  /// No description provided for @browserRetry.
+  ///
+  /// In it, this message translates to:
+  /// **'Riprova'**
+  String get browserRetry;
+
+  /// No description provided for @browserOpenWww.
+  ///
+  /// In it, this message translates to:
+  /// **'Apri {host}'**
+  String browserOpenWww(String host);
+
+  /// No description provided for @browserRuntimeTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Manca un componente di Windows'**
+  String get browserRuntimeTitle;
+
+  /// No description provided for @browserRuntimeMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Per aprire le pagine dentro Daylex serve Microsoft Edge WebView2. Installalo dal sito di Microsoft, poi riavvia Daylex.'**
+  String get browserRuntimeMessage;
+
+  /// No description provided for @browserRuntimeDownload.
+  ///
+  /// In it, this message translates to:
+  /// **'Scarica WebView2'**
+  String get browserRuntimeDownload;
+
+  /// No description provided for @browserExternalTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Le pagine si aprono nel tuo browser'**
+  String get browserExternalTitle;
+
+  /// No description provided for @browserExternalMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Su questo computer Daylex non può mostrare pagine web nel pannello: ogni scheda apre il suo indirizzo nel browser di sistema.'**
+  String get browserExternalMessage;
+
+  /// No description provided for @browserDownloaded.
+  ///
+  /// In it, this message translates to:
+  /// **'Scaricato: {name}'**
+  String browserDownloaded(String name);
+
+  /// No description provided for @browserShowInFolder.
+  ///
+  /// In it, this message translates to:
+  /// **'Mostra nella cartella'**
+  String get browserShowInFolder;
+
+  /// No description provided for @browserPortalsOfficial.
+  ///
+  /// In it, this message translates to:
+  /// **'Fonti ufficiali'**
+  String get browserPortalsOfficial;
+
+  /// No description provided for @browserPortalsDatabases.
+  ///
+  /// In it, this message translates to:
+  /// **'Banche dati e stampa'**
+  String get browserPortalsDatabases;
+
+  /// No description provided for @browserPortalsMine.
+  ///
+  /// In it, this message translates to:
+  /// **'I tuoi portali'**
+  String get browserPortalsMine;
+
+  /// No description provided for @browserPortalsMineEmpty.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi i siti che usi più spesso: apri la pagina e scegli «Aggiungi ai portali» dal menu della scheda.'**
+  String get browserPortalsMineEmpty;
+
+  /// No description provided for @browserAddPortalButton.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi un portale'**
+  String get browserAddPortalButton;
+
+  /// No description provided for @browserPortalRemove.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimuovi dai portali'**
+  String get browserPortalRemove;
+
+  /// No description provided for @browserPortalDialogTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuovo portale'**
+  String get browserPortalDialogTitle;
+
+  /// No description provided for @browserPortalRenameTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Rinomina il portale'**
+  String get browserPortalRenameTitle;
+
+  /// No description provided for @browserPortalName.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome'**
+  String get browserPortalName;
+
+  /// No description provided for @browserPortalAddress.
+  ///
+  /// In it, this message translates to:
+  /// **'Indirizzo'**
+  String get browserPortalAddress;
+
+  /// No description provided for @browserPortalAddressInvalid.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrivi un indirizzo web, ad esempio www.sito.it'**
+  String get browserPortalAddressInvalid;
+
+  /// No description provided for @browserPortalsMenu.
+  ///
+  /// In it, this message translates to:
+  /// **'Portali'**
+  String get browserPortalsMenu;
+
+  /// No description provided for @browserNewTabHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Accedi ai portali con le tue credenziali, come in un browser: l\'accesso resta anche dopo il riavvio. Daylex non legge né conserva le tue password.'**
+  String get browserNewTabHint;
+
+  /// No description provided for @panelFull.
+  ///
+  /// In it, this message translates to:
+  /// **'Pannello a tutta larghezza'**
+  String get panelFull;
+
+  /// No description provided for @panelSplit.
+  ///
+  /// In it, this message translates to:
+  /// **'Pannello accanto alla chat'**
+  String get panelSplit;
+
+  /// No description provided for @panelResize.
+  ///
+  /// In it, this message translates to:
+  /// **'Trascina per allargare o restringere · doppio clic per la larghezza iniziale'**
+  String get panelResize;
+
+  /// No description provided for @sidebarBrowser.
+  ///
+  /// In it, this message translates to:
+  /// **'Browser'**
+  String get sidebarBrowser;
+
+  /// No description provided for @settingsBrowser.
+  ///
+  /// In it, this message translates to:
+  /// **'Browser'**
+  String get settingsBrowser;
+
+  /// No description provided for @settingsBrowserSignOut.
+  ///
+  /// In it, this message translates to:
+  /// **'Esci da tutti i portali'**
+  String get settingsBrowserSignOut;
+
+  /// No description provided for @settingsBrowserSignOutHelp.
+  ///
+  /// In it, this message translates to:
+  /// **'Cancella gli accessi, i cookie e i dati che i siti hanno salvato nel browser di Daylex. Per rientrare ti serviranno di nuovo le credenziali.'**
+  String get settingsBrowserSignOutHelp;
+
+  /// No description provided for @settingsBrowserSignOutButton.
+  ///
+  /// In it, this message translates to:
+  /// **'Esci'**
+  String get settingsBrowserSignOutButton;
+
+  /// No description provided for @settingsBrowserSignOutConfirmTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Uscire da tutti i portali?'**
+  String get settingsBrowserSignOutConfirmTitle;
+
+  /// No description provided for @settingsBrowserSignOutConfirmMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Dovrai accedere di nuovo a ogni banca dati e portale. Le schede aperte restano dove sono.'**
+  String get settingsBrowserSignOutConfirmMessage;
+
+  /// No description provided for @settingsBrowserSignedOut.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei uscito da tutti i portali'**
+  String get settingsBrowserSignedOut;
+
+  /// No description provided for @browserPortalAdd.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi'**
+  String get browserPortalAdd;
+
+  /// No description provided for @browserDialogOk.
+  ///
+  /// In it, this message translates to:
+  /// **'OK'**
+  String get browserDialogOk;
+
+  /// No description provided for @settingsBrowserSignOutFailed.
+  ///
+  /// In it, this message translates to:
+  /// **'Non sono riuscito a farti uscire da tutti i portali. Riavvia Daylex e riprova.'**
+  String get settingsBrowserSignOutFailed;
 }
 
 class _AppLocalizationsDelegate

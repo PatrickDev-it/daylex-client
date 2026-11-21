@@ -74,7 +74,8 @@ class IndexRecoveredNotice extends StoreNotice {
 ///     documents/<id>.json     one document
 ///     chats/<id>.json         one chat's messages and turns
 ///     snapshots/<id>.json     a document version a message refers to; immutable, written once
-///     preferences.json        the theme and the language the lawyer picked
+///     preferences.json        the theme and the language the lawyer picked, the side panel's width
+///     browser.json            the web tabs and the portals (the sites' own cookies stay in the browser profile)
 class LocalStore {
   LocalStore(Directory root) : _root = root;
   LocalStore._browser() : _root = null {
@@ -110,15 +111,19 @@ class LocalStore {
   static const _readTries = 3;
   static const _readPause = Duration(milliseconds: 50);
 
-  /// The platform's per-user app data folder, or `PAPERAGENT_DATA`. None in tests: they start from an empty
-  /// first launch, or their own fixture, and write nothing.
+  /// The store in [dataPath]. None in tests: they start from an empty first launch, or their own fixture, and
+  /// write nothing.
   static LocalStore? open() {
     if (kIsWeb) return LocalStore._browser();
+    if (Platform.environment['FLUTTER_TEST'] == 'true') return null;
+    return LocalStore(Directory(dataPath()));
+  }
+
+  /// Where the lawyer's work is kept: `data` in the platform's per-user app data folder, or `PAPERAGENT_DATA`.
+  static String dataPath() {
     final env = Platform.environment;
-    if (env['FLUTTER_TEST'] == 'true') return null;
     final custom = env['PAPERAGENT_DATA'];
-    final path = custom != null && custom.isNotEmpty ? custom : '${appDataDir(env)}${Platform.pathSeparator}data';
-    return LocalStore(Directory(path));
+    return custom != null && custom.isNotEmpty ? custom : '${appDataDir(env)}${Platform.pathSeparator}data';
   }
 
   File _file(String relative) => File('${root.path}${Platform.pathSeparator}$relative');
@@ -294,6 +299,9 @@ class LocalStore {
 
   Map<String, dynamic>? readPreferences() => _read('preferences.json');
   void writePreferences(Map<String, dynamic> json) => _write('preferences.json', json);
+
+  Map<String, dynamic>? readBrowser() => _read('browser.json');
+  void writeBrowser(Map<String, dynamic> json) => _write('browser.json', json);
 
   Map<String, dynamic>? readExports() => _read('exports.json');
   void writeExports(Map<String, dynamic> json) => _write('exports.json', json);

@@ -664,5 +664,126 @@
   "exitDiscard": "Quit without saving",
   "accessKeyHint": "dlx_…",
   "webAccessHelp": "Enter a dedicated key for this browser, supplied by your administrator. A key already linked to the desktop app cannot be transferred automatically.",
-  "webSessionHelp": "The key stays in memory for this session only: enter it again after reloading or reopening Daylex. Documents and chats remain in this browser; download a backup regularly."
+  "webSessionHelp": "The key stays in memory for this session only: enter it again after reloading or reopening Daylex. Documents and chats remain in this browser; download a backup regularly.",
+  "shortcutNewWebTab": "New web tab",
+  "shortcutReopenTab": "Reopen closed tab",
+  "shortcutNextTab": "Next tab",
+  "shortcutPreviousTab": "Previous tab",
+  "shortcutFocusAddress": "Focus the address bar",
+  "shortcutReload": "Reload the web page",
+  "shortcutFullPanel": "Full-width panel",
+  "browserNewTab": "New tab",
+  "browserBack": "Back",
+  "browserForward": "Forward",
+  "browserReload": "Reload",
+  "browserStop": "Stop loading",
+  "browserAddressHint": "Search Google or type an address",
+  "browserNotSecure": "Not secure",
+  "browserSecure": "Encrypted connection",
+  "browserAttach": "Attach to chat",
+  "browserAttachShort": "Attach",
+  "browserAttachHelp": "Attach this page to the chat: the agent reads it like any case document",
+  "browserAttached": "“{name}” attached to the chat",
+  "@browserAttached": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "browserAttachFailed": "This page could not be attached. Download it and drop it on the chat.",
+  "browserCaptureNote": "Web page captured with Daylex on {date} at {time} from:",
+  "@browserCaptureNote": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "browserOpenOutside": "Open in browser",
+  "browserOpenOutsideHelp": "Open this page in the system browser",
+  "browserMore": "More actions",
+  "browserCopyAddress": "Copy address",
+  "browserAddressCopied": "Address copied",
+  "browserAddPortal": "Add to portals",
+  "browserPortalAdded": "“{name}” added to your portals",
+  "@browserPortalAdded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "browserZoom": "Zoom {percent}%",
+  "@browserZoom": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "browserRefused": "Daylex only opens web addresses (http and https).",
+  "browserProblemUnreachableTitle": "Site unreachable",
+  "browserProblemUnreachableMessage": "Check your internet connection and the address, then try again.",
+  "browserProblemTimeoutTitle": "The site is not responding",
+  "browserProblemTimeoutMessage": "The site is taking too long. Try again in a moment.",
+  "browserProblemCertificateTitle": "Connection not secure",
+  "browserProblemCertificateMessage": "This site's certificate is not valid, so Daylex does not open the page. If it is the right site, tell whoever runs it.",
+  "browserProblemEngineTitle": "The built-in browser did not start",
+  "browserProblemEngineMessage": "Restart Daylex. If it happens again, open the page in the system browser.",
+  "browserProblemOtherTitle": "The page did not open",
+  "browserProblemOtherMessage": "Try again, or open it in the system browser.",
+  "browserRetry": "Try again",
+  "browserOpenWww": "Open {host}",
+  "@browserOpenWww": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "browserRuntimeTitle": "A Windows component is missing",
+  "browserRuntimeMessage": "Opening pages inside Daylex needs Microsoft Edge WebView2. Install it from Microsoft's site, then restart Daylex.",
+  "browserRuntimeDownload": "Download WebView2",
+  "browserExternalTitle": "Pages open in your browser",
+  "browserExternalMessage": "On this computer Daylex cannot show web pages in the panel: each tab opens its address in the system browser.",
+  "browserDownloaded": "Downloaded: {name}",
+  "@browserDownloaded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "browserShowInFolder": "Show in folder",
+  "browserPortalsOfficial": "Official sources",
+  "browserPortalsDatabases": "Databases and press",
+  "browserPortalsMine": "Your portals",
+  "browserPortalsMineEmpty": "Add the sites you use most: open the page and choose “Add to portals” from the tab menu.",
+  "browserAddPortalButton": "Add a portal",
+  "browserPortalRemove": "Remove from portals",
+  "browserPortalDialogTitle": "New portal",
+  "browserPortalRenameTitle": "Rename portal",
+  "browserPortalName": "Name",
+  "browserPortalAddress": "Address",
+  "browserPortalAddressInvalid": "Type a web address, for example www.site.com",
+  "browserPortalsMenu": "Portals",
+  "browserNewTabHint": "Sign in to the portals with your own credentials, as in a browser: you stay signed in after a restart. Daylex never reads or keeps your passwords.",
+  "panelFull": "Full-width panel",
+  "panelSplit": "Panel beside the chat",
+  "panelResize": "Drag to resize · double-click for the default width",
+  "sidebarBrowser": "Browser",
+  "settingsBrowser": "Browser",
+  "settingsBrowserSignOut": "Sign out of all portals",
+  "settingsBrowserSignOutHelp": "Clears the sign-ins, cookies and data sites saved in Daylex's browser. You will need your credentials again.",
+  "settingsBrowserSignOutButton": "Sign out",
+  "settingsBrowserSignOutConfirmTitle": "Sign out of all portals?",
+  "settingsBrowserSignOutConfirmMessage": "You will have to sign in again to every database and portal. Open tabs stay where they are.",
+  "settingsBrowserSignedOut": "Signed out of all portals",
+  "browserPortalAdd": "Add",
+  "browserDialogOk": "OK",
+  "settingsBrowserSignOutFailed": "Could not sign you out of every portal. Restart Daylex and try again."
 }

@@ -19,6 +19,8 @@ class UiState {
     this.editorMode = EditorMode.preview,
     this.panelOpen = true,
     this.panelWidth = defaultPanelWidth,
+    this.panelFull = false,
+    this.panelFits = true,
     this.sidebarOpen = true,
     this.newChatProjectId,
   });
@@ -33,9 +35,19 @@ class UiState {
   static const defaultLocale = Locale('it');
   static const defaultPanelWidth = 600.0;
 
-  /// The side panel with preview/review/library/log tabs.
+  /// The side panel with the chat's tabs and the web tabs.
   final bool panelOpen;
   final double panelWidth;
+
+  /// The panel in the chat's place, at full width.
+  final bool panelFull;
+
+  /// The window has room for the panel beside the chat, as the shell measured it last. Without room an open
+  /// panel waits behind the chat, and a panel asked for comes in the chat's place.
+  final bool panelFits;
+
+  /// On screen, beside the chat or in its place.
+  bool get panelShown => panelOpen && (panelFits || panelFull);
   final bool sidebarOpen;
 
   /// Project picked on the new-chat screen.
@@ -48,6 +60,8 @@ class UiState {
     EditorMode? editorMode,
     bool? panelOpen,
     double? panelWidth,
+    bool? panelFull,
+    bool? panelFits,
     bool? sidebarOpen,
     String? Function()? newChatProjectId,
   }) => UiState(
@@ -57,6 +71,8 @@ class UiState {
     editorMode: editorMode ?? this.editorMode,
     panelOpen: panelOpen ?? this.panelOpen,
     panelWidth: panelWidth ?? this.panelWidth,
+    panelFull: panelFull ?? this.panelFull,
+    panelFits: panelFits ?? this.panelFits,
     sidebarOpen: sidebarOpen ?? this.sidebarOpen,
     newChatProjectId: newChatProjectId != null
         ? newChatProjectId()
@@ -70,15 +86,19 @@ class UiNotifier extends Notifier<UiState> {
   static const minPanelWidth = 360.0;
   static const maxPanelWidth = 1100.0;
 
-  /// Opens with the theme and the language picked last time; a saved value this app does not know is left
-  /// for the default.
+  /// Opens with the theme, the language and the panel width picked last time; a saved value this app does not
+  /// know is left for the default.
   @override
   UiState build() {
     final saved = ref.read(localStoreProvider)?.readPreferences() ?? const {};
+    final width = saved['panelWidth'];
     return UiState(
       themeMode:
           ThemeMode.values.asNameMap()[saved['themeMode']] ?? ThemeMode.dark,
       locale: UiState.defaultLocale,
+      panelWidth: width is num
+          ? width.toDouble().clamp(minPanelWidth, maxPanelWidth)
+          : UiState.defaultPanelWidth,
     );
   }
 
@@ -89,6 +109,7 @@ class UiNotifier extends Notifier<UiState> {
       store.writePreferences({
         'themeMode': state.themeMode.name,
         'locale': state.locale.languageCode,
+        'panelWidth': state.panelWidth,
       });
     } on FileSystemException catch (e) {
       store.saveFailed(e);
@@ -131,13 +152,44 @@ class UiNotifier extends Notifier<UiState> {
   void setEditorMode(EditorMode mode) =>
       state = state.copyWith(editorMode: mode);
 
-  void togglePanel() => state = state.copyWith(panelOpen: !state.panelOpen);
+  /// Hides the panel when it is on screen, shows it otherwise. Hiding also leaves the full width: the chat comes
+  /// back.
+  void togglePanel() => state.panelShown
+      ? state = state.copyWith(panelOpen: false, panelFull: false)
+      : showPanel();
 
-  void showPanel() => state = state.copyWith(panelOpen: true);
+  /// The panel on screen: in the chat's place when there is no room beside it.
+  void showPanel() => state = state.copyWith(
+    panelOpen: true,
+    panelFull: state.panelFull || !state.panelFits,
+  );
 
+  /// What the shell measured; see [UiState.panelFits].
+  void setPanelFits(bool fits) {
+    if (state.panelFits != fits) state = state.copyWith(panelFits: fits);
+  }
+
+  /// The panel in the chat's place, or back beside it.
+  void toggleFullPanel() => state = state.copyWith(
+    panelOpen: true,
+    panelFull: !state.panelFull,
+  );
+
+  void exitFullPanel() {
+    if (state.panelFull) state = state.copyWith(panelFull: false);
+  }
+
+  /// Follows the pointer; [endResize] saves the width once the drag ends.
   void resizePanel(double delta) => state = state.copyWith(
     panelWidth: (state.panelWidth + delta).clamp(minPanelWidth, maxPanelWidth),
   );
+
+  void endResize() => _savePreferences();
+
+  void resetPanelWidth() {
+    state = state.copyWith(panelWidth: UiState.defaultPanelWidth);
+    _savePreferences();
+  }
 
   void toggleSidebar() =>
       state = state.copyWith(sidebarOpen: !state.sidebarOpen);

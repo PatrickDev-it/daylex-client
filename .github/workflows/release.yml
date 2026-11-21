@@ -63,6 +63,28 @@ jobs:
         if: runner.os != 'Linux'
         working-directory: app
         run: flutter test integration_test/credential_vault_test.dart -d '${{ matrix.platform }}' --no-pub
+      - name: Windows and Mac browser engine
+        if: runner.os != 'Linux'
+        working-directory: app
+        run: |
+          # On the Mac the screen is kept every 3 s while the pages open: WebKit is checked nowhere else.
+          if [[ '${{ runner.os }}' == macOS ]]; then
+            mkdir -p "$RUNNER_TEMP/browser-shots"
+            (for i in $(seq -w 1 80); do screencapture -x "$RUNNER_TEMP/browser-shots/$i.png"; sleep 3; done) >/dev/null 2>&1 &
+            shots=$!
+          fi
+          status=0
+          flutter test integration_test/browser_engine_test.dart -d '${{ matrix.platform }}' --no-pub || status=$?
+          if [[ -n "${shots:-}" ]]; then kill "$shots" 2>/dev/null || true; fi
+          exit "$status"
+      - name: Mac browser screenshots
+        if: always() && runner.os == 'macOS'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: browser-shots-macos
+          path: ${{ runner.temp }}/browser-shots
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Windows and Linux release
         if: runner.os != 'macOS'
         working-directory: app

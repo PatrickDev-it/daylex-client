@@ -2204,4 +2204,261 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get webSessionHelp =>
       'The key stays in memory for this session only: enter it again after reloading or reopening Daylex. Documents and chats remain in this browser; download a backup regularly.';
+
+  @override
+  String get shortcutNewWebTab => 'New web tab';
+
+  @override
+  String get shortcutReopenTab => 'Reopen closed tab';
+
+  @override
+  String get shortcutNextTab => 'Next tab';
+
+  @override
+  String get shortcutPreviousTab => 'Previous tab';
+
+  @override
+  String get shortcutFocusAddress => 'Focus the address bar';
+
+  @override
+  String get shortcutReload => 'Reload the web page';
+
+  @override
+  String get shortcutFullPanel => 'Full-width panel';
+
+  @override
+  String get browserNewTab => 'New tab';
+
+  @override
+  String get browserBack => 'Back';
+
+  @override
+  String get browserForward => 'Forward';
+
+  @override
+  String get browserReload => 'Reload';
+
+  @override
+  String get browserStop => 'Stop loading';
+
+  @override
+  String get browserAddressHint => 'Search Google or type an address';
+
+  @override
+  String get browserNotSecure => 'Not secure';
+
+  @override
+  String get browserSecure => 'Encrypted connection';
+
+  @override
+  String get browserAttach => 'Attach to chat';
+
+  @override
+  String get browserAttachShort => 'Attach';
+
+  @override
+  String get browserAttachHelp =>
+      'Attach this page to the chat: the agent reads it like any case document';
+
+  @override
+  String browserAttached(String name) {
+    return '“$name” attached to the chat';
+  }
+
+  @override
+  String get browserAttachFailed =>
+      'This page could not be attached. Download it and drop it on the chat.';
+
+  @override
+  String browserCaptureNote(String date, String time) {
+    return 'Web page captured with Daylex on $date at $time from:';
+  }
+
+  @override
+  String get browserOpenOutside => 'Open in browser';
+
+  @override
+  String get browserOpenOutsideHelp => 'Open this page in the system browser';
+
+  @override
+  String get browserMore => 'More actions';
+
+  @override
+  String get browserCopyAddress => 'Copy address';
+
+  @override
+  String get browserAddressCopied => 'Address copied';
+
+  @override
+  String get browserAddPortal => 'Add to portals';
+
+  @override
+  String browserPortalAdded(String name) {
+    return '“$name” added to your portals';
+  }
+
+  @override
+  String browserZoom(int percent) {
+    return 'Zoom $percent%';
+  }
+
+  @override
+  String get browserRefused =>
+      'Daylex only opens web addresses (http and https).';
+
+  @override
+  String get browserProblemUnreachableTitle => 'Site unreachable';
+
+  @override
+  String get browserProblemUnreachableMessage =>
+      'Check your internet connection and the address, then try again.';
+
+  @override
+  String get browserProblemTimeoutTitle => 'The site is not responding';
+
+  @override
+  String get browserProblemTimeoutMessage =>
+      'The site is taking too long. Try again in a moment.';
+
+  @override
+  String get browserProblemCertificateTitle => 'Connection not secure';
+
+  @override
+  String get browserProblemCertificateMessage =>
+      'This site\'s certificate is not valid, so Daylex does not open the page. If it is the right site, tell whoever runs it.';
+
+  @override
+  String get browserProblemEngineTitle => 'The built-in browser did not start';
+
+  @override
+  String get browserProblemEngineMessage =>
+      'Restart Daylex. If it happens again, open the page in the system browser.';
+
+  @override
+  String get browserProblemOtherTitle => 'The page did not open';
+
+  @override
+  String get browserProblemOtherMessage =>
+      'Try again, or open it in the system browser.';
+
+  @override
+  String get browserRetry => 'Try again';
+
+  @override
+  String browserOpenWww(String host) {
+    return 'Open $host';
+  }
+
+  @override
+  String get browserRuntimeTitle => 'A Windows component is missing';
+
+  @override
+  String get browserRuntimeMessage =>
+      'Opening pages inside Daylex needs Microsoft Edge WebView2. Install it from Microsoft\'s site, then restart Daylex.';
+
+  @override
+  String get browserRuntimeDownload => 'Download WebView2';
+
+  @override
+  String get browserExternalTitle => 'Pages open in your browser';
+
+  @override
+  String get browserExternalMessage =>
+      'On this computer Daylex cannot show web pages in the panel: each tab opens its address in the system browser.';
+
+  @override
+  String browserDownloaded(String name) {
+    return 'Downloaded: $name';
+  }
+
+  @override
+  String get browserShowInFolder => 'Show in folder';
+
+  @override
+  String get browserPortalsOfficial => 'Official sources';
+
+  @override
+  String get browserPortalsDatabases => 'Databases and press';
+
+  @override
+  String get browserPortalsMine => 'Your portals';
+
+  @override
+  String get browserPortalsMineEmpty =>
+      'Add the sites you use most: open the page and choose “Add to portals” from the tab menu.';
+
+  @override
+  String get browserAddPortalButton => 'Add a portal';
+
+  @override
+  String get browserPortalRemove => 'Remove from portals';
+
+  @override
+  String get browserPortalDialogTitle => 'New portal';
+
+  @override
+  String get browserPortalRenameTitle => 'Rename portal';
+
+  @override
+  String get browserPortalName => 'Name';
+
+  @override
+  String get browserPortalAddress => 'Address';
+
+  @override
+  String get browserPortalAddressInvalid =>
+      'Type a web address, for example www.site.com';
+
+  @override
+  String get browserPortalsMenu => 'Portals';
+
+  @override
+  String get browserNewTabHint =>
+      'Sign in to the portals with your own credentials, as in a browser: you stay signed in after a restart. Daylex never reads or keeps your passwords.';
+
+  @override
+  String get panelFull => 'Full-width panel';
+
+  @override
+  String get panelSplit => 'Panel beside the chat';
+
+  @override
+  String get panelResize =>
+      'Drag to resize · double-click for the default width';
+
+  @override
+  String get sidebarBrowser => 'Browser';
+
+  @override
+  String get settingsBrowser => 'Browser';
+
+  @override
+  String get settingsBrowserSignOut => 'Sign out of all portals';
+
+  @override
+  String get settingsBrowserSignOutHelp =>
+      'Clears the sign-ins, cookies and data sites saved in Daylex\'s browser. You will need your credentials again.';
+
+  @override
+  String get settingsBrowserSignOutButton => 'Sign out';
+
+  @override
+  String get settingsBrowserSignOutConfirmTitle => 'Sign out of all portals?';
+
+  @override
+  String get settingsBrowserSignOutConfirmMessage =>
+      'You will have to sign in again to every database and portal. Open tabs stay where they are.';
+
+  @override
+  String get settingsBrowserSignedOut => 'Signed out of all portals';
+
+  @override
+  String get browserPortalAdd => 'Add';
+
+  @override
+  String get browserDialogOk => 'OK';
+
+  @override
+  String get settingsBrowserSignOutFailed =>
+      'Could not sign you out of every portal. Restart Daylex and try again.';
 }

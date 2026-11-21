@@ -24,9 +24,11 @@ String shortStamp(AppLocalizations l, DateTime t, DateTime now) {
   return l.dateAt(shortDate(l, t, now), clockTime(t));
 }
 
+/// The date with its year: "5 ott 2026".
+String longDate(AppLocalizations l, DateTime t) => l.dateOtherYear(t.day, _month(l, t), '${t.year}');
+
 /// The full date and time, for a tooltip: "5 ott 2026, 14:32:07".
-String fullStamp(AppLocalizations l, DateTime t) =>
-    l.dateAt(l.dateOtherYear(t.day, _month(l, t), '${t.year}'), clockSeconds(t));
+String fullStamp(AppLocalizations l, DateTime t) => l.dateAt(longDate(l, t), clockSeconds(t));
 
 /// How long ago: "adesso", "5 min fa", "3 h fa", "ieri", "4 giorni fa", then the date.
 String relativeTime(AppLocalizations l, DateTime t, DateTime now) {
