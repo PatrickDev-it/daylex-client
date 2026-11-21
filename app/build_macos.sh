@@ -79,7 +79,7 @@ fi
 codesign --force "${sign_flags[@]}" --entitlements macos/Runner/Release.entitlements "$built"
 verify_app() { codesign --verify --deep --strict --verbose=2 "$1"; }
 verify_app "$built"
-echo "architetture: $app_archs"
+echo "architetture: $(lipo -archs "${built}/Contents/MacOS/${app}")"
 
 step "DMG"
 rm -rf dist
