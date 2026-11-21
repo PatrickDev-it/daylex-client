@@ -1,46 +1,56 @@
-import '../../../l10n/app_localizations_it.dart';
-
 import 'dart:isolate';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import '../model/document.dart';
+import '../model/inline.dart';
 import 'pdfa.dart';
 
-/// Width over height of the pages the renderer makes (A4): placeholders and thumbnails take this shape.
+/// Width over height of an A4 page upright: placeholders and thumbnails take this shape until a page is drawn.
 final kA4AspectRatio = PdfPageFormat.a4.width / PdfPageFormat.a4.height;
+
+/// The paper of [doc]: A4, upright or landscape as its style says.
+PdfPageFormat pageFormatOf(PaperDocument doc) =>
+    DocStyles(doc.theme).page.orientation == PageOrientation.landscape
+    ? PdfPageFormat.a4.landscape
+    : PdfPageFormat.a4;
+
+/// Width over height of [doc]'s pages.
+double pageAspectRatio(PaperDocument doc) {
+  final format = pageFormatOf(doc);
+  return format.width / format.height;
+}
 
 /// Raw font files handed to the renderer, and the colour profile its PDF/A output intent embeds. Plain bytes,
 /// so they can cross an isolate boundary together with the document.
 class PdfFontSet {
-  const PdfFontSet({
-    required this.regular,
-    required this.medium,
-    required this.semiBold,
-    required this.bold,
-    required this.colorProfile,
-  });
+  const PdfFontSet({required this.faces, required this.colorProfile});
 
-  final Uint8List regular;
-  final Uint8List medium;
-  final Uint8List semiBold;
-  final Uint8List bold;
+  /// The faces of each typeface, in [faceNames] order.
+  final Map<DocFont, List<Uint8List>> faces;
 
   /// sRGB2014.icc, unchanged (assets/icc/LICENSE.txt).
   final Uint8List colorProfile;
+
+  /// The four files of a typeface: `assets/fonts/<asset>-<name>.ttf`, regular, bold, italic, bold italic.
+  static const faceNames = ['Regular', 'Bold', 'Italic', 'BoldItalic'];
 
   static Future<PdfFontSet> load() async {
     Future<Uint8List> read(String path) async =>
         (await rootBundle.load('assets/$path')).buffer.asUint8List();
     return PdfFontSet(
-      regular: await read('fonts/Inter-Regular.ttf'),
-      medium: await read('fonts/Inter-Medium.ttf'),
-      semiBold: await read('fonts/Inter-SemiBold.ttf'),
-      bold: await read('fonts/Inter-Bold.ttf'),
+      faces: {
+        for (final font in DocFont.values)
+          font: [
+            for (final face in faceNames)
+              await read('fonts/${font.asset}-$face.ttf'),
+          ],
+      },
       colorProfile: await read('icc/sRGB2014.icc'),
     );
   }
@@ -50,6 +60,9 @@ class PdfFontSet {
 /// exactly one PDF page, so "page 3" means the same thing to the user, the
 /// agent and the viewer. Every PDF it makes, the preview's included, is PDF/A-1b
 /// ([newPdfaDocument]): the lawyer exports what the preview shows.
+///
+/// Nothing on a page is drawn that the document does not say (rfc/055): every size, colour, line and text comes from
+/// [DocStyles], the document's style over its base.
 class PdfRenderer {
   const PdfRenderer(this.fonts);
 
@@ -62,49 +75,67 @@ class PdfRenderer {
     return Isolate.run(() => PdfRenderer(fonts).render(doc));
   }
 
-  Future<Uint8List> render(PaperDocument doc) {
-    final f = _Fonts(
-      regular: pw.Font.ttf(_byteData(fonts.regular)),
-      medium: pw.Font.ttf(_byteData(fonts.medium)),
-      semiBold: pw.Font.ttf(_byteData(fonts.semiBold)),
-      bold: pw.Font.ttf(_byteData(fonts.bold)),
-    );
+  /// [doc] as a PDF. [firstPage] (0-based) and [pageCount] place its pages in a longer document, as the page
+  /// fitter measures one page at a time: they decide the first-page header and the page numbers.
+  Future<Uint8List> render(PaperDocument doc, {int firstPage = 0, int? pageCount}) {
+    final faces = _Faces(fonts);
+    final styles = DocStyles(doc.theme);
+    final body = styles.resolve(styles.merged(StyleRole.body));
     final pdf = newPdfaDocument(
       title: doc.title,
       author: doc.metadata.author,
       application: 'Daylex',
       colorProfile: fonts.colorProfile,
-      theme: pw.ThemeData.withFont(base: f.regular, bold: f.bold),
+      theme: pw.ThemeData.withFont(
+        base: faces.font(body.font),
+        bold: faces.font(body.font, bold: true),
+        italic: faces.font(body.font, italic: true),
+        boldItalic: faces.font(body.font, bold: true, italic: true),
+      ),
     );
-    final style = _Style(PdfColor.fromInt(doc.theme.accent), f);
+    final format = pageFormatOf(doc);
+    final total = pageCount ?? doc.pages.length;
     for (var i = 0; i < doc.pages.length; i++) {
       pdf.addPage(
         pw.Page(
-          pageFormat: PdfPageFormat.a4,
+          pageFormat: format,
           margin: pw.EdgeInsets.zero,
-          build: (_) => _PageBuilder(doc, i, style).build(),
+          build: (_) => _PageBuilder(doc, styles, faces, doc.pages[i], firstPage + i, total).build(),
         ),
       );
     }
     return pdf.save();
   }
-
-  static ByteData _byteData(Uint8List bytes) =>
-      bytes.buffer.asByteData(bytes.offsetInBytes, bytes.lengthInBytes);
 }
 
-class _Fonts {
-  const _Fonts({
-    required this.regular,
-    required this.medium,
-    required this.semiBold,
-    required this.bold,
-  });
+ByteData _byteData(Uint8List bytes) => bytes.buffer.asByteData(bytes.offsetInBytes, bytes.lengthInBytes);
 
-  final pw.Font regular;
-  final pw.Font medium;
-  final pw.Font semiBold;
-  final pw.Font bold;
+/// The faces one render uses, read from [PdfFontSet] the first time each is asked for: a typeface the document never
+/// names is neither parsed nor embedded.
+class _Faces {
+  _Faces(this.set);
+
+  final PdfFontSet set;
+  final _fonts = <(DocFont, int), pw.Font>{};
+  final _metrics = <DocFont, _Metrics>{};
+
+  pw.Font font(DocFont font, {bool bold = false, bool italic = false}) {
+    final face = (bold ? 1 : 0) + (italic ? 2 : 0);
+    return _fonts[(font, face)] ??= pw.Font.ttf(_byteData(set.faces[font]![face]));
+  }
+
+  _Metrics metrics(DocFont font) => _metrics[font] ??= _Metrics(TtfParser(_byteData(set.faces[font]![0])));
+}
+
+/// A typeface's line, as a fraction of its size: what the PDF library stacks ([natural], ascender to descender)
+/// and what a word processor calls single spacing ([single], with the line gap).
+class _Metrics {
+  _Metrics(TtfParser font)
+    : natural = (font.ascent - font.descent) / font.unitsPerEm,
+      single = (font.ascent - font.descent + font.lineGap) / font.unitsPerEm;
+
+  final double natural;
+  final double single;
 }
 
 /// An export must contain all text. Page numbers remain identical to the editor.
@@ -117,6 +148,8 @@ class PdfLayoutException implements Exception {
       'Suddividi il contenuto su più pagine prima di esportare il PDF.';
 }
 
+/// Lays its child out without a height limit and refuses, with a [PdfLayoutException], one taller than the space
+/// it is given: a page never loses text silently.
 class _FitContent extends pw.SingleChildWidget {
   _FitContent({required pw.Widget child, required this.page})
     : super(child: child);
@@ -160,305 +193,266 @@ class _FitContent extends pw.SingleChildWidget {
   }
 }
 
-class _Style {
-  _Style(this.accent, this.fonts)
-    : tint = _mix(accent, 0.07),
-      tintStrong = _mix(accent, 0.16);
+/// Where a page's parts go, in points.
+class _Geometry {
+  _Geometry(PageSetup page)
+    : top = cmToPt(page.margin('top') ?? 0),
+      right = cmToPt(page.margin('right') ?? 0),
+      bottom = cmToPt(page.margin('bottom') ?? 0),
+      left = cmToPt(page.margin('left') ?? 0),
+      header = cmToPt(page.header ?? 0),
+      footer = cmToPt(page.footer ?? 0);
 
-  final PdfColor accent;
-  final PdfColor tint;
-  final PdfColor tintStrong;
-  final _Fonts fonts;
+  final double top;
+  final double right;
+  final double bottom;
+  final double left;
 
-  static const ink = PdfColor.fromInt(0xFF0F172A);
-  static const body = PdfColor.fromInt(0xFF334155);
-  static const muted = PdfColor.fromInt(0xFF64748B);
-  static const hairline = PdfColor.fromInt(0xFFE2E8F0);
-  static const zebra = PdfColor.fromInt(0xFFF8FAFC);
-  static const positive = PdfColor.fromInt(0xFF059669);
-  static const negative = PdfColor.fromInt(0xFFDC2626);
+  /// From the top edge to the header's top.
+  final double header;
 
-  /// Blends [c] over white with the given opacity.
-  static PdfColor _mix(PdfColor c, double opacity) => PdfColor(
-    1 - (1 - c.red) * opacity,
-    1 - (1 - c.green) * opacity,
-    1 - (1 - c.blue) * opacity,
-  );
+  /// From the bottom edge to the footer's bottom.
+  final double footer;
+}
 
-  pw.TextStyle text(
-    double size, {
-    pw.Font? font,
-    PdfColor color = body,
-    double lineSpacing = 0,
-    double letterSpacing = 0,
-  }) => pw.TextStyle(
-    font: font ?? fonts.regular,
-    fontSize: size,
-    color: color,
-    lineSpacing: lineSpacing,
-    letterSpacing: letterSpacing,
-  );
+/// The text of a page between its margins, pushed down by a header (up by a footer) that reaches past its margin,
+/// as a word processor does. Laid out after the header and footer, whose sizes it reads.
+class _Body extends pw.SingleChildWidget {
+  _Body({
+    required pw.Widget child,
+    required this.geometry,
+    required this.page,
+    this.header,
+    this.headerGap = 0,
+    this.footer,
+    this.footerGap = 0,
+  }) : super(child: child);
+
+  final _Geometry geometry;
+  final int page;
+  final pw.Widget? header;
+  final double headerGap;
+  final pw.Widget? footer;
+  final double footerGap;
+
+  @override
+  void layout(pw.Context context, pw.BoxConstraints constraints, {bool parentUsesSize = false}) {
+    final g = geometry;
+    box = PdfRect(0, 0, constraints.maxWidth, constraints.maxHeight);
+    final top = math.max(g.top, header == null ? 0.0 : g.header + header!.box!.height + headerGap);
+    final bottom = math.max(g.bottom, footer == null ? 0.0 : g.footer + footer!.box!.height + footerGap);
+    final width = box!.width - g.left - g.right;
+    final height = box!.height - top - bottom;
+    if (width <= 0 || height <= 0) throw PdfLayoutException(page);
+    child!.layout(
+      context,
+      pw.BoxConstraints(minWidth: width, maxWidth: width, maxHeight: height),
+      parentUsesSize: true,
+    );
+    final laid = child!.box!;
+    child!.box = PdfRect(g.left, bottom + height - laid.height, width, laid.height);
+  }
+
+  @override
+  void paint(pw.Context context) {
+    super.paint(context);
+    paintChild(context);
+  }
 }
 
 class _PageBuilder {
-  _PageBuilder(this.doc, this.index, this.s);
+  _PageBuilder(this.doc, this.styles, this.faces, this.page, this.number, this.total);
 
   final PaperDocument doc;
-  final int index;
-  final _Style s;
+  final DocStyles styles;
+  final _Faces faces;
+  final DocPage page;
 
-  DocPage get page => doc.pages[index];
-  bool get premium => page.layout == PageLayout.premium;
+  /// 0-based, in the whole document.
+  final int number;
+  final int total;
 
-  pw.Widget build() => switch (page.layout) {
-    PageLayout.cover => _cover(),
-    PageLayout.twoColumn => _frame(_twoColumns()),
-    PageLayout.standard || PageLayout.premium => _frame(
-      pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.stretch,
-        children: _blocks(page.blocks),
-      ),
-    ),
-  };
-
-  // -- chrome ---------------------------------------------------------------
-
-  pw.Widget _frame(pw.Widget content) {
-    final horizontal = premium ? 64.0 : 56.0;
+  pw.Widget build() {
+    final g = _Geometry(styles.page);
+    final cover = page.layout == PageLayout.cover;
+    final first = number == 0;
+    final header = cover ? null : _region(styles.region(first ? RegionSlot.firstHeader : RegionSlot.header), true);
+    final footer = cover ? null : _region(styles.region(first ? RegionSlot.firstFooter : RegionSlot.footer), false);
+    final content = page.layout == PageLayout.twoColumn
+        ? _twoColumns()
+        : pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.stretch, children: _blocks(page.blocks));
     return pw.Stack(
       children: [
-        if (premium)
-          pw.Positioned(
-            left: 0,
-            top: 0,
-            bottom: 0,
-            child: pw.Container(width: 6, color: s.accent),
-          ),
-        pw.Padding(
-          padding: pw.EdgeInsets.fromLTRB(horizontal, 40, horizontal, 36),
-          child: pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.stretch,
-            children: [
-              _header(),
-              pw.SizedBox(height: premium ? 36 : 28),
-              pw.Expanded(
-                child: _FitContent(page: index + 1, child: content),
-              ),
-              _footer(),
-            ],
+        if (header case (final widget, _))
+          pw.Positioned(left: g.left, right: g.right, top: g.header, child: widget),
+        if (footer case (final widget, _))
+          pw.Positioned(left: g.left, right: g.right, bottom: g.footer, child: widget),
+        pw.Positioned(
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          child: _Body(
+            geometry: g,
+            page: number + 1,
+            header: header?.$1,
+            headerGap: header?.$2.spaceAfter ?? 0,
+            footer: footer?.$1,
+            footerGap: footer?.$2.spaceBefore ?? 0,
+            child: _FitContent(page: number + 1, child: content),
           ),
         ),
       ],
     );
   }
 
-  pw.Widget _header() {
-    final brand = doc.theme.brandName.isNotEmpty
-        ? doc.theme.brandName
-        : doc.title;
-    return pw.Container(
-      padding: const pw.EdgeInsets.only(bottom: 10),
-      decoration: const pw.BoxDecoration(
-        border: pw.Border(bottom: pw.BorderSide(color: _Style.hairline)),
-      ),
-      child: pw.Row(
-        children: [
-          pw.Container(
-            width: 7,
-            height: 7,
-            decoration: pw.BoxDecoration(
-              color: s.accent,
-              borderRadius: pw.BorderRadius.circular(2),
-            ),
-          ),
-          pw.SizedBox(width: 7),
-          pw.Expanded(
-            child: pw.Text(
-              brand,
-              style: s.text(8.5, font: s.fonts.semiBold, color: _Style.ink),
-            ),
-          ),
-          pw.SizedBox(width: 12),
-          pw.Expanded(
-            child: pw.Text(
-              page.title.toUpperCase(),
-              textAlign: pw.TextAlign.right,
-              style: s.text(
-                7.5,
-                font: s.fonts.semiBold,
-                color: s.accent,
-                letterSpacing: 0.8,
+  // -- text -----------------------------------------------------------------
+
+  /// The space a line of [s] gets beyond what the PDF library stacks, so [ResolvedStyle.lineHeight] is the word
+  /// processor's: 1.5 is Word's «1,5 righe» for this typeface.
+  double _extra(ResolvedStyle s) {
+    final m = faces.metrics(s.font);
+    return s.size * (s.lineHeight * m.single - m.natural);
+  }
+
+  pw.TextStyle _textStyle(ResolvedStyle s, {bool bold = false, bool italic = false, bool underline = false}) =>
+      pw.TextStyle(
+        font: faces.font(s.font, bold: s.bold || bold, italic: s.italic || italic),
+        fontSize: s.size,
+        color: PdfColor.fromInt(s.color),
+        lineSpacing: _extra(s),
+        decoration: s.underline || underline ? pw.TextDecoration.underline : pw.TextDecoration.none,
+      );
+
+  static pw.TextAlign _align(BlockAlign align) => switch (align) {
+    BlockAlign.left => pw.TextAlign.left,
+    BlockAlign.center => pw.TextAlign.center,
+    BlockAlign.right => pw.TextAlign.right,
+    BlockAlign.justify => pw.TextAlign.justify,
+  };
+
+  /// [text] in [s], its emphasis ([parseInline]) kept. Each line is as tall as [ResolvedStyle.lineHeight] makes it,
+  /// the extra space above the text as Word puts it.
+  pw.Widget _text(String text, ResolvedStyle s) {
+    final extra = _extra(s);
+    return pw.Padding(
+      padding: pw.EdgeInsets.only(top: math.max(0, extra)),
+      child: pw.RichText(
+        textAlign: _align(s.align),
+        text: pw.TextSpan(
+          style: _textStyle(s),
+          children: [
+            if (s.firstLineIndent > 0) pw.WidgetSpan(child: pw.SizedBox(width: s.firstLineIndent)),
+            for (final run in parseInline(text))
+              pw.TextSpan(
+                text: s.cased(run.text),
+                style: _textStyle(s, bold: run.bold, italic: run.italic, underline: run.underline),
               ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  pw.Widget _footer() {
-    final left = [
-      doc.title,
-      if (doc.metadata.client.isNotEmpty) doc.metadata.client,
-    ].join('  ·  ');
-    return pw.Container(
-      padding: const pw.EdgeInsets.only(top: 10),
-      decoration: const pw.BoxDecoration(
-        border: pw.Border(top: pw.BorderSide(color: _Style.hairline)),
-      ),
-      child: pw.Row(
+  ResolvedStyle _resolve(BlockStyle style, [Map<String, Object>? patch]) =>
+      styles.resolve(patch == null ? style : style.patch(patch));
+
+  /// [child] inside the box [s] describes: background, border, padding, and the indent outside them.
+  pw.Widget _box(ResolvedStyle s, pw.Widget child, {bool indent = true}) {
+    final side = pw.BorderSide(color: PdfColor.fromInt(s.lineColor), width: s.borderWidth);
+    final border = s.borderWidth <= 0
+        ? null
+        : switch (s.border) {
+            BlockBorder.none => null,
+            BlockBorder.left => pw.Border(left: side),
+            BlockBorder.top => pw.Border(top: side),
+            BlockBorder.bottom => pw.Border(bottom: side),
+            BlockBorder.box => pw.Border.fromBorderSide(side),
+          };
+    var widget = child;
+    if (border != null || s.background != null || s.padding > 0) {
+      widget = pw.Container(
+        padding: pw.EdgeInsets.all(s.padding),
+        decoration: pw.BoxDecoration(
+          color: s.background == null ? null : PdfColor.fromInt(s.background!),
+          border: border,
+        ),
+        child: child,
+      );
+    }
+    return indent && s.indent > 0 ? pw.Padding(padding: pw.EdgeInsets.only(left: s.indent), child: widget) : widget;
+  }
+
+  // -- headers and footers ----------------------------------------------------
+
+  /// The header (or footer) [r] for this page, and its style; null when it shows nothing.
+  (pw.Widget, ResolvedStyle)? _region(PageRegion r, bool header) {
+    if (r.isEmpty) return null;
+    final style = styles.regionStyle(r);
+    final s = styles.resolve(style);
+    final values = {...regionValues(doc, page), 'pagina': '${number + 1}', 'pagine': '$total'};
+    final logo = r.logo;
+    final logoAlign = logo?.align == BlockAlign.justify ? BlockAlign.left : logo?.align;
+    pw.Widget? part(String text, BlockAlign align) {
+      final filled = fillPlaceholders(text, values);
+      final hasLogo = logo != null && logoAlign == align;
+      if (filled.isEmpty && !hasLogo) return null;
+      return pw.Column(
+        crossAxisAlignment: switch (align) {
+          BlockAlign.center => pw.CrossAxisAlignment.center,
+          BlockAlign.right => pw.CrossAxisAlignment.end,
+          _ => pw.CrossAxisAlignment.start,
+        },
         children: [
-          pw.Expanded(
-            child: pw.Text(left, style: s.text(7.5, color: _Style.muted)),
-          ),
-          pw.SizedBox(width: 12),
-          pw.Text(
-            '${index + 1} / ${doc.pages.length}',
-            style: s.text(7.5, font: s.fonts.medium, color: _Style.muted),
-          ),
+          if (hasLogo) pw.Image(OpaqueImage(logo.bytes), height: logo.height),
+          if (hasLogo && filled.isNotEmpty) pw.SizedBox(height: 4),
+          if (filled.isNotEmpty) _text(filled, _resolve(style, {'align': align.name, 'firstLineIndent': 0})),
         ],
-      ),
-    );
-  }
+      );
+    }
 
-  pw.Widget _cover() {
-    final meta = doc.metadata;
-    final date = meta.updatedAt;
-    // Export language is Italian, independent of the UI language and isolate locale.
-    final labels = AppLocalizationsIt();
-    final months = labels.pdfMonthNames.split(';');
-    final dateLabel = '${months[date.month - 1]} ${date.year}';
-    const white = PdfColors.white;
-    final softWhite = PdfColor(1, 1, 1, 0.72);
-
-    return pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.stretch,
-      children: [
-        pw.Container(
-          height: 470,
-          color: s.accent,
-          padding: const pw.EdgeInsets.fromLTRB(64, 56, 64, 56),
-          child: pw.Column(
+    final left = part(r.left, BlockAlign.left);
+    final center = part(r.center, BlockAlign.center);
+    final right = part(r.right, BlockAlign.right);
+    final present = [?left, ?center, ?right];
+    if (present.isEmpty) return null;
+    pw.Widget row = present.length == 1
+        ? pw.Align(
+            alignment: center != null
+                ? pw.Alignment.topCenter
+                : (right != null ? pw.Alignment.topRight : pw.Alignment.topLeft),
+            child: present.single,
+          )
+        : pw.Row(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              pw.Text(
-                (doc.theme.brandName.isEmpty
-                        ? 'Daylex'
-                        : doc.theme.brandName)
-                    .toUpperCase(),
-                style: s.text(
-                  8.5,
-                  font: s.fonts.semiBold,
-                  color: softWhite,
-                  letterSpacing: 1.6,
-                ),
-              ),
-              pw.Expanded(
-                child: pw.Align(
-                  alignment: pw.Alignment.bottomLeft,
-                  child: _FitContent(
-                    page: index + 1,
-                    child: pw.Column(
-                      mainAxisSize: pw.MainAxisSize.min,
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        if (page.title.isNotEmpty) ...[
-                          pw.Text(
-                            page.title.toUpperCase(),
-                            style: s.text(
-                              9,
-                              font: s.fonts.semiBold,
-                              color: softWhite,
-                              letterSpacing: 1.2,
-                            ),
-                          ),
-                          pw.SizedBox(height: 14),
-                        ],
-                        pw.Text(
-                          meta.title,
-                          style: s
-                              .text(38, font: s.fonts.bold, color: white)
-                              .copyWith(lineSpacing: 2),
-                        ),
-                        if (meta.subtitle.isNotEmpty) ...[
-                          pw.SizedBox(height: 14),
-                          pw.Text(
-                            meta.subtitle,
-                            style: s.text(14, color: softWhite, lineSpacing: 3),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        pw.Expanded(
-          child: pw.Padding(
-            padding: const pw.EdgeInsets.fromLTRB(64, 40, 64, 48),
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.stretch,
-              children: [
-                pw.Row(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    if (meta.client.isNotEmpty)
-                      pw.Expanded(
-                        child: _coverFact(labels.pdfPreparedFor, meta.client),
-                      ),
-                    if (meta.author.isNotEmpty)
-                      pw.Expanded(
-                        child: _coverFact(labels.pdfPreparedBy, meta.author),
-                      ),
-                    pw.Expanded(child: _coverFact(labels.pdfDate, dateLabel)),
-                  ],
-                ),
-                pw.SizedBox(height: 28),
-                pw.Expanded(
-                  child: _FitContent(
-                    page: index + 1,
-                    child: pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.stretch,
-                      children: _blocks(page.blocks),
-                    ),
-                  ),
-                ),
+              if (center == null) ...[
+                pw.Expanded(child: left ?? pw.SizedBox()),
+                pw.Expanded(child: pw.Align(alignment: pw.Alignment.topRight, child: right ?? pw.SizedBox())),
+              ] else ...[
+                pw.Expanded(child: left ?? pw.SizedBox()),
+                pw.Expanded(child: pw.Center(child: center)),
+                pw.Expanded(child: pw.Align(alignment: pw.Alignment.topRight, child: right ?? pw.SizedBox())),
               ],
-            ),
-          ),
-        ),
-      ],
-    );
+            ],
+          );
+    if (r.line && s.borderWidth > 0) {
+      final side = pw.BorderSide(color: PdfColor.fromInt(s.lineColor), width: s.borderWidth);
+      row = pw.Container(
+        padding: header ? pw.EdgeInsets.only(bottom: s.padding) : pw.EdgeInsets.only(top: s.padding),
+        decoration: pw.BoxDecoration(border: header ? pw.Border(bottom: side) : pw.Border(top: side)),
+        child: row,
+      );
+    }
+    return (row, s);
   }
 
-  pw.Widget _coverFact(String label, String value) => pw.Column(
-    crossAxisAlignment: pw.CrossAxisAlignment.start,
-    children: [
-      pw.Text(
-        label.toUpperCase(),
-        style: s.text(
-          7,
-          font: s.fonts.semiBold,
-          color: _Style.muted,
-          letterSpacing: 1,
-        ),
-      ),
-      pw.SizedBox(height: 5),
-      pw.Text(
-        value,
-        style: s.text(11, font: s.fonts.semiBold, color: _Style.ink),
-      ),
-    ],
-  );
+  // -- columns ------------------------------------------------------------------
 
   pw.Widget _twoColumns() {
     final blocks = page.blocks;
     // A leading heading spans both columns; the rest is balanced by length.
-    final lead = blocks.isNotEmpty && blocks.first is HeadingBlock
-        ? blocks.first
-        : null;
+    final lead = blocks.isNotEmpty && blocks.first is HeadingBlock ? blocks.first : null;
     final rest = lead == null ? blocks : blocks.sublist(1);
 
     // Keep each heading together with the blocks that follow it.
@@ -467,10 +461,7 @@ class _PageBuilder {
       if (groups.isEmpty || b is HeadingBlock) groups.add([]);
       groups.last.add(b);
     }
-    final total = groups.fold(
-      0,
-      (sum, g) => sum + g.fold(0, (s, b) => s + _weight(b)),
-    );
+    final total = groups.fold(0, (sum, g) => sum + g.fold(0, (s, b) => s + _weight(b)));
     final left = <DocBlock>[];
     final right = <DocBlock>[];
     var leftWeight = 0;
@@ -485,17 +476,14 @@ class _PageBuilder {
       }
     }
     pw.Widget column(List<DocBlock> b) => pw.Expanded(
-      child: pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.stretch,
-        children: _blocks(b),
-      ),
+      child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.stretch, children: _blocks(b)),
     );
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.stretch,
       children: [
         if (lead != null) ...[
           ..._blocks([lead]),
-          pw.SizedBox(height: 18),
+          pw.SizedBox(height: _style(lead).spaceAfter),
         ],
         pw.Row(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -512,213 +500,149 @@ class _PageBuilder {
     _ => 30 + b.plainText.length ~/ 3,
   };
 
-  // -- blocks ---------------------------------------------------------------
+  // -- blocks -----------------------------------------------------------------
 
+  /// The block's own style over its role's: what spacing and boxes read.
+  ResolvedStyle _style(DocBlock b) => styles.resolve(styles.merged(b.role, b.style));
+
+  /// [blocks] one under the other, each the space its style asks for (after the one before it, before itself)
+  /// from the previous; the first of a page or a column takes no space above it.
   List<pw.Widget> _blocks(List<DocBlock> blocks) {
-    final gap = premium ? 18.0 : 14.0;
-    return [
-      for (var i = 0; i < blocks.length; i++) ...[
-        if (i > 0) pw.SizedBox(height: _gapBefore(blocks[i], gap)),
-        _block(blocks[i]),
-      ],
-    ];
+    final widgets = <pw.Widget>[];
+    ResolvedStyle? previous;
+    for (final b in blocks) {
+      final s = _style(b);
+      if (previous != null) widgets.add(pw.SizedBox(height: previous.spaceAfter + s.spaceBefore));
+      widgets.add(_block(b));
+      previous = s;
+    }
+    return widgets;
   }
 
-  double _gapBefore(DocBlock b, double gap) =>
-      b is HeadingBlock && b.level <= 2 ? gap + 10 : gap;
-
-  pw.Widget _block(DocBlock block) => switch (block) {
-    HeadingBlock() => _heading(block),
-    ParagraphBlock(:final text) => pw.Text(
-      text,
-      style: s.text(premium ? 11 : 10, lineSpacing: premium ? 5 : 4),
-    ),
-    BulletListBlock(:final items) => _bullets(items),
-    TableBlock() => _table(block),
-    MetricsBlock(:final items) => _metrics(items),
-    QuoteBlock() => _quote(block),
-    CalloutBlock() => _callout(block),
-    ImageBlock() => _image(block),
-  };
-
-  pw.Widget _heading(HeadingBlock h) => switch (h.level) {
-    1 => pw.Text(
-      h.text,
-      style: s.text(
-        premium ? 28 : 22,
-        font: s.fonts.bold,
-        color: _Style.ink,
-        lineSpacing: 2,
-        letterSpacing: -0.3,
-      ),
-    ),
-    2 => pw.Text(
-      h.text,
-      style: s.text(
-        premium ? 16 : 14,
-        font: s.fonts.semiBold,
-        color: _Style.ink,
-      ),
-    ),
-    _ => pw.Text(
-      h.text.toUpperCase(),
-      style: s.text(
-        8,
-        font: s.fonts.semiBold,
-        color: s.accent,
-        letterSpacing: 1,
-      ),
-    ),
-  };
-
-  pw.Widget _bullets(List<String> items) => pw.Column(
-    crossAxisAlignment: pw.CrossAxisAlignment.stretch,
-    children: [
-      for (final item in items)
-        pw.Padding(
-          padding: const pw.EdgeInsets.only(bottom: 6),
-          child: pw.Row(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Container(
-                margin: const pw.EdgeInsets.only(top: 4.5, right: 10),
-                width: 4,
-                height: 4,
-                decoration: pw.BoxDecoration(
-                  color: s.accent,
-                  shape: pw.BoxShape.circle,
-                ),
-              ),
-              pw.Expanded(
-                child: pw.Text(
-                  item,
-                  style: s.text(premium ? 10.5 : 10, lineSpacing: 3),
-                ),
-              ),
-            ],
-          ),
-        ),
-    ],
-  );
-
-  pw.Widget _table(TableBlock t) {
-    final columnCount = [
-      t.columns.length,
-      ...t.rows.map((r) => r.length),
-    ].fold(0, (a, b) => a > b ? a : b);
-    if (columnCount == 0) return pw.SizedBox();
-    List<String> pad(List<String> r) => [
-      ...r,
-      ...List.filled(columnCount - r.length, ''),
-    ];
-
-    pw.Widget cell(String text, {bool header = false, bool first = false}) =>
-        pw.Padding(
-          padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 7),
-          child: pw.Text(
-            header ? text.toUpperCase() : text,
-            textAlign: first ? pw.TextAlign.left : pw.TextAlign.right,
-            style: header
-                ? s.text(
-                    7,
-                    font: s.fonts.semiBold,
-                    color: s.accent,
-                    letterSpacing: 0.6,
-                  )
-                : s.text(
-                    9,
-                    font: first ? s.fonts.medium : s.fonts.regular,
-                    color: first ? _Style.ink : _Style.body,
-                  ),
-          ),
-        );
-
-    return pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.stretch,
-      children: [
-        pw.Table(
-          border: const pw.TableBorder(
-            horizontalInside: pw.BorderSide(color: _Style.hairline, width: 0.6),
-            bottom: pw.BorderSide(color: _Style.hairline, width: 0.6),
-          ),
-          columnWidths: {0: const pw.FlexColumnWidth(1.6)},
+  pw.Widget _block(DocBlock block) {
+    final style = styles.merged(block.role, block.style);
+    final s = styles.resolve(style);
+    return switch (block) {
+      HeadingBlock(:final text) || ParagraphBlock(:final text) => _box(s, _text(text, s)),
+      BulletListBlock(:final items) => _bullets(items, s, style),
+      TableBlock() => _table(block, s, style),
+      MetricsBlock(:final items) => _metrics(items, s, style),
+      QuoteBlock() => _box(
+        s,
+        pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.stretch,
           children: [
-            if (t.columns.isNotEmpty)
-              pw.TableRow(
-                decoration: pw.BoxDecoration(color: s.tint),
-                children: [
-                  for (final (i, c) in pad(t.columns).indexed)
-                    cell(c, header: true, first: i == 0),
-                ],
-              ),
-            for (final (r, row) in t.rows.indexed)
-              pw.TableRow(
-                decoration: r.isOdd
-                    ? const pw.BoxDecoration(color: _Style.zebra)
-                    : null,
-                children: [
-                  for (final (i, c) in pad(row).indexed) cell(c, first: i == 0),
-                ],
-              ),
+            _text(block.text, s),
+            if (block.author.isNotEmpty) _caption(block.author, style),
           ],
         ),
-        if (t.caption.isNotEmpty)
-          pw.Padding(
-            padding: const pw.EdgeInsets.only(top: 6),
-            child: pw.Text(t.caption, style: s.text(7.5, color: _Style.muted)),
-          ),
-      ],
+      ),
+      CalloutBlock() => _box(
+        s,
+        pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+          children: [
+            if (block.title.isNotEmpty) _text(block.title, _resolve(style, {'bold': true})),
+            if (block.title.isNotEmpty && block.text.isNotEmpty) pw.SizedBox(height: 4),
+            if (block.text.isNotEmpty) _text(block.text, s),
+          ],
+        ),
+      ),
+      ImageBlock() => _box(s, _image(block, s, style)),
+    };
+  }
+
+  /// A caption (of a table, a picture, a quote) under the block whose style is [of].
+  pw.Widget _caption(String text, BlockStyle of) {
+    final s = styles.resolve(styles.part(StyleRole.caption, of));
+    return pw.Padding(padding: pw.EdgeInsets.only(top: s.spaceBefore), child: _text(text, s));
+  }
+
+  pw.Widget _bullets(List<String> items, ResolvedStyle s, BlockStyle style) {
+    final markerWidth = s.markerWidth;
+    final marker = _resolve(style, {'bold': false, 'underline': false, 'caps': false, 'align': 'left', 'firstLineIndent': 0});
+    return _box(
+      s,
+      indent: false,
+      pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+        children: [
+          for (final (i, item) in items.indexed)
+            pw.Padding(
+              padding: pw.EdgeInsets.only(top: i == 0 ? 0 : s.spaceAfter),
+              child: pw.Row(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.SizedBox(width: markerWidth, child: _text(listMarker(s.marker, i), marker)),
+                  pw.Expanded(child: _text(item, s)),
+                ],
+              ),
+            ),
+        ],
+      ),
     );
   }
 
-  pw.Widget _metrics(List<Metric> items) {
+  pw.Widget _table(TableBlock t, ResolvedStyle s, BlockStyle style) {
+    final columnCount = [t.columns.length, ...t.rows.map((r) => r.length)].fold(0, math.max);
+    if (columnCount == 0) return t.caption.isEmpty ? pw.SizedBox() : _caption(t.caption, style);
+    List<String> pad(List<String> r) => [...r, ...List.filled(columnCount - r.length, '')];
+    final head = styles.resolve(styles.part(StyleRole.tableHeader, style));
+    final side = pw.BorderSide(color: PdfColor.fromInt(s.lineColor), width: s.borderWidth);
+    final border = s.borderWidth <= 0
+        ? null
+        : switch (s.grid) {
+            TableGrid.rows => pw.TableBorder(horizontalInside: side, bottom: side),
+            TableGrid.all => pw.TableBorder.symmetric(outside: side, inside: side),
+            TableGrid.none => null,
+          };
+    pw.Widget cell(String text, ResolvedStyle cs) =>
+        pw.Padding(padding: pw.EdgeInsets.all(s.padding), child: _text(text, cs));
+    PdfColor? fill(int? argb) => argb == null ? null : PdfColor.fromInt(argb);
+    final table = pw.Table(
+      border: border,
+      columnWidths: {0: const pw.FlexColumnWidth(1.6)},
+      children: [
+        if (t.columns.isNotEmpty)
+          pw.TableRow(
+            decoration: pw.BoxDecoration(color: fill(head.background ?? s.background)),
+            children: [for (final c in pad(t.columns)) cell(c, head)],
+          ),
+        for (final (r, row) in t.rows.indexed)
+          pw.TableRow(
+            decoration: pw.BoxDecoration(color: fill(r.isOdd ? (s.stripe ?? s.background) : s.background)),
+            children: [for (final c in pad(row)) cell(c, s)],
+          ),
+      ],
+    );
+    final widget = t.caption.isEmpty
+        ? table
+        : pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.stretch, children: [table, _caption(t.caption, style)]);
+    return s.indent > 0 ? pw.Padding(padding: pw.EdgeInsets.only(left: s.indent), child: widget) : widget;
+  }
+
+  pw.Widget _metrics(List<Metric> items, ResolvedStyle s, BlockStyle style) {
     if (items.isEmpty) return pw.SizedBox();
+    final label = styles.part(StyleRole.caption, style);
     pw.Widget tile(Metric m) {
       final negative = m.delta.trim().startsWith('-');
-      return pw.Container(
-        padding: const pw.EdgeInsets.fromLTRB(14, 12, 14, 12),
-        decoration: pw.BoxDecoration(
-          color: s.tint,
-          borderRadius: pw.BorderRadius.circular(6),
-        ),
-        child: pw.Column(
+      return _box(
+        s,
+        indent: false,
+        pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            pw.Text(
-              m.label.toUpperCase(),
-              style: s.text(
-                6.5,
-                font: s.fonts.semiBold,
-                color: _Style.muted,
-                letterSpacing: 0.7,
-              ),
-            ),
-            pw.SizedBox(height: 6),
-            pw.Text(
-              m.value,
-              style: s.text(
-                premium ? 20 : 17,
-                font: s.fonts.bold,
-                color: _Style.ink,
-              ),
-            ),
-            if (m.delta.isNotEmpty) ...[
-              pw.SizedBox(height: 3),
-              pw.Text(
-                m.delta,
-                style: s.text(
-                  7.5,
-                  font: s.fonts.medium,
-                  color: negative ? _Style.negative : _Style.positive,
-                ),
-              ),
-            ],
+            _text(m.label, styles.resolve(label)),
+            pw.SizedBox(height: 4),
+            _text(m.value, s),
+            if (m.delta.isNotEmpty)
+              _text(m.delta, _resolve(label, {'color': negative ? '#dc2626' : '#059669'})),
           ],
         ),
       );
     }
 
-    return pw.Row(
+    final row = pw.Row(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         for (final (i, m) in items.indexed) ...[
@@ -727,97 +651,22 @@ class _PageBuilder {
         ],
       ],
     );
+    return s.indent > 0 ? pw.Padding(padding: pw.EdgeInsets.only(left: s.indent), child: row) : row;
   }
 
-  pw.Widget _quote(QuoteBlock q) => pw.Container(
-    padding: const pw.EdgeInsets.fromLTRB(16, 4, 0, 4),
-    decoration: pw.BoxDecoration(
-      border: pw.Border(left: pw.BorderSide(color: s.accent, width: 2.5)),
-    ),
-    child: pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        pw.Text(
-          q.text,
-          style: s.text(
-            premium ? 15 : 13,
-            font: s.fonts.medium,
-            color: _Style.ink,
-            lineSpacing: 4,
-          ),
-        ),
-        if (q.author.isNotEmpty) ...[
-          pw.SizedBox(height: 8),
-          pw.Text(q.author, style: s.text(8.5, color: _Style.muted)),
-        ],
-      ],
-    ),
-  );
-
-  pw.Widget _callout(CalloutBlock c) => pw.Container(
-    padding: const pw.EdgeInsets.all(14),
-    decoration: pw.BoxDecoration(
-      color: s.tint,
-      border: pw.Border.all(color: s.tintStrong, width: 0.8),
-      borderRadius: pw.BorderRadius.circular(6),
-    ),
-    child: pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        pw.Text(
-          c.title,
-          style: s.text(10, font: s.fonts.semiBold, color: _Style.ink),
-        ),
-        if (c.text.isNotEmpty) ...[
-          pw.SizedBox(height: 5),
-          pw.Text(c.text, style: s.text(9.5, lineSpacing: 3)),
-        ],
-      ],
-    ),
-  );
-
-  pw.Widget _image(ImageBlock img) {
+  pw.Widget _image(ImageBlock img, ResolvedStyle s, BlockStyle style) {
     final bytes = img.bytes;
     final picture = bytes != null
-        ? pw.ClipRRect(
-            horizontalRadius: 6,
-            verticalRadius: 6,
-            child: pw.Image(
-              OpaqueImage(bytes),
-              height: img.height,
-              fit: pw.BoxFit.cover,
-            ),
-          )
+        ? pw.Image(OpaqueImage(bytes), height: img.height, fit: pw.BoxFit.cover)
         : pw.Container(
             height: img.height,
-            decoration: pw.BoxDecoration(
-              color: s.tint,
-              borderRadius: pw.BorderRadius.circular(6),
-            ),
+            color: const PdfColor.fromInt(0xFFF1F5F9),
             alignment: pw.Alignment.center,
-            child: pw.Text(
-              'IMAGE',
-              style: s.text(
-                8,
-                font: s.fonts.semiBold,
-                color: s.accent,
-                letterSpacing: 1.2,
-              ),
-            ),
+            child: _text('IMMAGINE', _resolve(style, {'size': 8, 'bold': true, 'color': '#64748b', 'align': 'center'})),
           );
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.stretch,
-      children: [
-        picture,
-        if (img.caption.isNotEmpty)
-          pw.Padding(
-            padding: const pw.EdgeInsets.only(top: 6),
-            child: pw.Text(
-              img.caption,
-              style: s.text(7.5, color: _Style.muted),
-            ),
-          ),
-      ],
+      children: [picture, if (img.caption.isNotEmpty) _caption(img.caption, style)],
     );
   }
 }

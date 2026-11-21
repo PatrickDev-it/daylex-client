@@ -1,4 +1,5 @@
-/// TXT: UTF-8 without a byte order mark, CRLF line ends, headings underlined, tables as aligned columns.
+/// TXT: UTF-8 without a byte order mark, CRLF line ends. The text without its styling (rfc/055): headings underlined,
+/// lists with their markers, tables as aligned columns.
 library;
 
 import 'dart:convert';
@@ -15,7 +16,7 @@ const _tableWidth = 100;
 const _boxWidth = 78;
 
 Uint8List encodeTxt(PaperDocument doc) {
-  final lines = _Txt(buildExportDoc(doc)).build();
+  final lines = _Txt(buildExportDoc(doc, plain: true)).build();
   return Uint8List.fromList(utf8.encode(lines.map((l) => '$l\r\n').join()));
 }
 
@@ -56,9 +57,8 @@ class _Txt {
 
   final ExportDoc d;
   final _out = <String>[];
-  var _facts = false;
 
-  /// One blank line between blocks (none inside the run of cover facts).
+  /// One blank line between blocks.
   void _gap() {
     if (_out.isNotEmpty && _out.last.isNotEmpty) _out.add('');
   }
@@ -70,32 +70,18 @@ class _Txt {
 
   List<String> build() {
     for (final b in d.blocks) {
-      if (b is! ExFact) _facts = false;
       switch (b) {
-        case ExTitle(:final text):
-          final rule = '=' * _longest(text);
-          _block([rule, ...text.split('\n'), rule]);
-        case ExSubtitle(:final text):
-          _block(text.split('\n'));
-        case ExFact(:final label, :final value):
-          if (_facts) {
-            _out.add('$label: $value');
-          } else {
-            _block(['$label: $value']);
-          }
-          _facts = true;
-        case ExSectionLabel(:final text):
-          _block(['— $text —']);
         case ExHeading(:final level, :final text):
           _block([...text.split('\n'), (const ['=', '-', '~'][level - 1]) * _longest(text)]);
         case ExParagraph(:final text):
           _block(text.split('\n'));
-        case ExBullets(:final items):
+        case ExBullets(:final items, :final style):
           _gap();
-          for (final i in items) {
+          for (final (n, i) in items.indexed) {
+            final marker = listMarker(style.resolved.marker, n);
             final lines = i.split('\n');
-            _out.add('• ${lines.first}');
-            _out.addAll(lines.skip(1).map((l) => '  $l'));
+            _out.add(marker.isEmpty ? lines.first : '$marker ${lines.first}');
+            _out.addAll(lines.skip(1).map((l) => '${' ' * (marker.isEmpty ? 0 : _len(marker) + 1)}$l'));
           }
         case ExTable():
           _table(b);

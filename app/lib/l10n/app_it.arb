@@ -1381,6 +1381,19 @@
     }
   },
   "toolSetTheme": "Aggiorno il tema",
+  "toolSetStyle": "Aggiorno lo stile",
+  "toolSetHeaderFooter": "Aggiorno intestazione e piè di pagina",
+  "toolFormatBlock": "Formatto il blocco {block}{on}",
+  "@toolFormatBlock": {
+    "placeholders": {
+      "block": {
+        "type": "String"
+      },
+      "on": {
+        "type": "String"
+      }
+    }
+  },
   "toolUpdateMetadata": "Aggiorno i dati",
   "toolExportPdf": "Esporto il PDF",
   "toolExportFile": "Esporto in {format}",
@@ -1635,10 +1648,6 @@
   "reviewProtected": "Citazione o dato originale: verificare senza alterarne il senso.",
   "reviewKeepTerm": "Mantieni testo",
   "reviewConfirmed": "Confermato",
-  "pdfPreparedFor": "Destinatario",
-  "pdfPreparedBy": "Redatto da",
-  "pdfDate": "Data",
-  "pdfMonthNames": "gennaio;febbraio;marzo;aprile;maggio;giugno;luglio;agosto;settembre;ottobre;novembre;dicembre",
   "progressStarting": "Avvio della richiesta",
   "progressFailed": "Richiesta non completata",
   "progressStopped": "Richiesta interrotta",

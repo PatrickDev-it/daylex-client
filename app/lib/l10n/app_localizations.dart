@@ -2594,6 +2594,24 @@ abstract class AppLocalizations {
   /// **'Aggiorno il tema'**
   String get toolSetTheme;
 
+  /// No description provided for @toolSetStyle.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiorno lo stile'**
+  String get toolSetStyle;
+
+  /// No description provided for @toolSetHeaderFooter.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiorno intestazione e piè di pagina'**
+  String get toolSetHeaderFooter;
+
+  /// No description provided for @toolFormatBlock.
+  ///
+  /// In it, this message translates to:
+  /// **'Formatto il blocco {block}{on}'**
+  String toolFormatBlock(String block, String on);
+
   /// No description provided for @toolUpdateMetadata.
   ///
   /// In it, this message translates to:
@@ -3013,30 +3031,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Confermato'**
   String get reviewConfirmed;
-
-  /// No description provided for @pdfPreparedFor.
-  ///
-  /// In it, this message translates to:
-  /// **'Destinatario'**
-  String get pdfPreparedFor;
-
-  /// No description provided for @pdfPreparedBy.
-  ///
-  /// In it, this message translates to:
-  /// **'Redatto da'**
-  String get pdfPreparedBy;
-
-  /// No description provided for @pdfDate.
-  ///
-  /// In it, this message translates to:
-  /// **'Data'**
-  String get pdfDate;
-
-  /// No description provided for @pdfMonthNames.
-  ///
-  /// In it, this message translates to:
-  /// **'gennaio;febbraio;marzo;aprile;maggio;giugno;luglio;agosto;settembre;ottobre;novembre;dicembre'**
-  String get pdfMonthNames;
 
   /// No description provided for @progressStarting.
   ///

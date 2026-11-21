@@ -45,7 +45,8 @@ void main() {
       test('writes ${format.name}: bytes, the same ones every time, for every kind of document', () {
         for (final doc in [fixtureDocument(), emptyDocument(), textOnlyDocument()]) {
           final bytes = encodeDocument(doc, format);
-          expect(bytes, isNotEmpty);
+          // An empty document is an empty text file: nothing of its own is made up for it (rfc/055).
+          if (doc.pages.isNotEmpty || format != ExportFormat.txt) expect(bytes, isNotEmpty);
           expect(encodeDocument(doc, format), bytes, reason: 'the same document gives the same file');
         }
       });

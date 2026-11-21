@@ -3,11 +3,16 @@ import 'dart:typed_data';
 
 import 'package:uuid/uuid.dart';
 
+import 'style.dart';
+
+export 'style.dart';
+
 const _uuid = Uuid();
 
 String newId() => _uuid.v4();
 
-/// Visual layout applied to a whole page by the PDF renderer.
+/// How a page sets its blocks. `cover` is a page without header and footer; `premium` is a name kept from before
+/// rfc/055 and reads as `standard`.
 enum PageLayout {
   cover,
   standard,
@@ -35,9 +40,6 @@ enum DocumentStatus {
   approved,
 }
 
-/// The accent of a document, a template or a project when nothing says otherwise (ARGB).
-const kDefaultDocAccent = 0xFF4A7CFF;
-
 /// The accents a document can take: brand-like tones, the default among them, that read well on paper.
 const kDocAccentPalette = [
   0xFF3B5BDB, kDefaultDocAccent, 0xFF7C3AED, 0xFFDB2777,
@@ -48,39 +50,29 @@ const kDocAccentPalette = [
 /// The colours new projects take in turn: hues far apart, so projects tell apart in the sidebar at a glance.
 const kProjectPalette = [kDefaultDocAccent, 0xFF10B981, 0xFFF59E0B, 0xFFEC4899, 0xFF8B5CF6, 0xFF06B6D4];
 
-/// Document-wide styling. Colors are stored as ARGB ints so the model stays
-/// free of Flutter types and can be sent to a render isolate or a server.
-class DocTheme {
-  const DocTheme({this.accent = kDefaultDocAccent, this.brandName = ''});
+/// The months a document is dated in: Italian, as every document is written.
+const kMonthNames = [
+  'gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno',
+  'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre',
+];
 
-  final int accent;
-  final String brandName;
+/// `marzo 2024`.
+String monthYear(DateTime d) => '${kMonthNames[d.month - 1]} ${d.year}';
 
-  DocTheme copyWith({int? accent, String? brandName}) => DocTheme(
-    accent: accent ?? this.accent,
-    brandName: brandName ?? this.brandName,
-  );
+/// `12 marzo 2024`.
+String documentDate(DateTime d) => '${d.day} ${monthYear(d)}';
 
-  Map<String, dynamic> toJson() => {
-    'accent': '#${(accent & 0xFFFFFF).toRadixString(16).padLeft(6, '0')}',
-    'brandName': brandName,
-  };
-
-  factory DocTheme.fromJson(Map<String, dynamic> json) => DocTheme(
-    accent: parseColor(json['accent']) ?? kDefaultDocAccent,
-    brandName: json['brandName'] as String? ?? '',
-  );
-}
-
-/// Parses `#RRGGBB`, `RRGGBB` or an int into an opaque ARGB int.
-int? parseColor(Object? value) {
-  if (value is int) return value | 0xFF000000;
-  if (value is! String) return null;
-  final hex = value.replaceFirst('#', '');
-  if (hex.length != 6) return null;
-  final parsed = int.tryParse(hex, radix: 16);
-  return parsed == null ? null : 0xFF000000 | parsed;
-}
+/// What the placeholders of a header or footer ([regionPlaceholders]) say on [page] of [doc]. `{pagina}` and
+/// `{pagine}` are not here: the PDF numbers its pages, a word processor its own.
+Map<String, String> regionValues(PaperDocument doc, DocPage page) => {
+  'titolo': doc.metadata.title,
+  'sottotitolo': doc.metadata.subtitle,
+  'cliente': doc.metadata.client,
+  'autore': doc.metadata.author,
+  'data': documentDate(doc.metadata.updatedAt),
+  'studio': doc.theme.brandName,
+  'sezione': page.title,
+};
 
 class DocMetadata {
   const DocMetadata({
@@ -170,9 +162,12 @@ enum BlockKind {
 }
 
 sealed class DocBlock {
-  const DocBlock({required this.id});
+  const DocBlock({required this.id, this.style = BlockStyle.empty});
 
   final String id;
+
+  /// The block's own look, over its role's in the document's style (rfc/055).
+  final BlockStyle style;
 
   BlockKind get kind;
 
@@ -187,8 +182,33 @@ sealed class DocBlock {
   /// Returns a copy with every occurrence of [find] replaced.
   DocBlock replaceText(String find, String replace);
 
+  /// The same block with [style] as its own.
+  DocBlock withStyle(BlockStyle style);
+
+  /// The role whose style the block takes where its own says nothing. An image takes the body's spacing and box.
+  StyleRole get role => switch (this) {
+    HeadingBlock(level: 1) => StyleRole.heading1,
+    HeadingBlock(level: 2) => StyleRole.heading2,
+    HeadingBlock() => StyleRole.heading3,
+    ParagraphBlock() || ImageBlock() => StyleRole.body,
+    BulletListBlock() => StyleRole.bullets,
+    TableBlock() => StyleRole.table,
+    MetricsBlock() => StyleRole.metrics,
+    QuoteBlock() => StyleRole.quote,
+    CalloutBlock() => StyleRole.callout,
+  };
+
+  /// [fields] with the block's id, kind and style: every block's JSON.
+  Map<String, dynamic> _json(Map<String, dynamic> fields) => {
+    'id': id,
+    'type': type,
+    ...fields,
+    if (!style.isEmpty) 'style': style.toJson(),
+  };
+
   static DocBlock fromJson(Map<String, dynamic> json) {
     final id = json['id'] as String? ?? newId();
+    final style = BlockStyle.fromJson(json['style']);
     List<String> strings(Object? v) =>
         (v as List? ?? const []).map((e) => '$e').toList();
 
@@ -196,18 +216,21 @@ sealed class DocBlock {
     return switch (BlockKind.parse(json['type']) ?? BlockKind.paragraph) {
       BlockKind.heading => HeadingBlock(
         id: id,
+        style: style,
         text: json['text'] as String? ?? '',
         level: (json['level'] as num?)?.toInt().clamp(1, 3) ?? 1,
       ),
-      BlockKind.bullets => BulletListBlock(id: id, items: strings(json['items'])),
+      BlockKind.bullets => BulletListBlock(id: id, style: style, items: strings(json['items'])),
       BlockKind.table => TableBlock(
         id: id,
+        style: style,
         columns: strings(json['columns']),
         rows: (json['rows'] as List? ?? const []).map(strings).toList(),
         caption: json['caption'] as String? ?? '',
       ),
       BlockKind.metrics => MetricsBlock(
         id: id,
+        style: style,
         items: (json['items'] as List? ?? const [])
             .whereType<Map>()
             .map((m) => Metric.fromJson(m.cast<String, dynamic>()))
@@ -215,29 +238,32 @@ sealed class DocBlock {
       ),
       BlockKind.quote => QuoteBlock(
         id: id,
+        style: style,
         text: json['text'] as String? ?? '',
         author: json['author'] as String? ?? '',
       ),
       BlockKind.callout => CalloutBlock(
         id: id,
+        style: style,
         title: json['title'] as String? ?? '',
         text: json['text'] as String? ?? '',
       ),
       BlockKind.image => ImageBlock(
         id: id,
+        style: style,
         bytes: json['data'] is String
             ? base64Decode(json['data'] as String)
             : null,
         caption: json['caption'] as String? ?? '',
         height: (json['height'] as num?)?.toDouble() ?? 180,
       ),
-      BlockKind.paragraph => ParagraphBlock(id: id, text: json['text'] as String? ?? ''),
+      BlockKind.paragraph => ParagraphBlock(id: id, style: style, text: json['text'] as String? ?? ''),
     };
   }
 }
 
 class HeadingBlock extends DocBlock {
-  const HeadingBlock({required super.id, required this.text, this.level = 1});
+  const HeadingBlock({required super.id, super.style, required this.text, this.level = 1});
 
   final String text;
   final int level;
@@ -248,24 +274,22 @@ class HeadingBlock extends DocBlock {
   @override
   String get plainText => text;
 
-  HeadingBlock copyWith({String? text, int? level}) =>
-      HeadingBlock(id: id, text: text ?? this.text, level: level ?? this.level);
+  HeadingBlock copyWith({String? text, int? level, BlockStyle? style}) =>
+      HeadingBlock(id: id, style: style ?? this.style, text: text ?? this.text, level: level ?? this.level);
+
+  @override
+  DocBlock withStyle(BlockStyle style) => copyWith(style: style);
 
   @override
   DocBlock replaceText(String find, String replace) =>
       copyWith(text: text.replaceAll(find, replace));
 
   @override
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'type': type,
-    'text': text,
-    'level': level,
-  };
+  Map<String, dynamic> toJson() => _json({'text': text, 'level': level});
 }
 
 class ParagraphBlock extends DocBlock {
-  const ParagraphBlock({required super.id, required this.text});
+  const ParagraphBlock({required super.id, super.style, required this.text});
 
   final String text;
 
@@ -275,19 +299,22 @@ class ParagraphBlock extends DocBlock {
   @override
   String get plainText => text;
 
-  ParagraphBlock copyWith({String? text}) =>
-      ParagraphBlock(id: id, text: text ?? this.text);
+  ParagraphBlock copyWith({String? text, BlockStyle? style}) =>
+      ParagraphBlock(id: id, style: style ?? this.style, text: text ?? this.text);
+
+  @override
+  DocBlock withStyle(BlockStyle style) => copyWith(style: style);
 
   @override
   DocBlock replaceText(String find, String replace) =>
       copyWith(text: text.replaceAll(find, replace));
 
   @override
-  Map<String, dynamic> toJson() => {'id': id, 'type': type, 'text': text};
+  Map<String, dynamic> toJson() => _json({'text': text});
 }
 
 class BulletListBlock extends DocBlock {
-  const BulletListBlock({required super.id, required this.items});
+  const BulletListBlock({required super.id, super.style, required this.items});
 
   final List<String> items;
 
@@ -297,20 +324,24 @@ class BulletListBlock extends DocBlock {
   @override
   String get plainText => items.join('\n');
 
-  BulletListBlock copyWith({List<String>? items}) =>
-      BulletListBlock(id: id, items: items ?? this.items);
+  BulletListBlock copyWith({List<String>? items, BlockStyle? style}) =>
+      BulletListBlock(id: id, style: style ?? this.style, items: items ?? this.items);
+
+  @override
+  DocBlock withStyle(BlockStyle style) => copyWith(style: style);
 
   @override
   DocBlock replaceText(String find, String replace) =>
       copyWith(items: [for (final i in items) i.replaceAll(find, replace)]);
 
   @override
-  Map<String, dynamic> toJson() => {'id': id, 'type': type, 'items': items};
+  Map<String, dynamic> toJson() => _json({'items': items});
 }
 
 class TableBlock extends DocBlock {
   const TableBlock({
     required super.id,
+    super.style,
     required this.columns,
     required this.rows,
     this.caption = '',
@@ -334,8 +365,10 @@ class TableBlock extends DocBlock {
     List<String>? columns,
     List<List<String>>? rows,
     String? caption,
+    BlockStyle? style,
   }) => TableBlock(
     id: id,
+    style: style ?? this.style,
     columns: columns ?? this.columns,
     rows: rows ?? this.rows,
     caption: caption ?? this.caption,
@@ -351,13 +384,10 @@ class TableBlock extends DocBlock {
   );
 
   @override
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'type': type,
-    'columns': columns,
-    'rows': rows,
-    'caption': caption,
-  };
+  DocBlock withStyle(BlockStyle style) => copyWith(style: style);
+
+  @override
+  Map<String, dynamic> toJson() => _json({'columns': columns, 'rows': rows, 'caption': caption});
 }
 
 class Metric {
@@ -388,7 +418,7 @@ class Metric {
 
 /// A row of KPI tiles.
 class MetricsBlock extends DocBlock {
-  const MetricsBlock({required super.id, required this.items});
+  const MetricsBlock({required super.id, super.style, required this.items});
 
   final List<Metric> items;
 
@@ -399,22 +429,24 @@ class MetricsBlock extends DocBlock {
   String get plainText =>
       items.map((m) => '${m.label}: ${m.value} ${m.delta}'.trim()).join('\n');
 
-  @override
-  DocBlock replaceText(String find, String replace) => MetricsBlock(
-    id: id,
-    items: [for (final m in items) m.replaceText(find, replace)],
-  );
+  MetricsBlock copyWith({List<Metric>? items, BlockStyle? style}) =>
+      MetricsBlock(id: id, style: style ?? this.style, items: items ?? this.items);
 
   @override
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'type': type,
+  DocBlock replaceText(String find, String replace) =>
+      copyWith(items: [for (final m in items) m.replaceText(find, replace)]);
+
+  @override
+  DocBlock withStyle(BlockStyle style) => copyWith(style: style);
+
+  @override
+  Map<String, dynamic> toJson() => _json({
     'items': [for (final m in items) m.toJson()],
-  };
+  });
 }
 
 class QuoteBlock extends DocBlock {
-  const QuoteBlock({required super.id, required this.text, this.author = ''});
+  const QuoteBlock({required super.id, super.style, required this.text, this.author = ''});
 
   final String text;
   final String author;
@@ -425,8 +457,9 @@ class QuoteBlock extends DocBlock {
   @override
   String get plainText => author.isEmpty ? text : '$text — $author';
 
-  QuoteBlock copyWith({String? text, String? author}) => QuoteBlock(
+  QuoteBlock copyWith({String? text, String? author, BlockStyle? style}) => QuoteBlock(
     id: id,
+    style: style ?? this.style,
     text: text ?? this.text,
     author: author ?? this.author,
   );
@@ -438,16 +471,14 @@ class QuoteBlock extends DocBlock {
   );
 
   @override
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'type': type,
-    'text': text,
-    'author': author,
-  };
+  DocBlock withStyle(BlockStyle style) => copyWith(style: style);
+
+  @override
+  Map<String, dynamic> toJson() => _json({'text': text, 'author': author});
 }
 
 class CalloutBlock extends DocBlock {
-  const CalloutBlock({required super.id, required this.title, this.text = ''});
+  const CalloutBlock({required super.id, super.style, required this.title, this.text = ''});
 
   final String title;
   final String text;
@@ -458,8 +489,11 @@ class CalloutBlock extends DocBlock {
   @override
   String get plainText => '$title\n$text'.trim();
 
-  CalloutBlock copyWith({String? title, String? text}) =>
-      CalloutBlock(id: id, title: title ?? this.title, text: text ?? this.text);
+  CalloutBlock copyWith({String? title, String? text, BlockStyle? style}) =>
+      CalloutBlock(id: id, style: style ?? this.style, title: title ?? this.title, text: text ?? this.text);
+
+  @override
+  DocBlock withStyle(BlockStyle style) => copyWith(style: style);
 
   @override
   DocBlock replaceText(String find, String replace) => copyWith(
@@ -468,18 +502,14 @@ class CalloutBlock extends DocBlock {
   );
 
   @override
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'type': type,
-    'title': title,
-    'text': text,
-  };
+  Map<String, dynamic> toJson() => _json({'title': title, 'text': text});
 }
 
-/// An image. When [bytes] is null the renderer draws a styled placeholder.
+/// An image. When [bytes] is null the renderer draws a placeholder.
 class ImageBlock extends DocBlock {
   const ImageBlock({
     required super.id,
+    super.style,
     this.bytes,
     this.caption = '',
     this.height = 180,
@@ -495,8 +525,9 @@ class ImageBlock extends DocBlock {
   @override
   String get plainText => caption;
 
-  ImageBlock copyWith({String? caption, double? height}) => ImageBlock(
+  ImageBlock copyWith({String? caption, double? height, BlockStyle? style}) => ImageBlock(
     id: id,
+    style: style ?? this.style,
     bytes: bytes,
     caption: caption ?? this.caption,
     height: height ?? this.height,
@@ -507,13 +538,14 @@ class ImageBlock extends DocBlock {
       copyWith(caption: caption.replaceAll(find, replace));
 
   @override
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'type': type,
+  DocBlock withStyle(BlockStyle style) => copyWith(style: style);
+
+  @override
+  Map<String, dynamic> toJson() => _json({
     if (bytes != null) 'data': base64Encode(bytes!),
     'caption': caption,
     'height': height,
-  };
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -613,20 +645,59 @@ class PaperDocument {
     'pages': [for (final p in pages) p.toJson()],
   };
 
-  factory PaperDocument.fromJson(Map<String, dynamic> json) => PaperDocument(
-    id: json['id'] as String? ?? newId(),
-    projectId: json['projectId'] as String? ?? '',
-    metadata: DocMetadata.fromJson(
-      (json['metadata'] as Map? ?? const {}).cast<String, dynamic>(),
-    ),
-    theme: DocTheme.fromJson(
-      (json['theme'] as Map? ?? const {}).cast<String, dynamic>(),
-    ),
-    pages: (json['pages'] as List? ?? const [])
-        .whereType<Map>()
-        .map((p) => DocPage.fromJson(p.cast<String, dynamic>()))
-        .toList(),
-  );
+  factory PaperDocument.fromJson(Map<String, dynamic> json) {
+    final theme = (json['theme'] as Map? ?? const {}).cast<String, dynamic>();
+    final doc = PaperDocument(
+      id: json['id'] as String? ?? newId(),
+      projectId: json['projectId'] as String? ?? '',
+      metadata: DocMetadata.fromJson(
+        (json['metadata'] as Map? ?? const {}).cast<String, dynamic>(),
+      ),
+      theme: DocTheme.fromJson(theme),
+      pages: (json['pages'] as List? ?? const [])
+          .whereType<Map>()
+          .map((p) => DocPage.fromJson(p.cast<String, dynamic>()))
+          .toList(),
+    );
+    return theme['base'] == null ? doc._withCoverBlocks() : doc;
+  }
+
+  /// A document saved before rfc/055 (its theme names no base): each cover page gets, as ordinary blocks ahead of
+  /// its own, what its accent band used to draw (studio, section, title, subtitle, client, author, date). The ids
+  /// derive from the page's, so the same document always loads the same.
+  PaperDocument _withCoverBlocks() {
+    final m = metadata;
+    final facts = [
+      if (m.client.isNotEmpty) 'Destinatario: **${m.client}**',
+      if (m.author.isNotEmpty) 'Redatto da: **${m.author}**',
+      'Data: **${monthYear(m.updatedAt)}**',
+    ].join('  ·  ');
+    final label = BlockStyle.of({'size': 9, 'bold': true, 'caps': true, 'color': 'accent', 'spaceAfter': 6});
+    return copyWith(
+      pages: [
+        for (final p in pages)
+          if (p.layout != PageLayout.cover)
+            p
+          else
+            p.copyWith(
+              blocks: [
+                if (theme.brandName.isNotEmpty)
+                  ParagraphBlock(id: '${p.id}-studio', text: theme.brandName, style: label.patch({'spaceAfter': 72})),
+                if (p.title.isNotEmpty) ParagraphBlock(id: '${p.id}-section', text: p.title, style: label),
+                HeadingBlock(id: '${p.id}-title', text: m.title, style: BlockStyle.of({'size': 32, 'spaceAfter': 12})),
+                if (m.subtitle.isNotEmpty)
+                  ParagraphBlock(
+                    id: '${p.id}-subtitle',
+                    text: m.subtitle,
+                    style: BlockStyle.of({'size': 14, 'color': '#64748b', 'spaceAfter': 24}),
+                  ),
+                ParagraphBlock(id: '${p.id}-facts', text: facts, style: BlockStyle.of({'spaceAfter': 28})),
+                ...p.blocks,
+              ],
+            ),
+      ],
+    );
+  }
 }
 
 class Project {

@@ -1,5 +1,5 @@
 {
-  "about": "What the app does with each document tool call: the app's DocumentToolExecutor (Dart test test/tool_contract_test.dart) and its Python twin daylex_server/docsim.py (tests/test_tool_contract.py) must both give these results. `after` is the document after the call, without ids and dates; it is absent when the call leaves the document as it was.",
+  "about": "What the app does with each document tool call: the app's DocumentToolExecutor (Dart test test/tool_contract_test.dart) and its Python twin daylex_server/docsim.py (tests/test_tool_contract.py) must both give these results. `after` is the document after the call, without ids and dates; it is absent when the call leaves the document as it was. The documents are as a current app sends them: each theme names its base (rfc/055). A new document starts from the legal base, the test's studio style.",
   "documents": {
     "atto": {
       "metadata": {
@@ -10,7 +10,8 @@
       },
       "theme": {
         "accent": "#4a7cff",
-        "brandName": "Studio"
+        "brandName": "Studio",
+        "base": "report"
       },
       "pages": [
         {
@@ -85,7 +86,8 @@
       },
       "theme": {
         "accent": "#4a7cff",
-        "brandName": ""
+        "brandName": "",
+        "base": "report"
       },
       "pages": [
         {
@@ -103,6 +105,76 @@
             {
               "type": "paragraph",
               "text": "Distinti saluti."
+            }
+          ]
+        }
+      ]
+    },
+    "intestato": {
+      "metadata": {
+        "title": "Parere Bianchi",
+        "subtitle": "",
+        "client": "Luca Bianchi",
+        "status": "draft"
+      },
+      "theme": {
+        "accent": "#1f3a5f",
+        "brandName": "Studio Legale Neri",
+        "base": "legal",
+        "page": {
+          "margins": {
+            "left": 3
+          }
+        },
+        "styles": {
+          "quote": {
+            "italic": false,
+            "size": 12
+          }
+        },
+        "header": {
+          "right": "{sezione}",
+          "style": {
+            "size": 9
+          }
+        },
+        "firstHeader": {
+          "center": "**Studio Legale Neri**\nVia Roma 1, Milano · PEC neri@pec.it",
+          "line": true
+        }
+      },
+      "pages": [
+        {
+          "title": "Parere",
+          "layout": "standard",
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Parere pro veritate",
+              "level": 1
+            },
+            {
+              "type": "paragraph",
+              "text": "Egregio signor Bianchi,",
+              "style": {
+                "size": 13,
+                "bold": true
+              }
+            },
+            {
+              "type": "quote",
+              "text": "Art. 1218 c.c.",
+              "author": ""
+            }
+          ]
+        },
+        {
+          "title": "Conclusioni",
+          "layout": "standard",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "In conclusione, la domanda è fondata."
             }
           ]
         }
@@ -154,7 +226,8 @@
         },
         "theme": {
           "accent": "#4a7cff",
-          "brandName": "Studio"
+          "brandName": "Studio",
+          "base": "report"
         },
         "pages": [
           {
@@ -258,7 +331,8 @@
         },
         "theme": {
           "accent": "#4a7cff",
-          "brandName": "Studio"
+          "brandName": "Studio",
+          "base": "report"
         },
         "pages": [
           {
@@ -354,7 +428,8 @@
         },
         "theme": {
           "accent": "#4a7cff",
-          "brandName": "Studio"
+          "brandName": "Studio",
+          "base": "report"
         },
         "pages": [
           {
@@ -451,7 +526,8 @@
         },
         "theme": {
           "accent": "#4a7cff",
-          "brandName": "Studio"
+          "brandName": "Studio",
+          "base": "report"
         },
         "pages": [
           {
@@ -565,7 +641,8 @@
         },
         "theme": {
           "accent": "#4a7cff",
-          "brandName": "Studio"
+          "brandName": "Studio",
+          "base": "report"
         },
         "pages": [
           {
@@ -658,7 +735,8 @@
         },
         "theme": {
           "accent": "#4a7cff",
-          "brandName": "Studio"
+          "brandName": "Studio",
+          "base": "report"
         },
         "pages": [
           {
@@ -786,7 +864,8 @@
         },
         "theme": {
           "accent": "#4a7cff",
-          "brandName": "Studio"
+          "brandName": "Studio",
+          "base": "report"
         },
         "pages": [
           {
@@ -887,7 +966,8 @@
         },
         "theme": {
           "accent": "#4a7cff",
-          "brandName": "Studio"
+          "brandName": "Studio",
+          "base": "report"
         },
         "pages": [
           {
@@ -988,7 +1068,8 @@
         },
         "theme": {
           "accent": "#4a7cff",
-          "brandName": "Studio"
+          "brandName": "Studio",
+          "base": "report"
         },
         "pages": [
           {
@@ -1103,7 +1184,8 @@
         },
         "theme": {
           "accent": "#4a7cff",
-          "brandName": "Studio"
+          "brandName": "Studio",
+          "base": "report"
         },
         "pages": [
           {
@@ -1199,7 +1281,8 @@
         },
         "theme": {
           "accent": "#4a7cff",
-          "brandName": ""
+          "brandName": "",
+          "base": "report"
         },
         "pages": [
           {
@@ -1283,7 +1366,8 @@
         },
         "theme": {
           "accent": "#4a7cff",
-          "brandName": "Studio"
+          "brandName": "Studio",
+          "base": "report"
         },
         "pages": [
           {
@@ -1371,7 +1455,8 @@
         },
         "theme": {
           "accent": "#4a7cff",
-          "brandName": ""
+          "brandName": "",
+          "base": "report"
         },
         "pages": [
           {
@@ -1427,7 +1512,8 @@
         },
         "theme": {
           "accent": "#4a7cff",
-          "brandName": "Studio"
+          "brandName": "Studio",
+          "base": "report"
         },
         "pages": [
           {
@@ -1558,7 +1644,8 @@
         },
         "theme": {
           "accent": "#4a7cff",
-          "brandName": "Studio"
+          "brandName": "Studio",
+          "base": "report"
         },
         "pages": [
           {
@@ -1670,7 +1757,8 @@
         },
         "theme": {
           "accent": "#4a7cff",
-          "brandName": "Studio"
+          "brandName": "Studio",
+          "base": "report"
         },
         "pages": [
           {
@@ -1761,7 +1849,8 @@
         },
         "theme": {
           "accent": "#1f6feb",
-          "brandName": "Studio Legale Verdi"
+          "brandName": "Studio Legale Verdi",
+          "base": "report"
         },
         "pages": [
           {
@@ -1867,7 +1956,8 @@
         },
         "theme": {
           "accent": "#4a7cff",
-          "brandName": "Studio"
+          "brandName": "Studio",
+          "base": "report"
         },
         "pages": [
           {
@@ -1958,7 +2048,8 @@
         },
         "theme": {
           "accent": "#4a7cff",
-          "brandName": "Studio"
+          "brandName": "Studio",
+          "base": "report"
         },
         "pages": [
           {
@@ -2062,7 +2153,8 @@
         },
         "theme": {
           "accent": "#1f6feb",
-          "brandName": ""
+          "brandName": "",
+          "base": "legal"
         },
         "pages": [
           {
@@ -2072,6 +2164,2244 @@
               {
                 "type": "paragraph",
                 "text": "Gentile cliente,"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "set_style changes base, page and roles",
+      "document": "atto",
+      "call": {
+        "name": "set_style",
+        "arguments": {
+          "base": "legal",
+          "page": {
+            "orientation": "landscape",
+            "margins": {
+              "top": 3
+            }
+          },
+          "styles": {
+            "body": {
+              "font": "garamond",
+              "size": 13
+            },
+            "heading1": {
+              "color": "Accent/040",
+              "align": "left"
+            }
+          }
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Stile aggiornato"
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio",
+          "base": "legal",
+          "page": {
+            "orientation": "landscape",
+            "margins": {
+              "top": 3.0
+            }
+          },
+          "styles": {
+            "body": {
+              "font": "garamond",
+              "size": 13.0
+            },
+            "heading1": {
+              "color": "accent/40",
+              "align": "left"
+            }
+          }
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "set_style restores fields, a role and the page",
+      "document": "intestato",
+      "call": {
+        "name": "set_style",
+        "arguments": {
+          "styles": {
+            "quote": null,
+            "body": {
+              "size": null
+            }
+          },
+          "page": null
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Stile aggiornato"
+      },
+      "after": {
+        "metadata": {
+          "title": "Parere Bianchi",
+          "subtitle": "",
+          "client": "Luca Bianchi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#1f3a5f",
+          "brandName": "Studio Legale Neri",
+          "base": "legal",
+          "header": {
+            "right": "{sezione}",
+            "style": {
+              "size": 9.0
+            }
+          },
+          "firstHeader": {
+            "center": "**Studio Legale Neri**\nVia Roma 1, Milano · PEC neri@pec.it",
+            "line": true
+          }
+        },
+        "pages": [
+          {
+            "title": "Parere",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Parere pro veritate",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Egregio signor Bianchi,",
+                "style": {
+                  "size": 13.0,
+                  "bold": true
+                }
+              },
+              {
+                "type": "quote",
+                "text": "Art. 1218 c.c.",
+                "author": ""
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "In conclusione, la domanda è fondata."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "set_style with null styles restores them all",
+      "document": "intestato",
+      "call": {
+        "name": "set_style",
+        "arguments": {
+          "styles": null
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Stile aggiornato"
+      },
+      "after": {
+        "metadata": {
+          "title": "Parere Bianchi",
+          "subtitle": "",
+          "client": "Luca Bianchi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#1f3a5f",
+          "brandName": "Studio Legale Neri",
+          "base": "legal",
+          "page": {
+            "margins": {
+              "left": 3.0
+            }
+          },
+          "header": {
+            "right": "{sezione}",
+            "style": {
+              "size": 9.0
+            }
+          },
+          "firstHeader": {
+            "center": "**Studio Legale Neri**\nVia Roma 1, Milano · PEC neri@pec.it",
+            "line": true
+          }
+        },
+        "pages": [
+          {
+            "title": "Parere",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Parere pro veritate",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Egregio signor Bianchi,",
+                "style": {
+                  "size": 13.0,
+                  "bold": true
+                }
+              },
+              {
+                "type": "quote",
+                "text": "Art. 1218 c.c.",
+                "author": ""
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "In conclusione, la domanda è fondata."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "set_style saved as the studio style",
+      "document": "intestato",
+      "call": {
+        "name": "set_style",
+        "arguments": {
+          "accent": "#7A1F1F",
+          "saveAsDefault": true
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Stile aggiornato. Salvato come stile dello studio: i nuovi documenti partiranno da qui"
+      },
+      "after": {
+        "metadata": {
+          "title": "Parere Bianchi",
+          "subtitle": "",
+          "client": "Luca Bianchi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#7a1f1f",
+          "brandName": "Studio Legale Neri",
+          "base": "legal",
+          "page": {
+            "margins": {
+              "left": 3.0
+            }
+          },
+          "styles": {
+            "quote": {
+              "italic": false,
+              "size": 12.0
+            }
+          },
+          "header": {
+            "right": "{sezione}",
+            "style": {
+              "size": 9.0
+            }
+          },
+          "firstHeader": {
+            "center": "**Studio Legale Neri**\nVia Roma 1, Milano · PEC neri@pec.it",
+            "line": true
+          }
+        },
+        "pages": [
+          {
+            "title": "Parere",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Parere pro veritate",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Egregio signor Bianchi,",
+                "style": {
+                  "size": 13.0,
+                  "bold": true
+                }
+              },
+              {
+                "type": "quote",
+                "text": "Art. 1218 c.c.",
+                "author": ""
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "In conclusione, la domanda è fondata."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "set_style with an unknown field",
+      "document": "atto",
+      "call": {
+        "name": "set_style",
+        "arguments": {
+          "styles": {
+            "body": {
+              "fontSize": 12
+            }
+          }
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Stile non valido: \"fontSize\" non è un campo di stile. Campi: font, size, bold, italic, underline, caps, color, background, align, lineHeight, spaceBefore, spaceAfter, indent, firstLineIndent, border, borderColor, borderWidth, padding, marker, grid, stripe."
+      }
+    },
+    {
+      "name": "set_style with a size out of range",
+      "document": "atto",
+      "call": {
+        "name": "set_style",
+        "arguments": {
+          "styles": {
+            "body": {
+              "size": 100
+            }
+          }
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Stile non valido: \"size\" deve essere un numero da 6 a 72."
+      }
+    },
+    {
+      "name": "set_style with an unknown role",
+      "document": "atto",
+      "call": {
+        "name": "set_style",
+        "arguments": {
+          "styles": {
+            "titolo": {
+              "bold": true
+            }
+          }
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Stile non valido: \"titolo\" non è un ruolo. Ruoli: body, heading1, heading2, heading3, bullets, table, tableHeader, quote, callout, caption, metrics."
+      }
+    },
+    {
+      "name": "set_style with an unknown base",
+      "document": "atto",
+      "call": {
+        "name": "set_style",
+        "arguments": {
+          "base": "elegante"
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Stile non valido: \"base\" deve essere uno tra legal, report."
+      }
+    },
+    {
+      "name": "set_style with an unknown margin",
+      "document": "atto",
+      "call": {
+        "name": "set_style",
+        "arguments": {
+          "page": {
+            "margins": {
+              "alto": 2
+            }
+          }
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Stile non valido: \"margins.alto\" non è un campo della pagina. Campi: orientation, margins (top, right, bottom, left), header, footer."
+      }
+    },
+    {
+      "name": "set_style with a colour that is not one",
+      "document": "atto",
+      "call": {
+        "name": "set_style",
+        "arguments": {
+          "styles": {
+            "callout": {
+              "background": "blu"
+            }
+          }
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Stile non valido: \"background\" deve essere un colore #RRGGBB, \"accent\", \"accent/NN\" (da 1 a 100) o \"none\"."
+      }
+    },
+    {
+      "name": "set_style with styles that are not an object",
+      "document": "atto",
+      "call": {
+        "name": "set_style",
+        "arguments": {
+          "styles": "grassetto"
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Stile non valido: \"styles\" deve essere un oggetto."
+      }
+    },
+    {
+      "name": "set_header_footer patches the header of the base",
+      "document": "atto",
+      "call": {
+        "name": "set_header_footer",
+        "arguments": {
+          "region": "header",
+          "right": "Pagina {pagina}"
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Intestazione aggiornata"
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio",
+          "base": "report",
+          "header": {
+            "left": "{studio}",
+            "right": "Pagina {pagina}",
+            "style": {
+              "size": 7.5,
+              "color": "#64748b",
+              "lineHeight": 1.0,
+              "borderColor": "#e2e8f0",
+              "borderWidth": 0.6,
+              "padding": 8.0,
+              "spaceAfter": 18.0
+            },
+            "line": true
+          }
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "set_header_footer patches the footer of the base",
+      "document": "lettera",
+      "call": {
+        "name": "set_header_footer",
+        "arguments": {
+          "region": "footer",
+          "center": "{data}",
+          "line": false
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Piè di pagina aggiornato"
+      },
+      "after": {
+        "metadata": {
+          "title": "Diffida",
+          "subtitle": "",
+          "client": "Bianchi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "",
+          "base": "report",
+          "footer": {
+            "left": "{titolo} · {cliente}",
+            "center": "{data}",
+            "right": "{pagina} / {pagine}",
+            "style": {
+              "size": 7.5,
+              "color": "#64748b",
+              "lineHeight": 1.0,
+              "borderColor": "#e2e8f0",
+              "borderWidth": 0.6,
+              "padding": 8.0,
+              "spaceBefore": 12.0
+            }
+          }
+        },
+        "pages": [
+          {
+            "title": "Lettera",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Egregio signor Bianchi,"
+              },
+              {
+                "type": "paragraph",
+                "text": "con la presente La diffidiamo."
+              },
+              {
+                "type": "paragraph",
+                "text": "Distinti saluti."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "set_header_footer patches the legal footer",
+      "document": "intestato",
+      "call": {
+        "name": "set_header_footer",
+        "arguments": {
+          "region": "footer",
+          "center": "",
+          "right": "pag. {pagina} di {pagine}",
+          "style": {
+            "align": "right",
+            "size": 9
+          }
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Piè di pagina aggiornato"
+      },
+      "after": {
+        "metadata": {
+          "title": "Parere Bianchi",
+          "subtitle": "",
+          "client": "Luca Bianchi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#1f3a5f",
+          "brandName": "Studio Legale Neri",
+          "base": "legal",
+          "page": {
+            "margins": {
+              "left": 3.0
+            }
+          },
+          "styles": {
+            "quote": {
+              "italic": false,
+              "size": 12.0
+            }
+          },
+          "header": {
+            "right": "{sezione}",
+            "style": {
+              "size": 9.0
+            }
+          },
+          "footer": {
+            "right": "pag. {pagina} di {pagine}",
+            "style": {
+              "size": 9.0,
+              "lineHeight": 1.0,
+              "spaceBefore": 12.0,
+              "align": "right"
+            }
+          },
+          "firstHeader": {
+            "center": "**Studio Legale Neri**\nVia Roma 1, Milano · PEC neri@pec.it",
+            "line": true
+          }
+        },
+        "pages": [
+          {
+            "title": "Parere",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Parere pro veritate",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Egregio signor Bianchi,",
+                "style": {
+                  "size": 13.0,
+                  "bold": true
+                }
+              },
+              {
+                "type": "quote",
+                "text": "Art. 1218 c.c.",
+                "author": ""
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "In conclusione, la domanda è fondata."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "set_header_footer starts a first header blank, in the style of the others",
+      "document": "atto",
+      "call": {
+        "name": "set_header_footer",
+        "arguments": {
+          "region": "firstHeader",
+          "center": "**Studio Legale Verdi**\nVia Po 3, Torino"
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Intestazione della prima pagina aggiornata"
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio",
+          "base": "report",
+          "firstHeader": {
+            "center": "**Studio Legale Verdi**\nVia Po 3, Torino",
+            "style": {
+              "size": 7.5,
+              "color": "#64748b",
+              "lineHeight": 1.0,
+              "borderColor": "#e2e8f0",
+              "borderWidth": 0.6,
+              "padding": 8.0,
+              "spaceAfter": 18.0
+            },
+            "line": true
+          }
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "set_header_footer patches the first header the document sets",
+      "document": "intestato",
+      "call": {
+        "name": "set_header_footer",
+        "arguments": {
+          "region": "firstHeader",
+          "style": {
+            "align": "center",
+            "size": 11
+          },
+          "line": false
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Intestazione della prima pagina aggiornata"
+      },
+      "after": {
+        "metadata": {
+          "title": "Parere Bianchi",
+          "subtitle": "",
+          "client": "Luca Bianchi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#1f3a5f",
+          "brandName": "Studio Legale Neri",
+          "base": "legal",
+          "page": {
+            "margins": {
+              "left": 3.0
+            }
+          },
+          "styles": {
+            "quote": {
+              "italic": false,
+              "size": 12.0
+            }
+          },
+          "header": {
+            "right": "{sezione}",
+            "style": {
+              "size": 9.0
+            }
+          },
+          "firstHeader": {
+            "center": "**Studio Legale Neri**\nVia Roma 1, Milano · PEC neri@pec.it",
+            "style": {
+              "align": "center",
+              "size": 11.0
+            }
+          }
+        },
+        "pages": [
+          {
+            "title": "Parere",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Parere pro veritate",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Egregio signor Bianchi,",
+                "style": {
+                  "size": 13.0,
+                  "bold": true
+                }
+              },
+              {
+                "type": "quote",
+                "text": "Art. 1218 c.c.",
+                "author": ""
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "In conclusione, la domanda è fondata."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "set_header_footer removes a region",
+      "document": "intestato",
+      "call": {
+        "name": "set_header_footer",
+        "arguments": {
+          "region": "header",
+          "remove": true
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Intestazione aggiornata"
+      },
+      "after": {
+        "metadata": {
+          "title": "Parere Bianchi",
+          "subtitle": "",
+          "client": "Luca Bianchi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#1f3a5f",
+          "brandName": "Studio Legale Neri",
+          "base": "legal",
+          "page": {
+            "margins": {
+              "left": 3.0
+            }
+          },
+          "styles": {
+            "quote": {
+              "italic": false,
+              "size": 12.0
+            }
+          },
+          "header": {},
+          "firstHeader": {
+            "center": "**Studio Legale Neri**\nVia Roma 1, Milano · PEC neri@pec.it",
+            "line": true
+          }
+        },
+        "pages": [
+          {
+            "title": "Parere",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Parere pro veritate",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Egregio signor Bianchi,",
+                "style": {
+                  "size": 13.0,
+                  "bold": true
+                }
+              },
+              {
+                "type": "quote",
+                "text": "Art. 1218 c.c.",
+                "author": ""
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "In conclusione, la domanda è fondata."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "set_header_footer resets a region to the base",
+      "document": "intestato",
+      "call": {
+        "name": "set_header_footer",
+        "arguments": {
+          "region": "firstHeader",
+          "reset": true
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Intestazione della prima pagina aggiornata"
+      },
+      "after": {
+        "metadata": {
+          "title": "Parere Bianchi",
+          "subtitle": "",
+          "client": "Luca Bianchi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#1f3a5f",
+          "brandName": "Studio Legale Neri",
+          "base": "legal",
+          "page": {
+            "margins": {
+              "left": 3.0
+            }
+          },
+          "styles": {
+            "quote": {
+              "italic": false,
+              "size": 12.0
+            }
+          },
+          "header": {
+            "right": "{sezione}",
+            "style": {
+              "size": 9.0
+            }
+          }
+        },
+        "pages": [
+          {
+            "title": "Parere",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Parere pro veritate",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Egregio signor Bianchi,",
+                "style": {
+                  "size": 13.0,
+                  "bold": true
+                }
+              },
+              {
+                "type": "quote",
+                "text": "Art. 1218 c.c.",
+                "author": ""
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "In conclusione, la domanda è fondata."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "set_header_footer saved as the studio style",
+      "document": "atto",
+      "call": {
+        "name": "set_header_footer",
+        "arguments": {
+          "region": "footer",
+          "left": "Studio Legale Verdi",
+          "saveAsDefault": true
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Piè di pagina aggiornato. Salvato come stile dello studio: i nuovi documenti partiranno da qui"
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio",
+          "base": "report",
+          "footer": {
+            "left": "Studio Legale Verdi",
+            "right": "{pagina} / {pagine}",
+            "style": {
+              "size": 7.5,
+              "color": "#64748b",
+              "lineHeight": 1.0,
+              "borderColor": "#e2e8f0",
+              "borderWidth": 0.6,
+              "padding": 8.0,
+              "spaceBefore": 12.0
+            },
+            "line": true
+          }
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "set_header_footer without region",
+      "document": "atto",
+      "call": {
+        "name": "set_header_footer",
+        "arguments": {
+          "left": "Studio"
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Manca \"region\": uno tra header, footer, firstHeader, firstFooter."
+      }
+    },
+    {
+      "name": "set_header_footer with a text that is not one",
+      "document": "atto",
+      "call": {
+        "name": "set_header_footer",
+        "arguments": {
+          "region": "header",
+          "left": 12
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Stile non valido: \"left\" deve essere un testo."
+      }
+    },
+    {
+      "name": "set_header_footer with a missing logo",
+      "document": "intestato",
+      "call": {
+        "name": "set_header_footer",
+        "arguments": {
+          "region": "firstHeader",
+          "logo": {
+            "attachment": "logo.png",
+            "height": 30
+          }
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Allegato \"logo.png\" non trovato."
+      }
+    },
+    {
+      "name": "set_header_footer removes a logo it does not have",
+      "document": "intestato",
+      "call": {
+        "name": "set_header_footer",
+        "arguments": {
+          "region": "firstHeader",
+          "logo": null
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Intestazione della prima pagina aggiornata"
+      }
+    },
+    {
+      "name": "format_block styles a block",
+      "document": "atto",
+      "call": {
+        "name": "format_block",
+        "arguments": {
+          "page": 2,
+          "block": 2,
+          "style": {
+            "bold": true,
+            "align": "justify",
+            "firstLineIndent": 1.25
+          }
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Formattato il blocco 2 a pagina 2",
+        "focusPage": 2
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio",
+          "base": "report"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce.",
+                "style": {
+                  "bold": true,
+                  "align": "justify",
+                  "firstLineIndent": 1.25
+                }
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "format_block clears one field",
+      "document": "intestato",
+      "call": {
+        "name": "format_block",
+        "arguments": {
+          "page": 1,
+          "block": 2,
+          "style": {
+            "size": null
+          }
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Formattato il blocco 2 a pagina 1",
+        "focusPage": 1
+      },
+      "after": {
+        "metadata": {
+          "title": "Parere Bianchi",
+          "subtitle": "",
+          "client": "Luca Bianchi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#1f3a5f",
+          "brandName": "Studio Legale Neri",
+          "base": "legal",
+          "page": {
+            "margins": {
+              "left": 3.0
+            }
+          },
+          "styles": {
+            "quote": {
+              "italic": false,
+              "size": 12.0
+            }
+          },
+          "header": {
+            "right": "{sezione}",
+            "style": {
+              "size": 9.0
+            }
+          },
+          "firstHeader": {
+            "center": "**Studio Legale Neri**\nVia Roma 1, Milano · PEC neri@pec.it",
+            "line": true
+          }
+        },
+        "pages": [
+          {
+            "title": "Parere",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Parere pro veritate",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Egregio signor Bianchi,",
+                "style": {
+                  "bold": true
+                }
+              },
+              {
+                "type": "quote",
+                "text": "Art. 1218 c.c.",
+                "author": ""
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "In conclusione, la domanda è fondata."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "format_block with null style clears them all",
+      "document": "intestato",
+      "call": {
+        "name": "format_block",
+        "arguments": {
+          "page": 1,
+          "block": 2,
+          "style": null
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Formattato il blocco 2 a pagina 1",
+        "focusPage": 1
+      },
+      "after": {
+        "metadata": {
+          "title": "Parere Bianchi",
+          "subtitle": "",
+          "client": "Luca Bianchi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#1f3a5f",
+          "brandName": "Studio Legale Neri",
+          "base": "legal",
+          "page": {
+            "margins": {
+              "left": 3.0
+            }
+          },
+          "styles": {
+            "quote": {
+              "italic": false,
+              "size": 12.0
+            }
+          },
+          "header": {
+            "right": "{sezione}",
+            "style": {
+              "size": 9.0
+            }
+          },
+          "firstHeader": {
+            "center": "**Studio Legale Neri**\nVia Roma 1, Milano · PEC neri@pec.it",
+            "line": true
+          }
+        },
+        "pages": [
+          {
+            "title": "Parere",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Parere pro veritate",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Egregio signor Bianchi,"
+              },
+              {
+                "type": "quote",
+                "text": "Art. 1218 c.c.",
+                "author": ""
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "In conclusione, la domanda è fondata."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "format_block with a marker that is not one",
+      "document": "atto",
+      "call": {
+        "name": "format_block",
+        "arguments": {
+          "page": 3,
+          "block": 2,
+          "style": {
+            "marker": "stella"
+          }
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Stile non valido: \"marker\" deve essere uno tra disc, dash, number, letter, none."
+      }
+    },
+    {
+      "name": "format_block of a missing block",
+      "document": "atto",
+      "call": {
+        "name": "format_block",
+        "arguments": {
+          "page": 2,
+          "block": 9,
+          "style": {
+            "bold": true
+          }
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Il blocco 9 non esiste a pagina 2 (3 blocchi)."
+      }
+    },
+    {
+      "name": "update_block keeps the look of the block",
+      "document": "intestato",
+      "call": {
+        "name": "update_block",
+        "arguments": {
+          "page": 1,
+          "block": 2,
+          "content": {
+            "type": "paragraph",
+            "text": "Gentile signor Bianchi,"
+          }
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Aggiornato il blocco 2 a pagina 1",
+        "focusPage": 1
+      },
+      "after": {
+        "metadata": {
+          "title": "Parere Bianchi",
+          "subtitle": "",
+          "client": "Luca Bianchi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#1f3a5f",
+          "brandName": "Studio Legale Neri",
+          "base": "legal",
+          "page": {
+            "margins": {
+              "left": 3.0
+            }
+          },
+          "styles": {
+            "quote": {
+              "italic": false,
+              "size": 12.0
+            }
+          },
+          "header": {
+            "right": "{sezione}",
+            "style": {
+              "size": 9.0
+            }
+          },
+          "firstHeader": {
+            "center": "**Studio Legale Neri**\nVia Roma 1, Milano · PEC neri@pec.it",
+            "line": true
+          }
+        },
+        "pages": [
+          {
+            "title": "Parere",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Parere pro veritate",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Gentile signor Bianchi,",
+                "style": {
+                  "size": 13.0,
+                  "bold": true
+                }
+              },
+              {
+                "type": "quote",
+                "text": "Art. 1218 c.c.",
+                "author": ""
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "In conclusione, la domanda è fondata."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "update_block takes the look the content gives",
+      "document": "intestato",
+      "call": {
+        "name": "update_block",
+        "arguments": {
+          "page": 1,
+          "block": 2,
+          "content": {
+            "type": "paragraph",
+            "text": "Gentile signor Bianchi,",
+            "style": {
+              "italic": true
+            }
+          }
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Aggiornato il blocco 2 a pagina 1",
+        "focusPage": 1
+      },
+      "after": {
+        "metadata": {
+          "title": "Parere Bianchi",
+          "subtitle": "",
+          "client": "Luca Bianchi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#1f3a5f",
+          "brandName": "Studio Legale Neri",
+          "base": "legal",
+          "page": {
+            "margins": {
+              "left": 3.0
+            }
+          },
+          "styles": {
+            "quote": {
+              "italic": false,
+              "size": 12.0
+            }
+          },
+          "header": {
+            "right": "{sezione}",
+            "style": {
+              "size": 9.0
+            }
+          },
+          "firstHeader": {
+            "center": "**Studio Legale Neri**\nVia Roma 1, Milano · PEC neri@pec.it",
+            "line": true
+          }
+        },
+        "pages": [
+          {
+            "title": "Parere",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Parere pro veritate",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Gentile signor Bianchi,",
+                "style": {
+                  "italic": true
+                }
+              },
+              {
+                "type": "quote",
+                "text": "Art. 1218 c.c.",
+                "author": ""
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "In conclusione, la domanda è fondata."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "insert_block with a look",
+      "document": "atto",
+      "call": {
+        "name": "insert_block",
+        "arguments": {
+          "page": 3,
+          "block": {
+            "type": "paragraph",
+            "text": "Con **grassetto** e *corsivo*.",
+            "style": {
+              "italic": true,
+              "size": 11
+            }
+          }
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Inserito un blocco a pagina 3",
+        "focusPage": 3
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio",
+          "base": "report"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              },
+              {
+                "type": "paragraph",
+                "text": "Con **grassetto** e *corsivo*.",
+                "style": {
+                  "italic": true,
+                  "size": 11.0
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "insert_block with a look that is not one",
+      "document": "atto",
+      "call": {
+        "name": "insert_block",
+        "arguments": {
+          "page": 3,
+          "block": {
+            "type": "paragraph",
+            "text": "x",
+            "style": {
+              "italic": "sì"
+            }
+          }
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Stile non valido: \"italic\" deve essere true o false."
+      }
+    },
+    {
+      "name": "update_page with a look that is not one leaves the page",
+      "document": "atto",
+      "call": {
+        "name": "update_page",
+        "arguments": {
+          "page": 3,
+          "title": "Conclusioni finali",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "x",
+              "style": {
+                "align": "middle"
+              }
+            }
+          ]
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Stile non valido: \"align\" deve essere uno tra left, center, right, justify."
+      }
+    },
+    {
+      "name": "add_page with a look that is not one",
+      "document": "atto",
+      "call": {
+        "name": "add_page",
+        "arguments": {
+          "page": {
+            "title": "Diritto",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "x",
+                "style": {
+                  "lineHeight": 5
+                }
+              }
+            ]
+          }
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "Stile non valido: \"lineHeight\" deve essere un numero da 0.8 a 3."
+      }
+    },
+    {
+      "name": "replace_text everywhere covers the headers",
+      "document": "intestato",
+      "call": {
+        "name": "replace_text",
+        "arguments": {
+          "find": "Neri",
+          "replace": "Gialli"
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Sostituita 1 occorrenza"
+      },
+      "after": {
+        "metadata": {
+          "title": "Parere Bianchi",
+          "subtitle": "",
+          "client": "Luca Bianchi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#1f3a5f",
+          "brandName": "Studio Legale Neri",
+          "base": "legal",
+          "page": {
+            "margins": {
+              "left": 3.0
+            }
+          },
+          "styles": {
+            "quote": {
+              "italic": false,
+              "size": 12.0
+            }
+          },
+          "header": {
+            "right": "{sezione}",
+            "style": {
+              "size": 9.0
+            }
+          },
+          "firstHeader": {
+            "center": "**Studio Legale Gialli**\nVia Roma 1, Milano · PEC neri@pec.it",
+            "line": true
+          }
+        },
+        "pages": [
+          {
+            "title": "Parere",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Parere pro veritate",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Egregio signor Bianchi,",
+                "style": {
+                  "size": 13.0,
+                  "bold": true
+                }
+              },
+              {
+                "type": "quote",
+                "text": "Art. 1218 c.c.",
+                "author": ""
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "In conclusione, la domanda è fondata."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "replace_text on a page says the text is only in a header",
+      "document": "intestato",
+      "call": {
+        "name": "replace_text",
+        "arguments": {
+          "find": "PEC",
+          "replace": "Posta",
+          "page": 2
+        }
+      },
+      "result": {
+        "ok": false,
+        "summary": "\"PEC\" non è a pagina 2: è solo nel titolo, nel sottotitolo o nel cliente del documento, o in intestazione e piè di pagina. Ometti \"page\" per sostituirlo ovunque."
+      }
+    },
+    {
+      "name": "create_document with a look in a block",
+      "document": null,
+      "call": {
+        "name": "create_document",
+        "arguments": {
+          "title": "Lettera",
+          "brandName": "Studio Verdi",
+          "pages": [
+            {
+              "title": "Lettera",
+              "blocks": [
+                {
+                  "type": "paragraph",
+                  "text": "Egregio,",
+                  "style": {
+                    "bold": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Creato un documento di 1 pagina",
+        "focusPage": 1
+      },
+      "after": {
+        "metadata": {
+          "title": "Lettera",
+          "subtitle": "",
+          "client": "",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio Verdi",
+          "base": "legal"
+        },
+        "pages": [
+          {
+            "title": "Lettera",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Egregio,",
+                "style": {
+                  "bold": true
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "add_page skips what is not a block",
+      "document": "atto",
+      "call": {
+        "name": "add_page",
+        "arguments": {
+          "page": {
+            "title": "Diritto",
+            "blocks": [
+              "testo libero",
+              {
+                "type": "paragraph",
+                "text": "Il diritto.",
+                "style": {
+                  "bold": true
+                }
+              }
+            ]
+          }
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Aggiunta la pagina 4",
+        "focusPage": 4
+      },
+      "after": {
+        "metadata": {
+          "title": "Atto Rossi",
+          "subtitle": "Citazione",
+          "client": "Mario Rossi",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#4a7cff",
+          "brandName": "Studio",
+          "base": "report"
+        },
+        "pages": [
+          {
+            "title": "Copertina",
+            "layout": "cover",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "Atto di citazione",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il signor Mario Rossi, residente a Milano."
+              }
+            ]
+          },
+          {
+            "title": "Fatto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "FATTO",
+                "level": 2
+              },
+              {
+                "type": "paragraph",
+                "text": "Il 3 marzo 2025 Rossi consegnava la merce."
+              },
+              {
+                "type": "table",
+                "columns": [
+                  "Fattura",
+                  "Importo"
+                ],
+                "rows": [
+                  [
+                    "n. 12",
+                    "1.200 €"
+                  ]
+                ],
+                "caption": "Fatture"
+              }
+            ]
+          },
+          {
+            "title": "Conclusioni",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Voglia il Tribunale condannare Bianchi."
+              },
+              {
+                "type": "bullets",
+                "items": [
+                  "capitale",
+                  "interessi"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Diritto",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "paragraph",
+                "text": "Il diritto.",
+                "style": {
+                  "bold": true
+                }
               }
             ]
           }

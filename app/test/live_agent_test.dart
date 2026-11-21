@@ -78,7 +78,6 @@ void main() {
       container
           .read(workspaceProvider.notifier)
           .addDocument(before, threadId: id);
-      expect(before.pages[2].layout, isNot(PageLayout.premium));
 
       final watch = Stopwatch()..start();
       final observed = <Map<String, dynamic>>[];
@@ -152,7 +151,12 @@ void main() {
       final after = container
           .read(workspaceProvider)
           .documents[demoDocumentId]!;
-      expect(after.pages[2].layout, PageLayout.premium);
+      // A curated page is a look set on its blocks or on the document's style (rfc/055), never a layout.
+      expect(
+        after.pages[2].blocks.any((b) => !b.style.isEmpty) ||
+            jsonEncode(after.theme.toJson()) != jsonEncode(before.theme.toJson()),
+        isTrue,
+      );
       expect(
         after.pages[2].blocks.length,
         greaterThan(before.pages[2].blocks.length),

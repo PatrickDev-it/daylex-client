@@ -1609,6 +1609,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get toolSetTheme => 'Updating the theme';
 
   @override
+  String get toolSetStyle => 'Updating the style';
+
+  @override
+  String get toolSetHeaderFooter => 'Updating the header and footer';
+
+  @override
+  String toolFormatBlock(String block, String on) {
+    return 'Formatting block $block$on';
+  }
+
+  @override
   String get toolUpdateMetadata => 'Updating the details';
 
   @override
@@ -1896,19 +1907,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reviewConfirmed => 'Confirmed';
-
-  @override
-  String get pdfPreparedFor => 'Prepared for';
-
-  @override
-  String get pdfPreparedBy => 'Prepared by';
-
-  @override
-  String get pdfDate => 'Date';
-
-  @override
-  String get pdfMonthNames =>
-      'January;February;March;April;May;June;July;August;September;October;November;December';
 
   @override
   String get progressStarting => 'Avvio della richiesta';

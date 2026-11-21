@@ -86,12 +86,39 @@ void main() {
       expect(elements(content, 'text:p').map((p) => p.innerText), contains('[Immagine: Senza immagine]'));
     });
 
-    test('has a page footer with the page number, A4', () {
+    test('is A4, and gives the cover and page 2 their own master pages', () {
       final styles = xmlOf(parts, 'styles.xml');
-      expect(elements(styles, 'text:page-number'), isNotEmpty);
-      final layout = elements(styles, 'style:page-layout-properties').single;
-      expect(layout.getAttribute('fo:page-width'), '21cm');
-      expect(layout.getAttribute('fo:page-height'), '29.7cm');
+      for (final layout in elements(styles, 'style:page-layout-properties')) {
+        expect(layout.getAttribute('fo:page-width'), '21cm');
+        expect(layout.getAttribute('fo:page-height'), '29.7cm');
+      }
+      final masters = {for (final m in elements(styles, 'style:master-page')) m.getAttribute('style:name')!: m};
+      // The cover opens on Standard; page 2 starts on the master its first element's automatic style names.
+      final cover = masters['Standard']!;
+      expect(cover.getElement('style:header'), isNull, reason: 'a cover shows no header or footer');
+      expect(cover.getElement('style:footer'), isNull);
+      final named = elements(content, 'style:style').map((s) => s.getAttribute('style:master-page-name')).whereType<String>().toSet();
+      expect(named, hasLength(1));
+      final page2 = masters[named.single]!;
+      final header = page2.getElement('style:header')!.innerText, footer = page2.getElement('style:footer')!.innerText;
+      expect(header, contains('Studio Bianchi'));
+      expect(header, contains('Allegati e importi'));
+      expect(footer, contains('Parere pro veritate — Società Rossi & Figli S.r.l. · Società "Rossi" <info@rossi.it>'));
+      expect(elements(page2, 'text:page-number'), hasLength(1));
+      expect(elements(page2, 'text:page-count'), hasLength(1));
+      final bold = elements(page2, 'text:span').where((s) => s.getAttribute('text:style-name') == 'Emph_b').map((s) => s.innerText);
+      expect(bold, contains('Studio Bianchi'));
+    });
+
+    test('writes the emphasis as spans, and the look a block sets itself in its automatic style', () {
+      final p = elements(content, 'text:p').firstWhere((p) => p.innerText == 'Fine della tabella.');
+      expect(elements(p, 'text:span').single.getAttribute('text:style-name'), 'Emph_b');
+      expect(elements(p, 'text:span').single.innerText, 'tabella');
+      final name = p.getAttribute('text:style-name')!;
+      final style = elements(content, 'style:style').firstWhere((s) => s.getAttribute('style:name') == name);
+      expect(style.getAttribute('style:parent-style-name'), 'Standard');
+      expect(elements(style, 'style:paragraph-properties').single.getAttribute('fo:text-align'), 'center');
+      expect(elements(style, 'style:text-properties').single.getAttribute('fo:font-size'), '14pt');
     });
 
     test('writes the metadata', () {

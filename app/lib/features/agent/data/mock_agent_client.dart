@@ -357,7 +357,7 @@ class MockAgentClient implements AgentClient {
     ];
   }
 
-  /// Page [page] rewritten as the lawyer asked: a premium layout, less text, or both.
+  /// Page [page] rewritten as the lawyer asked: more elegant (more air around its text), less text, or both.
   List<_Step> _rewrite(
     PaperDocument doc,
     int page,
@@ -366,19 +366,16 @@ class MockAgentClient implements AgentClient {
     required bool shorter,
   }) {
     final target = doc.pages[page - 1];
-    final blocks = _condense(target.blocks, keepAll: !shorter);
-    final layout = target.layout == PageLayout.cover
-        ? PageLayout.cover
-        : premium
-        ? PageLayout.premium
-        : target.layout;
+    final blocks = [
+      for (final b in _condense(target.blocks, keepAll: !shorter)) premium ? _airier(b) : b,
+    ];
     final before = target.wordCount;
     final after = DocPage(id: '', blocks: blocks).wordCount;
     final plan = [
       if (premium)
         t(
-          'switch to the **premium** layout: accent bar, more whitespace, larger type',
-          'passo al layout **premium**: barra d\'accento, più respiro, tipografia più grande',
+          'give the text more air: line spacing 1.4, more space after paragraphs and around headings',
+          'do più respiro al testo: interlinea 1,4, più spazio dopo i paragrafi e attorno ai titoli',
         ),
       if (shorter)
         t(
@@ -410,13 +407,12 @@ class MockAgentClient implements AgentClient {
       _Status(t('Rewriting page $page', 'Riscrivo la pagina $page')),
       _Call(ToolNames.updatePage, {
         'page': page,
-        'layout': layout.name,
         'blocks': [for (final b in blocks) b.toJson()],
       }),
       _Say(
         t(
-          'Done. Only page $page changed:\n\n| | Before | After |\n|---|---:|---:|\n| Words | $before | $after |\n| Layout | ${target.layout.label} | ${layout.label} |\n\nUse **Undo** below to revert, or **Review** to compare in the side panel.',
-          'Fatto. È cambiata solo la pagina $page:\n\n| | Prima | Dopo |\n|---|---:|---:|\n| Parole | $before | $after |\n| Layout | ${target.layout.label} | ${layout.label} |\n\nUsa **Undo** qui sotto per tornare indietro, o **Review** per confrontare nel pannello laterale.',
+          'Done. Only page $page changed:\n\n| | Before | After |\n|---|---:|---:|\n| Words | $before | $after |\n\nUse **Undo** below to revert, or **Review** to compare in the side panel.',
+          'Fatto. È cambiata solo la pagina $page:\n\n| | Prima | Dopo |\n|---|---:|---:|\n| Parole | $before | $after |\n\nUsa **Undo** qui sotto per tornare indietro, o **Review** per confrontare nel pannello laterale.',
         ),
       ),
     ];
@@ -658,7 +654,7 @@ class MockAgentClient implements AgentClient {
           'caption': it ? 'IVA esclusa.' : 'Excluding VAT.',
         },
       ]),
-      pg(it ? 'Case study' : 'Case study', 'premium', [
+      pg(it ? 'Case study' : 'Case study', 'standard', [
         h('Case study'),
         {
           'type': 'quote',
@@ -700,13 +696,20 @@ class MockAgentClient implements AgentClient {
       ),
     ]);
 
-    if (count == 1) return [body.first..['layout'] = 'premium'];
+    if (count == 1) return [body.first];
     if (count == 2) return [cover, closing];
     final middle = <Map<String, dynamic>>[
       for (var i = 0; i < count - 2; i++) body[i % body.length],
     ];
     return [cover, ...middle, closing];
   }
+
+  /// [b] with more air around it, set on the block itself so the rest of the document keeps its style.
+  static DocBlock _airier(DocBlock b) => switch (b) {
+    HeadingBlock() => b.withStyle(b.style.patch({'spaceBefore': 18, 'spaceAfter': 10})),
+    ParagraphBlock() || BulletListBlock() => b.withStyle(b.style.patch({'lineHeight': 1.4, 'spaceAfter': 10})),
+    _ => b,
+  };
 
   /// Shortens text-heavy blocks: one lead sentence per paragraph run, at most
   /// three concise bullets. Data blocks are kept as they are.
@@ -717,21 +720,12 @@ class MockAgentClient implements AgentClient {
       switch (b) {
         case ParagraphBlock(:final text):
           if (paragraphRun && !keepAll) continue;
-          out.add(
-            ParagraphBlock(
-              id: b.id,
-              text: _firstSentences(text, keepAll ? 2 : 1),
-            ),
-          );
+          // copyWith keeps the block's own style: a shorter text is not a restyle.
+          out.add(b.copyWith(text: _firstSentences(text, keepAll ? 2 : 1)));
           paragraphRun = true;
           continue;
         case BulletListBlock(:final items):
-          out.add(
-            BulletListBlock(
-              id: b.id,
-              items: items.take(3).map(_clause).toList(),
-            ),
-          );
+          out.add(b.copyWith(items: items.take(3).map(_clause).toList()));
         default:
           out.add(b);
       }

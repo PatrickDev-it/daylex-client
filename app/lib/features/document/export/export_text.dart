@@ -1,6 +1,8 @@
 /// Text hygiene and escaping shared by every writer: one place decides what a character becomes.
 library;
 
+import '../model/style.dart';
+
 /// Everything that is not text any format can carry is dropped here, once, so no writer repeats it.
 ///
 /// Dropped: control characters (C0 and C1, but for tab and newline), lone surrogates, U+FFFE, U+FFFF and the byte
@@ -85,15 +87,6 @@ String htmlEscape(String s) {
   return out.toString();
 }
 
-/// The months of the export, in the Italian every document is written in.
-const kMonthNames = [
-  'gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno',
-  'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre',
-];
-
-/// `marzo 2024`, as the PDF cover prints the date.
-String monthYear(DateTime d) => '${kMonthNames[d.month - 1]} ${d.year}';
-
 String _two(int n) => n.toString().padLeft(2, '0');
 
 /// W3CDTF in UTC, the form core properties and ODF metadata take: `2024-03-12T10:30:00Z`.
@@ -102,15 +95,11 @@ String utcStamp(DateTime d) {
   return '${u.year.toString().padLeft(4, '0')}-${_two(u.month)}-${_two(u.day)}T${_two(u.hour)}:${_two(u.minute)}:${_two(u.second)}Z';
 }
 
+/// A length in points as ODF and CSS write it: at most two decimals and no trailing zeros (`11pt`, `10.5pt`).
+String ptLength(double v) => '${v.toStringAsFixed(2).replaceFirst(RegExp(r'\.?0+$'), '')}pt';
+
 /// `#RRGGBB` without the hash, upper case, from an ARGB int.
 String hex6(int argb) => (argb & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase();
 
 /// [argb] blended over white with the given opacity, as `RRGGBB` (the renderer's tints).
-String tintOf(int argb, double opacity) {
-  int mix(int shift) {
-    final c = (argb >> shift) & 0xFF;
-    return (255 - (255 - c) * opacity).round().clamp(0, 255);
-  }
-
-  return [mix(16), mix(8), mix(0)].map((v) => v.toRadixString(16).padLeft(2, '0')).join().toUpperCase();
-}
+String tintOf(int argb, double opacity) => hex6(tint(argb, opacity));

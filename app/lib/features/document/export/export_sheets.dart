@@ -3,6 +3,7 @@ library;
 
 import 'dart:math' as math;
 
+import '../model/document.dart';
 import 'export_model.dart';
 
 /// One sheet: a table, or the document's text (one paragraph per row).
@@ -54,11 +55,17 @@ class ExSheet {
 /// The longest text one spreadsheet cell holds (Excel's limit): longer paragraphs continue on the next row.
 const kCellLimit = 32000;
 
+/// [doc] as the spreadsheets take it: its text without the styling (rfc/055), and its sheets.
+({ExportDoc doc, List<ExSheet> sheets}) exportSheets(PaperDocument doc) {
+  final d = buildExportDoc(doc, plain: true);
+  return (doc: d, sheets: buildSheets(d));
+}
+
 /// The sheets of [doc]: one per table, named after the nearest heading; then `Testo` with everything that is not
 /// a table, when there is anything (always, in a document without tables).
 List<ExSheet> buildSheets(ExportDoc doc) {
   final text = _textRows(doc);
-  final hasText = doc.tables.isEmpty || doc.blocks.skip(doc.bodyStart).any((b) => b is! ExTable && b is! ExPageBreak);
+  final hasText = doc.tables.isEmpty || doc.blocks.any((b) => b is! ExTable && b is! ExPageBreak);
 
   final names = _SheetNames();
   final textName = hasText ? names.take('Testo') : '';
@@ -88,15 +95,14 @@ List<ExSheet> buildSheets(ExportDoc doc) {
 
   for (final b in doc.blocks) {
     switch (b) {
-      case ExTitle(:final text) || ExHeading(:final text) || ExSectionLabel(:final text):
+      case ExHeading(:final text):
         add(text, heading: true);
-      case ExSubtitle(:final text) || ExParagraph(:final text):
+      case ExParagraph(:final text):
         add(text);
-      case ExFact(:final label, :final value):
-        add('$label: $value');
-      case ExBullets(:final items):
-        for (final i in items) {
-          add('• $i');
+      case ExBullets(:final items, :final style):
+        for (final (n, i) in items.indexed) {
+          final marker = listMarker(style.resolved.marker, n);
+          add(marker.isEmpty ? i : '$marker $i');
         }
       case ExMetrics(:final items):
         for (final m in items) {

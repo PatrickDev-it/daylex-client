@@ -178,6 +178,55 @@ void main() {
     expect(text(fitted.document), text(before));
   });
 
+  test('each page is measured where it goes, with its own header', () async {
+    final doc = buildQ3Proposal();
+    // Page 1 shows nothing above its text, every other page a tall
+    // letterhead: measured as page 1, a later page would fit where it does
+    // not.
+    final letterhead = [for (var i = 0; i < 8; i++) 'Riga $i'].join('\n');
+    final theme = doc.theme
+        .withRegion(
+          RegionSlot.header,
+          PageRegion(left: letterhead, style: BlockStyle.of({'size': 14})),
+        )
+        .withRegion(RegionSlot.firstHeader, const PageRegion());
+    final before = doc.copyWith(
+      theme: theme,
+      pages: [
+        page('Premessa', [p('Breve premessa.')]),
+        appeal(),
+      ],
+    );
+    final fitted = await fitter.fit(before);
+    expect(fitted.overflowing, isEmpty);
+    expect(
+      pdfPageCount(await renderer.render(fitted.document)),
+      fitted.document.pages.length,
+    );
+    expect(text(fitted.document), text(before));
+  });
+
+  test('a block cut in two keeps its style on every page', () async {
+    final doc = buildQ3Proposal();
+    final style = BlockStyle.of({
+      'lineHeight': 2,
+      'firstLineIndent': 1.25,
+      'align': 'justify',
+    });
+    final before = doc.copyWith(
+      pages: [
+        page('Unico', [
+          ParagraphBlock(id: newId(), text: 'parola ' * 1500, style: style),
+        ]),
+      ],
+    );
+    final fitted = await fitter.fit(before);
+    expect(fitted.document.pages.length, greaterThan(1));
+    for (final fittedPage in fitted.document.pages) {
+      expect(fittedPage.blocks.single.style, style);
+    }
+  });
+
   test('fits on a background isolate', () async {
     final doc = buildQ3Proposal();
     final fitted = await fitter.fitInBackground(

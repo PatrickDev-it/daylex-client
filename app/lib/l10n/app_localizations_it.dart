@@ -1613,6 +1613,17 @@ class AppLocalizationsIt extends AppLocalizations {
   String get toolSetTheme => 'Aggiorno il tema';
 
   @override
+  String get toolSetStyle => 'Aggiorno lo stile';
+
+  @override
+  String get toolSetHeaderFooter => 'Aggiorno intestazione e piè di pagina';
+
+  @override
+  String toolFormatBlock(String block, String on) {
+    return 'Formatto il blocco $block$on';
+  }
+
+  @override
   String get toolUpdateMetadata => 'Aggiorno i dati';
 
   @override
@@ -1903,19 +1914,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get reviewConfirmed => 'Confermato';
-
-  @override
-  String get pdfPreparedFor => 'Destinatario';
-
-  @override
-  String get pdfPreparedBy => 'Redatto da';
-
-  @override
-  String get pdfDate => 'Data';
-
-  @override
-  String get pdfMonthNames =>
-      'gennaio;febbraio;marzo;aprile;maggio;giugno;luglio;agosto;settembre;ottobre;novembre;dicembre';
 
   @override
   String get progressStarting => 'Avvio della richiesta';

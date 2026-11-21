@@ -59,7 +59,7 @@ void main() {
       final b = encodeCsv(textOnlyDocument());
       final r = parseCsv(utf8.decode(b.sublist(3)));
       expect(r.every((x) => x.length == 1), isTrue);
-      expect(r.map((x) => x.single), containsAll(['Solo testo', 'Titolo del paragrafo', 'Primo paragrafo; con punto e virgola.', 'Secondo "paragrafo"\ncon a capo.', "'=1+1"]));
+      expect(r.map((x) => x.single), containsAll(['Titolo del paragrafo', 'Primo paragrafo; con punto e virgola.', 'Secondo "paragrafo"\ncon a capo.', "'=1+1"]));
       expect(utf8.decode(b.sublist(3)), contains('"Primo paragrafo; con punto e virgola."\r\n'));
     });
 
@@ -73,9 +73,10 @@ void main() {
       expect(forbiddenChars.hasMatch(text.replaceAll('\r', '')), isFalse);
     });
 
-    test('writes an empty document', () {
-      final r = parseCsv(utf8.decode(encodeCsv(emptyDocument()).sublist(3)));
-      expect(r.map((x) => x.length).toSet(), {1});
+    test('writes an empty document as no record at all', () {
+      final bytes = encodeCsv(emptyDocument());
+      expect(bytes.take(3), [0xEF, 0xBB, 0xBF]);
+      expect(parseCsv(utf8.decode(bytes.sublist(3))), isEmpty);
     });
   });
 }

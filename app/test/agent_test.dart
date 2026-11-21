@@ -41,6 +41,12 @@ class FakeHost implements ToolHost {
 
   @override
   AgentAttachment? attachment(String name) => null;
+
+  @override
+  DocTheme defaultTheme = DocTheme.legal;
+
+  @override
+  void saveDefaultTheme(DocTheme theme) => defaultTheme = theme;
 }
 
 /// Runs [prompt] through the mock agent and executes its tool calls.
@@ -207,7 +213,13 @@ void main() {
     expect(results, isNotEmpty);
     expect(results.every((r) => r.ok), isTrue);
     final after = host.activeDocument!.pages[2];
-    expect(after.layout, PageLayout.premium);
+    // The look is set on the page's own blocks (rfc/055): no layout draws it, and the other pages keep theirs.
+    expect(after.layout, before.layout);
+    final paragraphs = after.blocks.whereType<ParagraphBlock>();
+    expect(paragraphs, isNotEmpty);
+    expect(paragraphs.map((p) => p.style.lineHeight), everyElement(1.4));
+    expect(after.blocks.whereType<HeadingBlock>().map((h) => h.style.spaceBefore), everyElement(18));
+    expect(host.activeDocument!.theme.toJson(), original.theme.toJson());
     expect(after.wordCount, lessThan(before.wordCount));
     for (final i in [0, 1, 3, 4, 5]) {
       expect(host.activeDocument!.pages[i], same(original.pages[i]));

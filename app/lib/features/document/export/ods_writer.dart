@@ -12,8 +12,7 @@ import 'export_text.dart';
 import 'odf_common.dart';
 
 Uint8List encodeOds(PaperDocument doc) {
-  final d = buildExportDoc(doc);
-  final sheets = buildSheets(d);
+  final (doc: d, :sheets) = exportSheets(doc);
   return odfPackage(
     d,
     mediaType: kOdsMime,
@@ -118,7 +117,7 @@ String _sheet(ExSheet s, String Function(double) columnStyle) {
 }
 
 String _styles(ExportDoc d) {
-  final mx = cm(d.page.marginXTwips), my = cm(ExPageSetup.marginYTwips);
+  final p = d.page;
   return '$kOdfDecl<office:document-styles $kOdfNamespaces office:version="$kOdfVersion">'
       '<office:font-face-decls>$_fontFace</office:font-face-decls>'
       '<office:styles>'
@@ -126,11 +125,12 @@ String _styles(ExportDoc d) {
       '<style:text-properties style:font-name="Arial" fo:font-size="10pt" fo:language="it" fo:country="IT"/></style:default-style>'
       '<style:style style:name="Default" style:family="table-cell"/>'
       '</office:styles>'
-      '<office:automatic-styles><style:page-layout style:name="Mpm1"><style:page-layout-properties fo:page-width="21cm" fo:page-height="29.7cm" '
-      'style:print-orientation="portrait" fo:margin-top="$my" fo:margin-bottom="$my" fo:margin-left="$mx" fo:margin-right="$mx" style:writing-mode="lr-tb"/>'
+      '<office:automatic-styles><style:page-layout style:name="Mpm1"><style:page-layout-properties fo:page-width="${cm(p.widthTwips)}" '
+      'fo:page-height="${cm(p.heightTwips)}" style:print-orientation="${p.landscape ? 'landscape' : 'portrait'}" fo:margin-top="${cm(p.topTwips)}" '
+      'fo:margin-bottom="${cm(p.bottomTwips)}" fo:margin-left="${cm(p.leftTwips)}" fo:margin-right="${cm(p.rightTwips)}" style:writing-mode="lr-tb"/>'
       '<style:footer-style><style:header-footer-properties fo:min-height="0.5cm" fo:margin-top="0.3cm"/></style:footer-style></style:page-layout></office:automatic-styles>'
       '<office:master-styles><style:master-page style:name="Default" style:page-layout-name="Mpm1"><style:footer>'
-      '<text:p>${odfText(d.footerText)} — pagina <text:page-number text:select-page="current">1</text:page-number> di <text:page-count>1</text:page-count></text:p>'
+      '<text:p>${odfText(d.title)} — pagina <text:page-number text:select-page="current">1</text:page-number> di <text:page-count>1</text:page-count></text:p>'
       '</style:footer></style:master-page></office:master-styles></office:document-styles>';
 }
 

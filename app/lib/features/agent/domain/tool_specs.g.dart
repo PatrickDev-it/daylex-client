@@ -40,8 +40,7 @@ const _toolsJson = r'''
                 "enum": [
                   "cover",
                   "standard",
-                  "twoColumn",
-                  "premium"
+                  "twoColumn"
                 ]
               },
               "blocks": {
@@ -91,8 +90,7 @@ const _toolsJson = r'''
               "enum": [
                 "cover",
                 "standard",
-                "twoColumn",
-                "premium"
+                "twoColumn"
               ]
             },
             "blocks": {
@@ -155,8 +153,7 @@ const _toolsJson = r'''
           "enum": [
             "cover",
             "standard",
-            "twoColumn",
-            "premium"
+            "twoColumn"
           ]
         },
         "blocks": {
@@ -378,8 +375,7 @@ const _toolsJson = r'''
           "enum": [
             "cover",
             "standard",
-            "twoColumn",
-            "premium"
+            "twoColumn"
           ]
         }
       },
@@ -406,6 +402,317 @@ const _toolsJson = r'''
         }
       },
       "required": []
+    },
+    "requiresApproval": false,
+    "mutates": true
+  },
+  {
+    "name": "set_style",
+    "description": "Cambia lo stile dell'intero documento. base: legal (DM 110/2023: Times 12, interlinea 1,5, margini 2,5 cm, giustificato) o report. page: orientamento, margini e distanza di intestazione e piè di pagina dal bordo. styles: per ruolo (body, heading1, heading2, heading3, bullets, table, tableHeader, quote, callout, caption, metrics) uno stile con i campi di format_block. Manda solo ciò che cambia; null riporta un campo, un ruolo, la pagina o tutti gli stili alla base. Per un solo blocco usa format_block. saveAsDefault: true solo se l'avvocato chiede che diventi lo stile dello studio, da cui partono i nuovi documenti.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "base": {
+          "type": "string",
+          "enum": [
+            "legal",
+            "report"
+          ]
+        },
+        "accent": {
+          "type": "string",
+          "description": "#RRGGBB"
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "orientation": {
+              "type": "string",
+              "enum": [
+                "portrait",
+                "landscape"
+              ]
+            },
+            "margins": {
+              "type": "object",
+              "description": "cm",
+              "properties": {
+                "top": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 10
+                },
+                "right": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 10
+                },
+                "bottom": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 10
+                },
+                "left": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 10
+                }
+              }
+            },
+            "header": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 5,
+              "description": "distanza dell'intestazione dal bordo, cm"
+            },
+            "footer": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 5,
+              "description": "distanza del piè di pagina dal bordo, cm"
+            }
+          }
+        },
+        "styles": {
+          "type": "object",
+          "description": "ruolo → stile, con i campi di format_block"
+        },
+        "saveAsDefault": {
+          "type": "boolean"
+        }
+      },
+      "required": []
+    },
+    "requiresApproval": false,
+    "mutates": true
+  },
+  {
+    "name": "set_header_footer",
+    "description": "Imposta l'intestazione o il piè di pagina. region: header e footer valgono per ogni pagina, firstHeader e firstFooter per la sola prima (la carta intestata: studio, indirizzo, PEC, telefono, CF/P.IVA, logo). left, center, right: il testo di ogni lato, righe separate da \\n, con **grassetto**, *corsivo*, __sottolineato__ e i segnaposto {pagina} {pagine} {titolo} {sottotitolo} {cliente} {autore} {data} {studio} {sezione}; manda solo i lati che cambiano, \"\" ne svuota uno. style: uno stile con i campi di format_block. line: una linea tra la regione e il testo. logo: un'immagine allegata, null la toglie. remove: true lascia la regione vuota; reset: true la riporta alla base. Le pagine con layout cover non hanno intestazione né piè di pagina. saveAsDefault come in set_style.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "region": {
+          "type": "string",
+          "enum": [
+            "header",
+            "footer",
+            "firstHeader",
+            "firstFooter"
+          ]
+        },
+        "left": {
+          "type": "string"
+        },
+        "center": {
+          "type": "string"
+        },
+        "right": {
+          "type": "string"
+        },
+        "style": {
+          "type": "object",
+          "description": "uno stile, con i campi di format_block"
+        },
+        "line": {
+          "type": "boolean"
+        },
+        "logo": {
+          "type": "object",
+          "properties": {
+            "attachment": {
+              "type": "string",
+              "description": "nome del file allegato"
+            },
+            "height": {
+              "type": "number",
+              "minimum": 8,
+              "maximum": 200,
+              "description": "pt"
+            },
+            "align": {
+              "type": "string",
+              "enum": [
+                "left",
+                "center",
+                "right"
+              ]
+            }
+          },
+          "required": [
+            "attachment"
+          ]
+        },
+        "remove": {
+          "type": "boolean"
+        },
+        "reset": {
+          "type": "boolean"
+        },
+        "saveAsDefault": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "region"
+      ]
+    },
+    "requiresApproval": false,
+    "mutates": true
+  },
+  {
+    "name": "format_block",
+    "description": "Cambia lo stile di un blocco: manda solo i campi che cambiano, null riporta un campo allo stile del suo ruolo, style null li riporta tutti. Lo stesso \"style\" vale in ogni blocco di create_document, add_page, update_page, insert_block e update_block. Nel testo di un blocco: **grassetto**, *corsivo*, __sottolineato__.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "numero di pagina, da 1"
+        },
+        "block": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "numero del blocco nella pagina, da 1"
+        },
+        "style": {
+          "type": "object",
+          "properties": {
+            "font": {
+              "type": "string",
+              "enum": [
+                "times",
+                "arial",
+                "courier",
+                "calibri",
+                "garamond",
+                "inter"
+              ]
+            },
+            "size": {
+              "type": "number",
+              "minimum": 6,
+              "maximum": 72,
+              "description": "pt"
+            },
+            "bold": {
+              "type": "boolean"
+            },
+            "italic": {
+              "type": "boolean"
+            },
+            "underline": {
+              "type": "boolean"
+            },
+            "caps": {
+              "type": "boolean"
+            },
+            "color": {
+              "type": "string",
+              "description": "#RRGGBB, \"accent\", \"accent/NN\" (l'accento al NN%, da 1 a 100) o \"none\""
+            },
+            "background": {
+              "type": "string",
+              "description": "#RRGGBB, \"accent\", \"accent/NN\" (l'accento al NN%, da 1 a 100) o \"none\""
+            },
+            "align": {
+              "type": "string",
+              "enum": [
+                "left",
+                "center",
+                "right",
+                "justify"
+              ]
+            },
+            "lineHeight": {
+              "type": "number",
+              "minimum": 0.8,
+              "maximum": 3,
+              "description": "1 singola, 1.5 una riga e mezza"
+            },
+            "spaceBefore": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 72,
+              "description": "pt"
+            },
+            "spaceAfter": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 72,
+              "description": "pt"
+            },
+            "indent": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10,
+              "description": "rientro, cm"
+            },
+            "firstLineIndent": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 5,
+              "description": "rientro della prima riga, cm"
+            },
+            "border": {
+              "type": "string",
+              "enum": [
+                "none",
+                "left",
+                "top",
+                "bottom",
+                "box"
+              ]
+            },
+            "borderColor": {
+              "type": "string",
+              "description": "#RRGGBB, \"accent\", \"accent/NN\" (l'accento al NN%, da 1 a 100) o \"none\""
+            },
+            "borderWidth": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 6,
+              "description": "pt"
+            },
+            "padding": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 72,
+              "description": "pt, tra il bordo e il testo"
+            },
+            "marker": {
+              "type": "string",
+              "enum": [
+                "disc",
+                "dash",
+                "number",
+                "letter",
+                "none"
+              ],
+              "description": "elenchi: •, –, 1., a), nessuno"
+            },
+            "grid": {
+              "type": "string",
+              "enum": [
+                "rows",
+                "all",
+                "none"
+              ],
+              "description": "tabelle: linee tra le righe, ovunque, nessuna"
+            },
+            "stripe": {
+              "type": "string",
+              "description": "tabelle, righe alterne: #RRGGBB, \"accent\", \"accent/NN\" (l'accento al NN%, da 1 a 100) o \"none\""
+            }
+          }
+        }
+      },
+      "required": [
+        "page",
+        "block",
+        "style"
+      ]
     },
     "requiresApproval": false,
     "mutates": true

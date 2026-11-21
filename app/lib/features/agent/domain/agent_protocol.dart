@@ -215,6 +215,8 @@ class AgentRequest {
     'attachments': [for (final a in attachments) a.toJson()],
     'history': [for (final t in history) t.toJson()],
     'exportFormats': exportFileFormats.keys.toList(),
+    // This app styles its documents (rfc/055): the server offers it set_style, set_header_footer and format_block.
+    'documentStyle': 1,
   };
 }
 

@@ -76,6 +76,7 @@ class IndexRecoveredNotice extends StoreNotice {
 ///     snapshots/<id>.json     a document version a message refers to; immutable, written once
 ///     preferences.json        the theme and the language the lawyer picked, the side panel's width
 ///     browser.json            the web tabs and the portals (the sites' own cookies stay in the browser profile)
+///     document-style.json     the studio's style, which every new document starts from (rfc/055)
 class LocalStore {
   LocalStore(Directory root) : _root = root;
   LocalStore._browser() : _root = null {
@@ -302,6 +303,9 @@ class LocalStore {
 
   Map<String, dynamic>? readBrowser() => _read('browser.json');
   void writeBrowser(Map<String, dynamic> json) => _write('browser.json', json);
+
+  Map<String, dynamic>? readDocumentStyle() => _read('document-style.json');
+  void writeDocumentStyle(Map<String, dynamic> json) => _write('document-style.json', json);
 
   Map<String, dynamic>? readExports() => _read('exports.json');
   void writeExports(Map<String, dynamic> json) => _write('exports.json', json);

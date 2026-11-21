@@ -7,6 +7,7 @@ import 'package:daylex/features/document/model/document.dart';
 import 'package:daylex/features/document/render/pdf_renderer.dart';
 
 import 'demo_fixture.dart';
+import 'document_export/export_fixture.dart' show gradientPng;
 
 /// Counts `/Type /Page` objects (excluding the `/Pages` tree node).
 int pdfPageCount(List<int> bytes) =>
@@ -105,6 +106,122 @@ void main() {
       }
     },
   );
+
+  test('renders every style the agent can set (rfc/055)', () async {
+    final theme = DocTheme.legal
+        .patchStyle({
+          'page': {
+            'orientation': 'landscape',
+            'margins': {'left': 3},
+          },
+          'styles': {
+            'body': {'font': 'garamond', 'size': 12},
+            'heading1': {'font': 'arial', 'caps': true, 'underline': true},
+            'quote': {'font': 'courier'},
+            'callout': {'font': 'calibri', 'background': 'accent/10'},
+            'table': {'font': 'times', 'grid': 'all', 'stripe': '#f1f5f9'},
+            'bullets': {'font': 'inter', 'marker': 'letter'},
+          },
+        })
+        .withRegion(
+          RegionSlot.firstHeader,
+          const PageRegion(
+            center: '**Studio Legale Neri**\n*Via Roma 1, Milano*',
+            line: true,
+          ).withLogo(
+            RegionLogo(
+              bytes: gradientPng(),
+              height: 30,
+              align: BlockAlign.center,
+            ),
+          ),
+        )
+        .withRegion(
+          RegionSlot.footer,
+          const PageRegion(
+            left: '{titolo} · {cliente}',
+            right: 'pag. {pagina} di {pagine}',
+          ),
+        );
+    BlockStyle s(Map<String, Object> values) => BlockStyle.of(values);
+    final doc = buildQ3Proposal().copyWith(
+      theme: theme,
+      pages: [
+        DocPage(
+          id: 'a',
+          title: 'Parere',
+          blocks: [
+            HeadingBlock(
+              id: 'h',
+              text: 'Parere',
+              style: s({'align': 'center'}),
+            ),
+            ParagraphBlock(
+              id: 'p',
+              text: 'Con **grassetto**, *corsivo* e __sottolineato__.',
+              style: s({
+                'firstLineIndent': 1.25,
+                'lineHeight': 2,
+                'align': 'justify',
+              }),
+            ),
+            BulletListBlock(
+              id: 'l',
+              items: const ['uno', 'due'],
+              style: s({'marker': 'number'}),
+            ),
+            QuoteBlock(
+              id: 'q',
+              text: 'Art. 1218 c.c.',
+              author: 'Codice civile',
+              style: s({'border': 'left'}),
+            ),
+            CalloutBlock(
+              id: 'c',
+              title: 'Nota',
+              text: 'Termine: 30 giorni.',
+              style: s({'padding': 12}),
+            ),
+            TableBlock(
+              id: 't',
+              columns: const ['Voce', 'Importo'],
+              rows: const [
+                ['Capitale', '1.000 €'],
+                ['Interessi', '45 €'],
+              ],
+              style: s({'border': 'bottom', 'borderWidth': 1}),
+            ),
+          ],
+        ),
+        DocPage(
+          id: 'b',
+          title: 'Conclusioni',
+          blocks: [
+            MetricsBlock(
+              id: 'm',
+              items: const [Metric(label: 'Totale', value: '1.045 €')],
+              style: s({'size': 20}),
+            ),
+            ParagraphBlock(
+              id: 'z',
+              text: 'Fine.',
+              style: s({'caps': true, 'color': '#7a1f1f'}),
+            ),
+          ],
+        ),
+      ],
+    );
+    final bytes = await renderer.render(doc);
+    expect(pdfPageCount(bytes), 2);
+    final box = RegExp(
+      r'/MediaBox\s*\[\s*0\s+0\s+([\d.]+)\s+([\d.]+)',
+    ).firstMatch(latin1.decode(bytes))!;
+    expect(
+      double.parse(box[1]!),
+      greaterThan(double.parse(box[2]!)),
+      reason: 'landscape',
+    );
+  });
 
   test('document survives a JSON round trip', () {
     final doc = buildQ3Proposal();

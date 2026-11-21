@@ -36,6 +36,12 @@ class _Host implements ToolHost {
 
   @override
   AgentAttachment? attachment(String name) => null;
+
+  @override
+  DocTheme defaultTheme = DocTheme.legal;
+
+  @override
+  void saveDefaultTheme(DocTheme theme) => defaultTheme = theme;
 }
 
 /// Source of every Dart file the app-domain partition owns, by path under lib/.

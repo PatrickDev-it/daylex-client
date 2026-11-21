@@ -15,6 +15,7 @@ import 'doc_history.dart';
 import 'document_review.dart';
 import 'first_run.dart';
 import 'panel_tabs.dart';
+import 'studio_style.dart';
 import 'workspace_documents.dart';
 import 'workspace_model.dart';
 import 'workspace_repository.dart';
@@ -179,6 +180,7 @@ class WorkspaceNotifier extends Notifier<WorkspaceState> {
   PaperDocument createFromTemplate(DocTemplate template, {String? projectId}) {
     final doc = template.build(
       projectId ?? state.activeThread?.projectId ?? state.projects.first.id,
+      ref.read(studioStyleProvider),
     );
     addDocument(doc);
     return doc;

@@ -30,7 +30,7 @@ const kOdsMime = 'application/vnd.oasis.opendocument.spreadsheet';
 const _twipsPerCm = 566.929;
 
 /// A length in centimetres, from twips, without trailing zeros: `17.05cm`.
-String cm(num twips) => '${_trim((twips / _twipsPerCm).toStringAsFixed(3))}cm';
+String cm(num twips) => '${_trim((twips / _twipsPerCm).toStringAsFixed(2))}cm';
 
 /// A length in centimetres, from points.
 String cmFromPt(num pt) => cm(pt * 20);

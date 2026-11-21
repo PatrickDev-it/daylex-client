@@ -63,11 +63,14 @@ class DocTemplate {
   final String description;
   final int pageCount;
   final int accent;
-  final PaperDocument Function(String projectId) build;
+
+  /// A new document in the studio's [style] (rfc/055), with the template's accent.
+  final PaperDocument Function(String projectId, [DocTheme style]) build;
 }
 
 PaperDocument _fromTemplate(
   String projectId,
+  DocTheme style,
   String title,
   int accent,
   List<DocPage> pages, {
@@ -75,10 +78,17 @@ PaperDocument _fromTemplate(
 }) => PaperDocument(
   id: newId(),
   projectId: projectId,
-  theme: DocTheme(accent: accent),
+  theme: style.copyWith(accent: accent),
   metadata: _meta(title, subtitle: subtitle),
   pages: pages,
 );
+
+/// The opening of a document without a header: its title, large, and what follows it.
+List<DocBlock> _opening(String title, String subtitle, String note) => [
+  HeadingBlock(id: newId(), text: title, style: BlockStyle.of({'size': 30, 'align': 'left', 'spaceAfter': 10})),
+  ParagraphBlock(id: newId(), text: subtitle, style: BlockStyle.of({'size': 14, 'spaceAfter': 28})),
+  p(note),
+];
 
 final docTemplates = <DocTemplate>[
   DocTemplate(
@@ -87,23 +97,24 @@ final docTemplates = <DocTemplate>[
     description: 'Una pagina vuota da cui iniziare.',
     pageCount: 1,
     accent: kDefaultDocAccent,
-    build: (projectId) => _fromTemplate(projectId, 'Documento senza titolo', kDefaultDocAccent, [
+    build: (projectId, [style = DocTheme.legal]) => _fromTemplate(projectId, style, 'Documento senza titolo', kDefaultDocAccent, [
       page('Pagina 1', [h1('Documento senza titolo'), p('Inizia a scrivere oppure chiedi all’agente di preparare questa pagina.')]),
     ]),
   ),
   DocTemplate(
     id: 'proposal',
     name: 'Proposta di consulenza',
-    description: 'Copertina, sintesi, metodo, compensi e prossimi passi.',
+    description: 'Apertura, sintesi, metodo, compensi e prossimi passi.',
     pageCount: 5,
     accent: _blue,
-    build: (projectId) => _fromTemplate(
+    build: (projectId, [style = DocTheme.legal]) => _fromTemplate(
       projectId,
+      style,
       'Proposta di consulenza',
       _blue,
       subtitle: 'Ambito, metodo e compensi',
       [
-        page('Proposta', [p('Preparato per il gruppo di lavoro del cliente.')], PageLayout.cover),
+        page('Proposta', _opening('Proposta di consulenza', 'Ambito, metodo e compensi', 'Preparato per il gruppo di lavoro del cliente.'), PageLayout.cover),
         page('Sintesi', [h1('Sintesi della proposta'), p('Descrivi il problema del cliente e il risultato previsto.'), metrics([('Impatto', '—', ''), ('Tempi', '8 settimane', ''), ('Investimento', '—', '')])]),
         page('Metodo', [h1('Il nostro metodo'), h3('Analisi'), p('Colloqui, analisi dei dati e criteri di risultato.'), h3('Progettazione'), p('Alternative, compromessi e piano proposto.'), h3('Attuazione'), p('Supporto operativo e consegna del lavoro.')], PageLayout.twoColumn),
         page('Compensi', [h1('Investimento'), table(['Fase', 'Durata', 'Compenso'], [['Analisi', '2 settimane', '—'], ['Progettazione', '3 settimane', '—'], ['Attuazione', '3 settimane', '—']])]),
@@ -117,16 +128,17 @@ final docTemplates = <DocTemplate>[
     description: 'Indicatori, risultati principali, dati economici e prospettive.',
     pageCount: 4,
     accent: _violet,
-    build: (projectId) => _fromTemplate(
+    build: (projectId, [style = DocTheme.legal]) => _fromTemplate(
       projectId,
+      style,
       'Relazione trimestrale',
       _violet,
       subtitle: 'Valutazione dei risultati',
       [
-        page('Relazione', [p('Edizione per il consiglio di amministrazione e la direzione.')], PageLayout.cover),
+        page('Relazione', _opening('Relazione trimestrale', 'Valutazione dei risultati', 'Edizione per il consiglio di amministrazione e la direzione.'), PageLayout.cover),
         page('Risultati principali', [h1('Il trimestre in sintesi'), metrics([('Ricavi', '—', ''), ('Clienti', '—', ''), ('Clienti persi', '—', '')]), h2('Risultati principali'), bullets(['Primo risultato', 'Secondo risultato', 'Terzo risultato'])]),
         page('Dati economici', [h1('Dati economici'), table(['Indicatore', '1° trimestre', '2° trimestre', '3° trimestre'], [['Ricavi', '—', '—', '—'], ['Margine lordo', '—', '—', '—'], ['Costi operativi', '—', '—', '—']])]),
-        page('Prospettive', [h1('Prospettive'), p('Priorità e rischi per il prossimo trimestre.'), callout('Rischio principale', 'Descrivi il rischio principale e le misure per ridurlo.')], PageLayout.premium),
+        page('Prospettive', [h1('Prospettive'), p('Priorità e rischi per il prossimo trimestre.'), callout('Rischio principale', 'Descrivi il rischio principale e le misure per ridurlo.')]),
       ],
     ),
   ),
@@ -136,8 +148,8 @@ final docTemplates = <DocTemplate>[
     description: 'Una pagina curata per presentare un prodotto o servizio.',
     pageCount: 1,
     accent: _teal,
-    build: (projectId) => _fromTemplate(projectId, 'Scheda di presentazione', _teal, [
-      page('Panoramica', [h1('Nome del prodotto'), p('Una frase che spiega il valore della proposta.'), metrics([('Indicatore', '—', ''), ('Indicatore', '—', ''), ('Indicatore', '—', '')]), h2('Perché è rilevante'), bullets(['Primo beneficio', 'Secondo beneficio', 'Terzo beneficio'])], PageLayout.premium),
+    build: (projectId, [style = DocTheme.legal]) => _fromTemplate(projectId, style, 'Scheda di presentazione', _teal, [
+      page('Panoramica', [h1('Nome del prodotto'), p('Una frase che spiega il valore della proposta.'), metrics([('Indicatore', '—', ''), ('Indicatore', '—', ''), ('Indicatore', '—', '')]), h2('Perché è rilevante'), bullets(['Primo beneficio', 'Secondo beneficio', 'Terzo beneficio'])]),
     ]),
   ),
 ];
