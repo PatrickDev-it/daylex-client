@@ -15,6 +15,7 @@ import 'package:paper_agent/features/browser/engine/engine.dart';
 import 'package:paper_agent/features/browser/engine/page_script.dart' hide KeyMessage;
 import 'package:paper_agent/features/browser/engine/page_script.dart' as script show KeyMessage;
 import 'package:paper_agent/features/browser/engine/webkit_page.dart' show webKitProblem;
+import 'package:paper_agent/features/browser/engine/windows_page.dart' show webView2Problem;
 import 'package:paper_agent/features/browser/live_pages.dart';
 import 'package:paper_agent/features/browser/page_file.dart';
 import 'package:paper_agent/features/browser/portals.dart';
@@ -24,6 +25,7 @@ import 'package:paper_agent/ui/browser/address_bar.dart';
 import 'package:paper_agent/ui/browser/browser_host.dart';
 import 'package:paper_agent/ui/chat/composer_inputs.dart';
 import 'package:paper_agent/ui/shortcuts.dart';
+import 'package:webview_flutter_windows/webview_flutter_windows.dart' show WebErrorStatus;
 
 import 'test_app.dart';
 
@@ -366,6 +368,15 @@ void main() {
     expect(webKitProblem(102, domain: 'WebKitErrorDomain'), isNull);
     expect(webKitProblem(204, domain: 'WebKitErrorDomain'), isNull);
     expect(webKitProblem(2, domain: 'WKErrorDomain'), PageProblem.other, reason: 'the page process ended');
+  });
+
+  test('WebView2: a site that refused the connection is unreachable, a load left for another is no failure', () {
+    expect(webView2Problem(WebErrorStatus.unknown), PageProblem.unreachable, reason: 'WebView2 names no refused port');
+    expect(webView2Problem(WebErrorStatus.hostNameNotResolved), PageProblem.unreachable);
+    expect(webView2Problem(WebErrorStatus.timeout), PageProblem.timeout);
+    expect(webView2Problem(WebErrorStatus.certificateIsInvalid), PageProblem.certificate);
+    expect(webView2Problem(WebErrorStatus.operationCanceled), isNull);
+    expect(webView2Problem(WebErrorStatus.redirectFailed), PageProblem.other);
   });
 
   group('live pages', () {

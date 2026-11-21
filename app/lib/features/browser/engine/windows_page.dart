@@ -73,6 +73,31 @@ class WindowsBrowser implements BrowserEngine {
   }
 }
 
+/// What a failed load of the page means to the lawyer, from the status WebView2 reports; null when nothing failed.
+@visibleForTesting
+PageProblem? webView2Problem(WebErrorStatus status) => switch (status) {
+  // Stopped, or left for another page: nothing went wrong. Sign-in prompts are WebView2's own.
+  WebErrorStatus.operationCanceled ||
+  WebErrorStatus.validAuthenticationCredentialsRequired ||
+  WebErrorStatus.validProxyAuthenticationRequired => null,
+  WebErrorStatus.certificateCommonNameIsIncorrect ||
+  WebErrorStatus.certificateExpired ||
+  WebErrorStatus.clientCertificateContainsErrors ||
+  WebErrorStatus.certificateRevoked ||
+  WebErrorStatus.certificateIsInvalid => PageProblem.certificate,
+  WebErrorStatus.timeout => PageProblem.timeout,
+  // WebView2 names no status for a connection the site refused (measured on the CI's Windows runner): a load that
+  // failed for no reason it names is, in practice, a site that did not answer.
+  WebErrorStatus.unknown ||
+  WebErrorStatus.serverUnreachable ||
+  WebErrorStatus.connectionAborted ||
+  WebErrorStatus.connectionReset ||
+  WebErrorStatus.disconnected ||
+  WebErrorStatus.cannotConnect ||
+  WebErrorStatus.hostNameNotResolved => PageProblem.unreachable,
+  _ => PageProblem.other,
+};
+
 class WindowsPage extends ScriptedPage {
   WindowsPage._(this._engine, PageOptions options) {
     _engine._live.add(this);
@@ -119,7 +144,7 @@ class WindowsPage extends ScriptedPage {
         (h) => current = current.copyWith(canGoBack: h.canGoBack, canGoForward: h.canGoForward),
       ),
       _controller.onLoadError.listen((status) {
-        final problem = _problemOf(status);
+        final problem = webView2Problem(status);
         if (problem == null) return;
         debugPrint('Daylex browser: the page did not load: $status');
         current = current.copyWith(problem: () => problem);
@@ -132,26 +157,6 @@ class WindowsPage extends ScriptedPage {
       }),
     ]);
   }
-
-  static PageProblem? _problemOf(WebErrorStatus status) => switch (status) {
-    // Stopped, or left for another page: nothing went wrong. Sign-in prompts are WebView2's own.
-    WebErrorStatus.operationCanceled ||
-    WebErrorStatus.validAuthenticationCredentialsRequired ||
-    WebErrorStatus.validProxyAuthenticationRequired => null,
-    WebErrorStatus.certificateCommonNameIsIncorrect ||
-    WebErrorStatus.certificateExpired ||
-    WebErrorStatus.clientCertificateContainsErrors ||
-    WebErrorStatus.certificateRevoked ||
-    WebErrorStatus.certificateIsInvalid => PageProblem.certificate,
-    WebErrorStatus.timeout => PageProblem.timeout,
-    WebErrorStatus.serverUnreachable ||
-    WebErrorStatus.connectionAborted ||
-    WebErrorStatus.connectionReset ||
-    WebErrorStatus.disconnected ||
-    WebErrorStatus.cannotConnect ||
-    WebErrorStatus.hostNameNotResolved => PageProblem.unreachable,
-    _ => PageProblem.other,
-  };
 
   /// Runs [action] once WebView2 is up; nothing when it could not start (the page shows why).
   Future<void> _when(Future<void> Function() action) async {

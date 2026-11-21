@@ -76,21 +76,21 @@ class WebKitPage extends ScriptedPage {
           onProgress: (_) => unawaited(_install()),
           onPageFinished: (_) async {
             await _install();
+            final title = await _controller.getTitle();
+            final (back, forward) = await _history();
             current = current.copyWith(
               loading: false,
-              title: await _controller.getTitle() ?? current.title,
-              canGoBack: await _controller.canGoBack(),
-              canGoForward: await _controller.canGoForward(),
+              title: title ?? current.title,
+              canGoBack: back,
+              canGoForward: forward,
             );
           },
+          // No address: the load failed before the page answered. The one asked for stays.
           onUrlChange: (change) async {
             final uri = Uri.tryParse(change.url ?? '');
-            if (uri == null) return;
-            current = current.copyWith(
-              url: uri,
-              canGoBack: await _controller.canGoBack(),
-              canGoForward: await _controller.canGoForward(),
-            );
+            if (uri == null || !uri.hasScheme) return;
+            final (back, forward) = await _history();
+            current = current.copyWith(url: uri, canGoBack: back, canGoForward: forward);
           },
           onWebResourceError: (e) {
             if (e.isForMainFrame == false) return;
@@ -142,6 +142,10 @@ class WebKitPage extends ScriptedPage {
   /// The loads of the page itself let through so far, and the one that failed last.
   var _decided = 0;
   var _failed = -1;
+
+  /// Back and forward as WebKit has them now. Asked before the state is read: a state read first and written after
+  /// the answers would undo what the page reported meanwhile, a failed load above all.
+  Future<(bool, bool)> _history() async => (await _controller.canGoBack(), await _controller.canGoForward());
 
   Future<void> _install() async {
     try {
