@@ -236,10 +236,11 @@ class _Pieces {
         (t) => block.copyWith(items: [t]),
         (t) => BulletListBlock(id: newId(), style: block.style, items: [t]),
       ),
-      TableBlock(:final columns, :final rows) when rows.length > 1 => _Pieces(
+      // The caption is drawn under the table, so it goes with the last rows, as a quote's author does.
+      TableBlock(:final columns, :final rows, :final caption) when rows.length > 1 => _Pieces(
         rows.length,
-        (m) => block.copyWith(rows: rows.sublist(0, m)),
-        (m) => TableBlock(id: newId(), style: block.style, columns: columns, rows: rows.sublist(m)),
+        (m) => block.copyWith(rows: rows.sublist(0, m), caption: ''),
+        (m) => TableBlock(id: newId(), style: block.style, columns: columns, rows: rows.sublist(m), caption: caption),
       ),
       _ => null,
     };

@@ -10,13 +10,13 @@ import 'package:daylex/features/document/service/document_service.dart';
 import 'demo_fixture.dart';
 import 'pdf_renderer_test.dart' show pdfPageCount;
 
-/// All the visible text, without whitespace: what a split must keep exactly. A table cut in two repeats its
-/// header on the next page, so its rows are what counts.
+/// All the visible text, without whitespace, in reading order: what a split must keep exactly. A table cut in
+/// two repeats its header on the next page, so its rows and the caption under them are what counts.
 String text(PaperDocument doc) => [
   for (final page in doc.pages)
     for (final b in page.blocks)
       b is TableBlock
-          ? [b.caption, for (final r in b.rows) r.join()].join()
+          ? [for (final r in b.rows) r.join(), b.caption].join()
           : b.plainText,
 ].join().replaceAll(RegExp(r'\s+'), '');
 
@@ -160,6 +160,35 @@ void main() {
       pdfPageCount(await renderer.render(fitted.document)),
       fitted.document.pages.length,
     );
+    expect(text(fitted.document), text(before));
+  });
+
+  test('a table cut in two keeps its caption under its last rows', () async {
+    final doc = buildQ3Proposal();
+    const total = 'Totale dovuto: 80.000,00 €';
+    final before = doc.copyWith(
+      pages: [
+        page('Fatture', [
+          TableBlock(
+            id: newId(),
+            columns: const ['Fattura', 'Importo'],
+            rows: [
+              for (var i = 0; i < 80; i++) ['n. $i/2026', '1.000,00 €'],
+            ],
+            caption: total,
+          ),
+        ]),
+      ],
+    );
+    final fitted = await fitter.fit(before);
+    final tables = [
+      for (final p in fitted.document.pages) ...p.blocks.whereType<TableBlock>(),
+    ];
+    expect(tables.length, greaterThan(1));
+    expect(tables.map((t) => t.caption), [
+      ...List.filled(tables.length - 1, ''),
+      total,
+    ]);
     expect(text(fitted.document), text(before));
   });
 

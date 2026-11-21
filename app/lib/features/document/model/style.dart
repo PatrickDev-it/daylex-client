@@ -756,10 +756,14 @@ final Map<StyleBase, BaseStyle> styleBases = {
         'borderWidth': 0.5, 'padding': 8, 'spaceAfter': 12,
       }),
     },
+    // No header, only the style the one the agent writes starts from: a line clears its text, the body its rule.
     regions: {
+      RegionSlot.header: PageRegion(
+        style: BlockStyle.of({'size': 10, 'lineHeight': 1, 'padding': 6, 'spaceAfter': 12}),
+      ),
       RegionSlot.footer: PageRegion(
         center: '{pagina}',
-        style: BlockStyle.of({'size': 10, 'lineHeight': 1, 'spaceBefore': 12}),
+        style: BlockStyle.of({'size': 10, 'lineHeight': 1, 'padding': 6, 'spaceBefore': 12}),
       ),
     },
   ),

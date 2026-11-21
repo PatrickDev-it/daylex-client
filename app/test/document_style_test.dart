@@ -191,6 +191,18 @@ void main() {
       expect(styles.region(RegionSlot.firstFooter).center, '{pagina}', reason: "the legal base's footer");
     });
 
+    test('a header written on a legal page clears its line, and the text clears the header', () {
+      // A letterhead drew its line through the descenders of its last row, with the title 7 pt below it.
+      final styles = DocStyles(theme);
+      expect(styles.region(RegionSlot.header).isEmpty, isTrue, reason: 'the legal base shows no header');
+      for (final slot in [RegionSlot.header, RegionSlot.firstHeader]) {
+        final s = styles.resolve(styles.regionStyle(styles.region(slot)));
+        expect((s.padding, s.spaceAfter), (6, 12), reason: slot.name);
+      }
+      final footer = styles.resolve(styles.regionStyle(styles.region(RegionSlot.footer)));
+      expect((footer.padding, footer.spaceBefore), (6, 12));
+    });
+
     test('a saved theme round-trips, and one from before rfc/055 reads as a report', () {
       final styled = theme
           .patchStyle({

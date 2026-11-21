@@ -179,6 +179,36 @@
           ]
         }
       ]
+    },
+    "minuta": {
+      "metadata": {
+        "title": "Parere",
+        "subtitle": "",
+        "client": "Neri",
+        "status": "draft"
+      },
+      "theme": {
+        "accent": "#1f3a5f",
+        "brandName": "Studio Legale Neri",
+        "base": "legal"
+      },
+      "pages": [
+        {
+          "title": "Parere",
+          "layout": "standard",
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "PARERE",
+              "level": 1
+            },
+            {
+              "type": "paragraph",
+              "text": "Il cliente chiede se il contratto sia risolto."
+            }
+          ]
+        }
+      ]
     }
   },
   "cases": [
@@ -2879,6 +2909,7 @@
             "style": {
               "size": 9.0,
               "lineHeight": 1.0,
+              "padding": 6.0,
               "spaceBefore": 12.0,
               "align": "right"
             }
@@ -3118,6 +3149,122 @@
               {
                 "type": "paragraph",
                 "text": "In conclusione, la domanda è fondata."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "set_header_footer starts a legal header in the base's style, clear of its line and of the text",
+      "document": "minuta",
+      "call": {
+        "name": "set_header_footer",
+        "arguments": {
+          "region": "header",
+          "left": "Studio Legale Neri",
+          "right": "{titolo}",
+          "line": true
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Intestazione aggiornata"
+      },
+      "after": {
+        "metadata": {
+          "title": "Parere",
+          "subtitle": "",
+          "client": "Neri",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#1f3a5f",
+          "brandName": "Studio Legale Neri",
+          "base": "legal",
+          "header": {
+            "left": "Studio Legale Neri",
+            "right": "{titolo}",
+            "style": {
+              "size": 10.0,
+              "lineHeight": 1.0,
+              "padding": 6.0,
+              "spaceAfter": 12.0
+            },
+            "line": true
+          }
+        },
+        "pages": [
+          {
+            "title": "Parere",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "PARERE",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il cliente chiede se il contratto sia risolto."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "set_header_footer starts a legal letterhead blank, in the style of the legal header",
+      "document": "minuta",
+      "call": {
+        "name": "set_header_footer",
+        "arguments": {
+          "region": "firstHeader",
+          "center": "**Studio Legale Neri**\nVia Roma 1, Milano · PEC neri@pec.it",
+          "line": true
+        }
+      },
+      "result": {
+        "ok": true,
+        "summary": "Intestazione della prima pagina aggiornata"
+      },
+      "after": {
+        "metadata": {
+          "title": "Parere",
+          "subtitle": "",
+          "client": "Neri",
+          "author": "",
+          "status": "draft"
+        },
+        "theme": {
+          "accent": "#1f3a5f",
+          "brandName": "Studio Legale Neri",
+          "base": "legal",
+          "firstHeader": {
+            "center": "**Studio Legale Neri**\nVia Roma 1, Milano · PEC neri@pec.it",
+            "style": {
+              "size": 10.0,
+              "lineHeight": 1.0,
+              "padding": 6.0,
+              "spaceAfter": 12.0
+            },
+            "line": true
+          }
+        },
+        "pages": [
+          {
+            "title": "Parere",
+            "layout": "standard",
+            "blocks": [
+              {
+                "type": "heading",
+                "text": "PARERE",
+                "level": 1
+              },
+              {
+                "type": "paragraph",
+                "text": "Il cliente chiede se il contratto sia risolto."
               }
             ]
           }
