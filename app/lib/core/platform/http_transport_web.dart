@@ -39,6 +39,7 @@ class HttpClient {
 
 class HttpHeaders {
   static const authorizationHeader = 'authorization';
+  static const cacheControlHeader = 'cache-control';
   final _values = <String, String>{};
   void set(String name, Object value) => _values[name] = '$value';
   set contentType(ContentType value) => set('content-type', value.toString());
