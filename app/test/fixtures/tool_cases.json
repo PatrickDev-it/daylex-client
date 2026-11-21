@@ -1,5 +1,5 @@
 {
-  "about": "What the app does with each document tool call: the app's DocumentToolExecutor (Dart test test/tool_contract_test.dart) and its Python twin paperagent_server/docsim.py (tests/test_tool_contract.py) must both give these results. `after` is the document after the call, without ids and dates; it is absent when the call leaves the document as it was.",
+  "about": "What the app does with each document tool call: the app's DocumentToolExecutor (Dart test test/tool_contract_test.dart) and its Python twin daylex_server/docsim.py (tests/test_tool_contract.py) must both give these results. `after` is the document after the call, without ids and dates; it is absent when the call leaves the document as it was.",
   "documents": {
     "atto": {
       "metadata": {
