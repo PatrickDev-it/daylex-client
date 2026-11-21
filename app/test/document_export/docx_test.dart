@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/document/export/docx_writer.dart';
+import 'package:daylex/features/document/export/docx_writer.dart';
 import 'package:xml/xml.dart';
 
 import 'export_fixture.dart';
@@ -42,9 +42,10 @@ void main() {
 
     test('is Italian, A4, compatibility mode 15', () {
       expect(textOf(parts, 'word/styles.xml'), contains('w:lang w:val="it-IT"'));
-      final pg = elements(doc, 'w:pgSz').single;
-      expect(pg.getAttribute('w:w'), '11906');
-      expect(pg.getAttribute('w:h'), '16838');
+      for (final pg in elements(doc, 'w:pgSz')) {
+        expect(pg.getAttribute('w:w'), '11906');
+        expect(pg.getAttribute('w:h'), '16838');
+      }
       final compat = elements(xmlOf(parts, 'word/settings.xml'), 'w:compatSetting').where((e) => e.getAttribute('w:name') == 'compatibilityMode');
       expect(compat.single.getAttribute('w:val'), '15');
     });
@@ -52,7 +53,8 @@ void main() {
     test('defines the styles the body uses', () {
       final styles = xmlOf(parts, 'word/styles.xml');
       final defined = {for (final s in elements(styles, 'w:style')) s.getAttribute('w:styleId')!};
-      expect(defined, containsAll(['Normal', 'Title', 'Heading1', 'Heading2', 'Heading3', 'Quote', 'ListParagraph', 'DaylexTable']));
+      expect(defined, containsAll(['Normal', 'Heading1', 'Heading2', 'Heading3', 'Quote', 'ListParagraph', 'Header', 'Footer', 'DaylexTable']));
+      expect(defined, isNot(contains('Title')), reason: 'no front matter of its own (rfc/055)');
       final used = {
         for (final e in doc.descendantElements.where((e) => const ['w:pStyle', 'w:rStyle', 'w:tblStyle'].contains(e.name.qualified))) e.getAttribute('w:val')!,
       };
@@ -94,10 +96,32 @@ void main() {
       expect(styles, containsAll(['ListParagraph', 'Quote', 'Callout', 'Heading1', 'Heading2', 'Heading3']));
     });
 
-    test('puts the page number in the footer', () {
-      final footer = textOf(parts, 'word/footer1.xml');
-      expect(footer, contains('PAGE'));
-      expect(footer, contains('NUMPAGES'));
+    test('gives each page its own section when the pages differ: the cover shows nothing, page 2 its details', () {
+      final sections = elements(doc, 'w:sectPr').toList();
+      expect(sections, hasLength(2), reason: 'the cover and page 2 show different headers ({sezione}, and none on a cover)');
+      final rels = {for (final r in elements(xmlOf(parts, 'word/_rels/document.xml.rels'), 'Relationship')) r.getAttribute('Id')!: r.getAttribute('Target')!};
+      String part(XmlElement section, String kind) =>
+          'word/${rels[elements(section, 'w:${kind}Reference').firstWhere((e) => e.getAttribute('w:type') == 'default').getAttribute('r:id')]}';
+      String words(String name) => elements(xmlOf(parts, name), 'w:t').map((t) => t.innerText).join();
+      expect(words(part(sections[0], 'header')), isEmpty, reason: 'a cover has no header');
+      expect(words(part(sections[0], 'footer')), isEmpty, reason: 'a cover has no footer');
+      final header = part(sections[1], 'header'), footer = part(sections[1], 'footer');
+      expectWords(words(header) + words(footer), fixtureRegionWords, reason: 'header and footer');
+      final bold = elements(xmlOf(parts, header), 'w:r').where((r) => elements(r, 'w:b').isNotEmpty).map((r) => elements(r, 'w:t').map((t) => t.innerText).join());
+      expect(bold, contains('Studio Bianchi'), reason: '**{studio}** is bold');
+      final fields = elements(xmlOf(parts, footer), 'w:fldSimple').map((f) => f.getAttribute('w:instr')!.trim()).toList();
+      expect(fields, ['PAGE', 'NUMPAGES']);
+      expect(words(footer), contains('Pagina '));
+      expect(words(footer), isNot(contains('{pagina}')));
+    });
+
+    test('writes the emphasis as runs, and the look a block sets itself on its paragraph', () {
+      final p = elements(doc, 'w:p').firstWhere((p) => elements(p, 'w:t').map((t) => t.innerText).join() == 'Fine della tabella.');
+      final bold = elements(p, 'w:r').where((r) => elements(r, 'w:b').isNotEmpty).map((r) => elements(r, 'w:t').single.innerText);
+      expect(bold, ['tabella']);
+      expect(elements(p, 'w:jc').single.getAttribute('w:val'), 'center');
+      expect(elements(p, 'w:sz').map((s) => s.getAttribute('w:val')).toSet(), {'28'}, reason: '14 pt in half-points, on every run');
+      expect(elements(p, 'w:pStyle'), isEmpty, reason: 'a body paragraph stays Normal; only the look it sets itself is direct');
     });
 
     test('sets the document properties', () {
@@ -111,7 +135,8 @@ void main() {
       final empty = unzip(encodeDocx(emptyDocument()));
       expectWellFormed(empty);
       expectConsistentOpc(empty);
-      expect(textOf(empty, 'word/document.xml'), contains('Documento senza titolo'));
+      expect(textOf(empty, 'docProps/core.xml'), contains('Documento senza titolo'));
+      expect(textOf(empty, 'word/document.xml'), isNot(contains('Documento senza titolo')), reason: 'no front matter of its own');
     });
   });
 }

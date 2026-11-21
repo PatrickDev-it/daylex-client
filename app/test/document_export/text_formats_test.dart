@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/document/export/html_writer.dart';
-import 'package:paper_agent/features/document/export/md_writer.dart';
-import 'package:paper_agent/features/document/export/rtf_writer.dart';
-import 'package:paper_agent/features/document/export/txt_writer.dart';
+import 'package:daylex/features/document/export/html_writer.dart';
+import 'package:daylex/features/document/export/md_writer.dart';
+import 'package:daylex/features/document/export/rtf_writer.dart';
+import 'package:daylex/features/document/export/txt_writer.dart';
 
 import 'export_fixture.dart';
 import 'export_readers.dart';
@@ -52,12 +52,31 @@ void main() {
 
     test('has real tables with a repeating header row, a picture and a footer', () {
       expect(RegExp(r'\\trhdr').allMatches(rtf), hasLength(3), reason: 'metrics and the two tables');
-      expect(RegExp(r'\\trowd').allMatches(rtf), hasLength(3 + 5 + 3));
+      expect(RegExp(r'\\trowd\\trgaph\d+\\trleft\d+\\trpaddl').allMatches(rtf), hasLength(3 + 5 + 3), reason: 'the body rows, not the header rows');
       expect(rtf, contains(r'\cellx'));
       expect(rtf, contains(r'{\pict\pngblip'));
       expect(rtf, contains('{\\footer'));
       expect(rtf, contains(r'\fldinst PAGE'));
       expect(rtf, contains('[Immagine: Senza immagine]'));
+    });
+
+    test('gives the cover and page 2 their own sections, page 2 with its header and footer', () {
+      final sections = rtf.split(r'\sect\sectd');
+      expect(sections, hasLength(2), reason: 'one section per page: the cover shows nothing, page 2 its details');
+      expect(sections[0], contains('{\\header \\pard\\plain\\par}'), reason: 'the header of the cover is empty, and says so');
+      expect(sections[0], contains('{\\footer \\pard\\plain\\par}'));
+      final header = RegExp(r'\{\\header (.*?)\}\n\{\\footer', dotAll: true).firstMatch(sections[1])![1]!;
+      expect(rtfText(header), contains('Studio Bianchi'));
+      expect(header, contains(r'\b\i0\ulnone\caps0 Studio Bianchi}'), reason: '**{studio}** is bold');
+      expect(rtfText(sections[1]), contains('Allegati e importi'));
+      expect(sections[1], contains(r'{\field{\*\fldinst NUMPAGES}{\fldrslt 1}}'));
+    });
+
+    test('writes the emphasis as groups, and the look a block sets itself on its paragraph', () {
+      final line = rtf.split('\n').firstWhere((l) => rtfText(l).contains('Fine della tabella.'));
+      expect(line, contains(r'\qc'));
+      expect(line, matches(RegExp(r'\\fs28\\cf\d+\\b\\i0\\ulnone\\caps0 tabella\}')), reason: '14 pt, bold');
+      expect(line, matches(RegExp(r'\\fs28\\cf\d+\\b0\\i0\\ulnone\\caps0 Fine della \}')));
     });
 
     test('writes an empty document', () {
@@ -84,8 +103,7 @@ void main() {
 
     test('underlines headings, marks bullets, indents quotes, names pictures, aligns tables', () {
       final lines = text.split('\r\n');
-      final title = lines.indexWhere((l) => l.startsWith('Parere pro veritate'));
-      expect(lines[title + 1], '=' * lines[title].runes.length, reason: 'the title is underlined');
+      expect(lines.take(2), ['Premessa', '========'], reason: 'the first page opens the file, its heading underlined');
       final h = lines.indexOf('Sintesi dei fatti');
       expect(lines[h + 1], '-' * 'Sintesi dei fatti'.length);
       expect(lines, contains('• Primo punto: àèéìòù'));
@@ -100,6 +118,12 @@ void main() {
         // Every body row starts where the first column does and its second column ends where the rule's does.
         expect(row.length, greaterThan(columns.first), reason: row);
       }
+    });
+
+    test('writes the text without its styling: no markers, no header or footer (rfc/055)', () {
+      expect(text, contains('Fine della tabella.'));
+      expect(text, isNot(contains('**')));
+      expect(text, isNot(contains('Studio Bianchi')));
     });
   });
 
@@ -123,7 +147,8 @@ void main() {
       expect(mdEscapeLine('a | b'), 'a | b');
       expect(mdEscapeLine('&amp; e & basta'), r'\&amp; e & basta');
       expect(markdownText(mdEscapeLine('x * y _ z [1] <2> | \\ #')), 'x * y _ z [1] <2> | \\ #');
-      expect(md, contains(r'\<info@rossi.it>'), reason: 'an unescaped <...> would be an autolink or raw HTML');
+      expect(md, contains(r'Secondo punto con & e \<tag>'), reason: 'an unescaped <...> would be raw HTML');
+      expect(md, contains('Fine della tabella.'), reason: 'the emphasis markers go with the styling (rfc/055)');
     });
 
     test('keeps the text of every block once unescaped', () {
@@ -147,12 +172,11 @@ void main() {
       expect(lines.where((l) => l == '---'), isNotEmpty, reason: 'the page break is a rule');
     });
 
-    test('titles with # and shifts headings down one level', () {
+    test('keeps the level of each heading, with no title of its own (rfc/055)', () {
       final lines = md.split('\n');
-      expect(lines.first, startsWith('# Parere pro veritate'));
-      expect(lines, contains('## Premessa'));
-      expect(lines, contains('### Sintesi dei fatti'));
-      expect(lines, contains('#### Dettaglio'));
+      expect(lines.first, '# Premessa');
+      expect(lines, contains('## Sintesi dei fatti'));
+      expect(lines, contains('### Dettaglio'));
       expect(lines, contains('- Primo punto: àèéìòù'));
     });
   });
@@ -172,7 +196,7 @@ void main() {
     });
 
     test('escapes every character that is markup, and keeps the text', () {
-      expect(html, contains('Società &quot;Rossi&quot; &lt;info@rossi.it&gt;'));
+      expect(html, contains('Società &quot;Rossi&quot; &lt;info@rossi.it&gt;'), reason: 'the footer prints the client');
       expect(html, contains('Simboli &amp;&lt;&gt;&quot;&#39; e 😀'));
       expectWords(htmlText(html), fixtureWords, reason: 'html');
       expect(forbiddenChars.hasMatch(html), isFalse);
@@ -203,12 +227,29 @@ void main() {
       expect(html, contains('<img src="data:image/png;base64,'));
       expect(html, contains('width="48" height="32"'));
       expect(html, contains('[Immagine: Senza immagine]'));
-      expect(html, contains('<h2>Premessa</h2>'));
-      expect(html, contains('<h1>Parere pro veritate'));
+      expect(html, contains('<h1 class="r-heading1">Premessa</h1>'));
+      expect(html, isNot(contains('<h1 class="r-heading1">Parere pro veritate')), reason: 'no front matter of its own');
+    });
+
+    test('makes each page a sheet: the cover without header or footer, page 2 with its details and numbers', () {
+      final pages = html.split('<section class="page">').skip(1).toList();
+      expect(pages, hasLength(2));
+      expect(pages[0], isNot(contains('<header')));
+      expect(pages[0], isNot(contains('<footer')));
+      expect(pages[1], contains('<strong>Studio Bianchi</strong>'));
+      expect(pages[1], contains('Allegati e importi'));
+      expect(pages[1], contains('Pagina 2 di 2'));
+    });
+
+    test('writes the emphasis as elements, each role as a class and the look a block sets itself inline', () {
+      expect(html, contains('Fine della <strong>tabella</strong>.'));
+      expect(html, contains('<p class="r-body" style="font-size:14pt;text-align:center">Fine della'));
+      expect(RegExp(r'^\.r-heading1\{', multiLine: true).hasMatch(html), isTrue);
+      expect(html, isNot(contains('font-family:"')), reason: 'a double quote would end a style attribute');
     });
 
     test('writes an empty document', () {
-      expect(utf8.decode(encodeHtml(emptyDocument())), contains('Documento senza titolo'));
+      expect(utf8.decode(encodeHtml(emptyDocument())), contains('<title>Documento senza titolo</title>'));
     });
   });
 }

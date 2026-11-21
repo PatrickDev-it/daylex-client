@@ -36,7 +36,7 @@ class ChatArchive {
         ],
       );
     } on Object catch (e) {
-      debugPrint('PaperAgent: chat $id unreadable: $e');
+      debugPrint('Daylex: chat $id unreadable: $e');
       _store.setAsideChat(id);
       return null;
     }
@@ -121,7 +121,7 @@ class ChatArchive {
     final error = json['error'] as String?;
     return ChatMessage(
       text: json['text'] as String? ?? '',
-      user: json['user'] == lawyer.id ? lawyer : paperAgent,
+      user: json['user'] == lawyer.id ? lawyer : daylexAgent,
       createdAt:
           DateTime.tryParse(json['createdAt'] as String? ?? '') ??
           DateTime.now(),

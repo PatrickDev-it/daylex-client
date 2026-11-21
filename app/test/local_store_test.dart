@@ -4,13 +4,13 @@ import 'package:flutter/material.dart' show Locale, ThemeMode;
 import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/agent/agent_controller.dart';
-import 'package:paper_agent/features/document/data/doc_templates.dart';
-import 'package:paper_agent/features/document/render/page_images.dart';
-import 'package:paper_agent/features/storage/local_store.dart';
-import 'package:paper_agent/features/workspace/ui_state.dart';
-import 'package:paper_agent/features/workspace/workspace_state.dart';
-import 'package:paper_agent/l10n/app_localizations.dart';
+import 'package:daylex/features/agent/agent_controller.dart';
+import 'package:daylex/features/document/data/doc_templates.dart';
+import 'package:daylex/features/document/render/page_images.dart';
+import 'package:daylex/features/storage/local_store.dart';
+import 'package:daylex/features/workspace/ui_state.dart';
+import 'package:daylex/features/workspace/workspace_state.dart';
+import 'package:daylex/l10n/app_localizations.dart';
 
 import 'demo_fixture.dart';
 

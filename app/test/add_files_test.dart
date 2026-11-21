@@ -4,11 +4,11 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/agent/agent_controller.dart';
-import 'package:paper_agent/features/agent/attachment_files.dart';
-import 'package:paper_agent/features/agent/domain/agent_protocol.dart';
-import 'package:paper_agent/l10n/l10n.dart';
-import 'package:paper_agent/ui/chat/file_drop.dart';
+import 'package:daylex/features/agent/agent_controller.dart';
+import 'package:daylex/features/agent/attachment_files.dart';
+import 'package:daylex/features/agent/domain/agent_protocol.dart';
+import 'package:daylex/l10n/l10n.dart';
+import 'package:daylex/ui/chat/file_drop.dart';
 
 /// Dropped files and folders become the chat's attachments; what is left out is reported, by reason, not lost.
 void main() {

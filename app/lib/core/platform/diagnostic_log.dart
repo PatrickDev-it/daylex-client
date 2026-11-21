@@ -25,13 +25,13 @@ class DiagnosticLog {
 
   /// One timestamped line. A log that cannot be written is not worth stopping the app for.
   void add(String line) {
-    debugPrint('PaperAgent: $line');
+    debugPrint('Daylex: $line');
     try {
       file.parent.createSync(recursive: true);
       if (file.existsSync() && file.lengthSync() > maxBytes) file.renameSync('${file.path}.1');
       file.writeAsStringSync('${DateTime.now().toIso8601String()} $line\n', mode: FileMode.append, flush: true);
     } on FileSystemException catch (e) {
-      debugPrint('PaperAgent: could not write ${file.path}: $e');
+      debugPrint('Daylex: could not write ${file.path}: $e');
     }
   }
 }

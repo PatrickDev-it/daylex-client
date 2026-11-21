@@ -881,7 +881,7 @@ abstract class AppLocalizations {
   /// No description provided for @serverAddressEnvironmentOverride.
   ///
   /// In it, this message translates to:
-  /// **'L\'indirizzo del servizio è impostato dall\'ambiente PAPERAGENT_URL: chiedi all\'amministratore di aggiornarlo.'**
+  /// **'L\'indirizzo del servizio è impostato dall\'ambiente DAYLEX_URL: chiedi all\'amministratore di aggiornarlo.'**
   String get serverAddressEnvironmentOverride;
 
   /// No description provided for @settingsAccessKeyUnverified.
@@ -2417,7 +2417,7 @@ abstract class AppLocalizations {
   /// No description provided for @connectionLocalOff.
   ///
   /// In it, this message translates to:
-  /// **'Il collegamento a PaperAgent non è attivo su questo computer: avvialo e riprova.'**
+  /// **'Il collegamento a Daylex non è attivo su questo computer: avvialo e riprova.'**
   String get connectionLocalOff;
 
   /// No description provided for @connectionUnreachable.
@@ -2594,6 +2594,24 @@ abstract class AppLocalizations {
   /// **'Aggiorno il tema'**
   String get toolSetTheme;
 
+  /// No description provided for @toolSetStyle.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiorno lo stile'**
+  String get toolSetStyle;
+
+  /// No description provided for @toolSetHeaderFooter.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiorno intestazione e piè di pagina'**
+  String get toolSetHeaderFooter;
+
+  /// No description provided for @toolFormatBlock.
+  ///
+  /// In it, this message translates to:
+  /// **'Formatto il blocco {block}{on}'**
+  String toolFormatBlock(String block, String on);
+
   /// No description provided for @toolUpdateMetadata.
   ///
   /// In it, this message translates to:
@@ -2615,7 +2633,7 @@ abstract class AppLocalizations {
   /// No description provided for @storeNoticeNewer.
   ///
   /// In it, this message translates to:
-  /// **'Questi dati sono stati salvati da una versione più recente di PaperAgent: puoi consultarli, ma le modifiche non verranno salvate finché non aggiorni l\'app.'**
+  /// **'Questi dati sono stati salvati da una versione più recente di Daylex: puoi consultarli, ma le modifiche non verranno salvate finché non aggiorni l\'app.'**
   String get storeNoticeNewer;
 
   /// No description provided for @storeNoticeRestored.
@@ -2633,7 +2651,7 @@ abstract class AppLocalizations {
   /// No description provided for @storeNoticeUnreadable.
   ///
   /// In it, this message translates to:
-  /// **'Non riesco a leggere una parte del lavoro salvato ({reason}): forse è aperta in un altro programma. Ti mostro quello che ho letto, ma non salvo le modifiche finché non riapri PaperAgent.'**
+  /// **'Non riesco a leggere una parte del lavoro salvato ({reason}): forse è aperta in un altro programma. Ti mostro quello che ho letto, ma non salvo le modifiche finché non riapri Daylex.'**
   String storeNoticeUnreadable(String reason);
 
   /// No description provided for @storeNoticeRecovered.
@@ -3013,30 +3031,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Confermato'**
   String get reviewConfirmed;
-
-  /// No description provided for @pdfPreparedFor.
-  ///
-  /// In it, this message translates to:
-  /// **'Destinatario'**
-  String get pdfPreparedFor;
-
-  /// No description provided for @pdfPreparedBy.
-  ///
-  /// In it, this message translates to:
-  /// **'Redatto da'**
-  String get pdfPreparedBy;
-
-  /// No description provided for @pdfDate.
-  ///
-  /// In it, this message translates to:
-  /// **'Data'**
-  String get pdfDate;
-
-  /// No description provided for @pdfMonthNames.
-  ///
-  /// In it, this message translates to:
-  /// **'gennaio;febbraio;marzo;aprile;maggio;giugno;luglio;agosto;settembre;ottobre;novembre;dicembre'**
-  String get pdfMonthNames;
 
   /// No description provided for @progressStarting.
   ///

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/ui/chat/components/evidence_card.dart';
+import 'package:daylex/ui/chat/components/evidence_card.dart';
 
 import 'test_app.dart';
 

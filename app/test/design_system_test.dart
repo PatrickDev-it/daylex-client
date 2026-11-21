@@ -4,11 +4,11 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/document/model/document.dart';
-import 'package:paper_agent/l10n/labels.dart';
-import 'package:paper_agent/l10n/l10n.dart';
-import 'package:paper_agent/ui/common/time_format.dart';
-import 'package:paper_agent/ui/shortcuts.dart';
+import 'package:daylex/features/document/model/document.dart';
+import 'package:daylex/l10n/labels.dart';
+import 'package:daylex/l10n/l10n.dart';
+import 'package:daylex/ui/common/time_format.dart';
+import 'package:daylex/ui/shortcuts.dart';
 
 import 'test_app.dart';
 
@@ -144,7 +144,7 @@ void main() {
           RegExp(
             r"""(Text|tooltip:|label:|labelText:|hintText:|helperText:|message:|title:|toast)\s*\(?'[A-Za-zÀ-ú]""",
           ),
-          allowed: (l) => RegExp(r"'(PDF|Normattiva|PaperAgent)'").hasMatch(l),
+          allowed: (l) => RegExp(r"'(PDF|Normattiva|Daylex)'").hasMatch(l),
         ),
         isEmpty,
       );

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:paper_agent/app.dart';
+import 'package:daylex/app.dart';
 
 import 'test_app.dart';
 
@@ -25,7 +25,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
 
-      await tester.pumpWidget(const ProviderScope(child: PaperAgentApp()));
+      await tester.pumpWidget(const ProviderScope(child: DaylexApp()));
       await tester.pump(const Duration(seconds: 1));
 
       final picker = find.descendant(

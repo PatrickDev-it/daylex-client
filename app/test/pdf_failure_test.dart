@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/document/model/document_review.dart';
-import 'package:paper_agent/features/document/render/pdf_renderer.dart';
-import 'package:paper_agent/features/workspace/pdf_export.dart';
-import 'package:paper_agent/l10n/app_localizations_it.dart';
+import 'package:daylex/features/document/model/document_review.dart';
+import 'package:daylex/features/document/render/pdf_renderer.dart';
+import 'package:daylex/features/workspace/pdf_export.dart';
+import 'package:daylex/l10n/app_localizations_it.dart';
 
 import 'demo_fixture.dart';
 

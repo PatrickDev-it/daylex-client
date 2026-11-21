@@ -1,5 +1,5 @@
-/// MD: CommonMark with GFM tables, UTF-8, LF. Every metacharacter in the text is escaped, so the file renders as
-/// the document reads. Headings sit one level down (the title is the one `#`), the way a web page is outlined.
+/// MD: CommonMark with GFM tables, UTF-8, LF. The text without its styling (rfc/055): every metacharacter is
+/// escaped, so the file renders as the document reads, and a heading keeps its level.
 library;
 
 import 'dart:convert';
@@ -8,7 +8,8 @@ import 'dart:typed_data';
 import '../model/document.dart';
 import 'export_model.dart';
 
-Uint8List encodeMd(PaperDocument doc) => Uint8List.fromList(utf8.encode('${_Md(buildExportDoc(doc)).build().join('\n')}\n'));
+Uint8List encodeMd(PaperDocument doc) =>
+    Uint8List.fromList(utf8.encode('${_Md(buildExportDoc(doc, plain: true)).build().join('\n')}\n'));
 
 final _entity = RegExp(r'^&(?:#\d+|#[xX][0-9a-fA-F]+|[A-Za-z][A-Za-z0-9]*);');
 
@@ -62,17 +63,10 @@ class _Md {
 
   final ExportDoc d;
   final _out = <String>[];
-  final _facts = <String>[];
 
   void _block(String text) {
     if (_out.isNotEmpty) _out.add('');
     _out.add(text);
-  }
-
-  void _flushFacts() {
-    if (_facts.isEmpty) return;
-    _block(_facts.join('\\\n'));
-    _facts.clear();
   }
 
   /// A blockquote: every line, blank ones included, carries the marker.
@@ -80,22 +74,21 @@ class _Md {
 
   List<String> build() {
     for (final b in d.blocks) {
-      if (b is! ExFact) _flushFacts();
       switch (b) {
-        case ExTitle(:final text):
-          _block('# ${_flat(text)}');
-        case ExSubtitle(:final text):
-          _block('*${_flat(text)}*');
-        case ExFact(:final label, :final value):
-          _facts.add('**${_flat(label)}:** ${_flat(value)}');
-        case ExSectionLabel(:final text):
-          _block('*${_flat(text)}*');
         case ExHeading(:final level, :final text):
-          _block('${'#' * (level + 1)} ${_flat(text).replaceFirstMapped(RegExp(r'#+$'), (m) => '\\${m[0]}')}');
+          _block('${'#' * level} ${_flat(text).replaceFirstMapped(RegExp(r'#+$'), (m) => '\\${m[0]}')}');
         case ExParagraph(:final text):
           _block(_paragraph(text));
-        case ExBullets(:final items):
-          _block(items.map((i) => '- ${i.split('\n').map(mdEscapeLine).where((l) => l.isNotEmpty).join('\\\n  ')}'.trimRight()).join('\n'));
+        case ExBullets(:final items, :final style):
+          // A numbered list stays one; every other marker is a bullet.
+          final numbered = style.resolved.marker == ListMarker.number;
+          _block([
+            for (final (n, i) in items.indexed)
+              () {
+                final marker = numbered ? '${n + 1}.' : '-';
+                return '$marker ${i.split('\n').map(mdEscapeLine).where((l) => l.isNotEmpty).join('\\\n${' ' * (marker.length + 1)}')}'.trimRight();
+              }(),
+          ].join('\n'));
         case ExTable():
           _table(b);
         case ExMetrics():
@@ -111,7 +104,6 @@ class _Md {
           _block('---');
       }
     }
-    _flushFacts();
     return _out;
   }
 

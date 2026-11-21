@@ -484,7 +484,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get serverAddressEnvironmentOverride =>
-      'L\'indirizzo del servizio è impostato dall\'ambiente PAPERAGENT_URL: chiedi all\'amministratore di aggiornarlo.';
+      'L\'indirizzo del servizio è impostato dall\'ambiente DAYLEX_URL: chiedi all\'amministratore di aggiornarlo.';
 
   @override
   String settingsAccessKeyUnverified(String reason) {
@@ -1483,7 +1483,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get connectionLocalOff =>
-      'Il collegamento a PaperAgent non è attivo su questo computer: avvialo e riprova.';
+      'Il collegamento a Daylex non è attivo su questo computer: avvialo e riprova.';
 
   @override
   String get connectionUnreachable =>
@@ -1613,6 +1613,17 @@ class AppLocalizationsIt extends AppLocalizations {
   String get toolSetTheme => 'Aggiorno il tema';
 
   @override
+  String get toolSetStyle => 'Aggiorno lo stile';
+
+  @override
+  String get toolSetHeaderFooter => 'Aggiorno intestazione e piè di pagina';
+
+  @override
+  String toolFormatBlock(String block, String on) {
+    return 'Formatto il blocco $block$on';
+  }
+
+  @override
   String get toolUpdateMetadata => 'Aggiorno i dati';
 
   @override
@@ -1625,7 +1636,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get storeNoticeNewer =>
-      'Questi dati sono stati salvati da una versione più recente di PaperAgent: puoi consultarli, ma le modifiche non verranno salvate finché non aggiorni l\'app.';
+      'Questi dati sono stati salvati da una versione più recente di Daylex: puoi consultarli, ma le modifiche non verranno salvate finché non aggiorni l\'app.';
 
   @override
   String get storeNoticeRestored =>
@@ -1638,7 +1649,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String storeNoticeUnreadable(String reason) {
-    return 'Non riesco a leggere una parte del lavoro salvato ($reason): forse è aperta in un altro programma. Ti mostro quello che ho letto, ma non salvo le modifiche finché non riapri PaperAgent.';
+    return 'Non riesco a leggere una parte del lavoro salvato ($reason): forse è aperta in un altro programma. Ti mostro quello che ho letto, ma non salvo le modifiche finché non riapri Daylex.';
   }
 
   @override
@@ -1903,19 +1914,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get reviewConfirmed => 'Confermato';
-
-  @override
-  String get pdfPreparedFor => 'Destinatario';
-
-  @override
-  String get pdfPreparedBy => 'Redatto da';
-
-  @override
-  String get pdfDate => 'Data';
-
-  @override
-  String get pdfMonthNames =>
-      'gennaio;febbraio;marzo;aprile;maggio;giugno;luglio;agosto;settembre;ottobre;novembre;dicembre';
 
   @override
   String get progressStarting => 'Avvio della richiesta';

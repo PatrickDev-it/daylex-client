@@ -485,7 +485,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get serverAddressEnvironmentOverride =>
-      'The server address is set by PAPERAGENT_URL: ask your administrator to update it.';
+      'The server address is set by DAYLEX_URL: ask your administrator to update it.';
 
   @override
   String settingsAccessKeyUnverified(String reason) {
@@ -1482,7 +1482,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connectionLocalOff =>
-      'The PaperAgent connection is not running on this computer: start it and try again.';
+      'The Daylex connection is not running on this computer: start it and try again.';
 
   @override
   String get connectionUnreachable =>
@@ -1609,6 +1609,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get toolSetTheme => 'Updating the theme';
 
   @override
+  String get toolSetStyle => 'Updating the style';
+
+  @override
+  String get toolSetHeaderFooter => 'Updating the header and footer';
+
+  @override
+  String toolFormatBlock(String block, String on) {
+    return 'Formatting block $block$on';
+  }
+
+  @override
   String get toolUpdateMetadata => 'Updating the details';
 
   @override
@@ -1621,7 +1632,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get storeNoticeNewer =>
-      'This data was saved by a newer version of PaperAgent: you can read it, but changes will not be saved until you update the app.';
+      'This data was saved by a newer version of Daylex: you can read it, but changes will not be saved until you update the app.';
 
   @override
   String get storeNoticeRestored =>
@@ -1634,7 +1645,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String storeNoticeUnreadable(String reason) {
-    return 'Cannot read part of your saved work ($reason): another program may have it open. I show what I could read, but changes are not saved until you reopen PaperAgent.';
+    return 'Cannot read part of your saved work ($reason): another program may have it open. I show what I could read, but changes are not saved until you reopen Daylex.';
   }
 
   @override
@@ -1896,19 +1907,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reviewConfirmed => 'Confirmed';
-
-  @override
-  String get pdfPreparedFor => 'Prepared for';
-
-  @override
-  String get pdfPreparedBy => 'Prepared by';
-
-  @override
-  String get pdfDate => 'Date';
-
-  @override
-  String get pdfMonthNames =>
-      'January;February;March;April;May;June;July;August;September;October;November;December';
 
   @override
   String get progressStarting => 'Avvio della richiesta';

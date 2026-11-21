@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/agent/agent_controller.dart';
-import 'package:paper_agent/features/agent/data/mock_agent_client.dart';
-import 'package:paper_agent/features/agent/domain/agent_protocol.dart';
+import 'package:daylex/features/agent/agent_controller.dart';
+import 'package:daylex/features/agent/data/mock_agent_client.dart';
+import 'package:daylex/features/agent/domain/agent_protocol.dart';
 
 import 'demo_fixture.dart';
 

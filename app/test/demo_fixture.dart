@@ -1,15 +1,15 @@
 import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart' hide AgentRequest, ChatThread;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:paper_agent/features/agent/agent_controller.dart';
-import 'package:paper_agent/features/agent/chat_cards.dart';
-import 'package:paper_agent/features/agent/domain/document_tools.dart';
-import 'package:paper_agent/features/agent/presentation/ui_components.dart';
-import 'package:paper_agent/features/document/data/doc_templates.dart';
-import 'package:paper_agent/features/document/model/document.dart';
-import 'package:paper_agent/features/document/render/page_images.dart';
-import 'package:paper_agent/features/workspace/chat_thread.dart';
-import 'package:paper_agent/features/workspace/first_run.dart';
-import 'package:paper_agent/features/workspace/workspace_state.dart';
+import 'package:daylex/features/agent/agent_controller.dart';
+import 'package:daylex/features/agent/chat_cards.dart';
+import 'package:daylex/features/agent/domain/document_tools.dart';
+import 'package:daylex/features/agent/presentation/ui_components.dart';
+import 'package:daylex/features/document/data/doc_templates.dart';
+import 'package:daylex/features/document/model/document.dart';
+import 'package:daylex/features/document/render/page_images.dart';
+import 'package:daylex/features/workspace/chat_thread.dart';
+import 'package:daylex/features/workspace/first_run.dart';
+import 'package:daylex/features/workspace/workspace_state.dart';
 
 // The demo the app opened on before it started empty (docs/adr/ADR-0002-primo-avvio.md): a test fixture now, with
 // the ids the betas have on disk (lib/features/workspace/legacy_demo.dart recognises them).
@@ -295,7 +295,7 @@ List<ChatMessage> demoConversation(PaperDocument doc, String snapshot, ChatClock
 
   return [
     say(lawyer, 'Draft a 6-page Q3 business proposal for Acme Corp'),
-    say(paperAgent, 'Drafting a **6-page** proposal for **Acme Corp**: cover, executive summary, market, strategy, investment and next steps.'),
+    say(daylexAgent, 'Drafting a **6-page** proposal for **Acme Corp**: cover, executive summary, market, strategy, investment and next steps.'),
     rich(UiComponents.toolCall, {
       'tool': ToolNames.createDocument,
       'title': 'Creating "${doc.title}"',
@@ -305,7 +305,7 @@ List<ChatMessage> demoConversation(PaperDocument doc, String snapshot, ChatClock
       'ms': 184,
     }),
     rich(UiComponents.documentCard, {'documentId': doc.id, 'snapshot': snapshot}),
-    say(paperAgent, 'Here is the structure and how the text is distributed:'),
+    say(daylexAgent, 'Here is the structure and how the text is distributed:'),
     rich(UiComponents.documentOutline, {'documentId': doc.id, 'snapshot': snapshot}),
     rich(UiComponents.chart, {
       'title': 'Words per page',
@@ -314,7 +314,7 @@ List<ChatMessage> demoConversation(PaperDocument doc, String snapshot, ChatClock
         for (final (i, p) in doc.pages.indexed) {'label': '${i + 1} · ${p.title}', 'value': p.wordCount},
       ],
     }),
-    say(paperAgent,
+    say(daylexAgent,
         'The proposal is ready. Page $densest is the densest (${words[densest - 1]} words): '
         'ask me to *make it more premium and reduce the text*, or open **Review** in the side panel to compare versions.'),
   ];

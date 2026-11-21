@@ -1,14 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/agent/data/mock_agent_client.dart';
-import 'package:paper_agent/features/agent/domain/agent_protocol.dart';
-import 'package:paper_agent/features/agent/domain/document_tools.dart';
-import 'package:paper_agent/features/document/export/document_export.dart';
-import 'package:paper_agent/features/document/model/document.dart';
-import 'package:paper_agent/features/document/model/operations.dart';
-import 'package:paper_agent/features/document/render/page_fit.dart';
-import 'package:paper_agent/features/document/service/document_service.dart';
-import 'package:paper_agent/features/workspace/workspace_state.dart';
+import 'package:daylex/features/agent/data/mock_agent_client.dart';
+import 'package:daylex/features/agent/domain/agent_protocol.dart';
+import 'package:daylex/features/agent/domain/document_tools.dart';
+import 'package:daylex/features/document/export/document_export.dart';
+import 'package:daylex/features/document/model/document.dart';
+import 'package:daylex/features/document/model/operations.dart';
+import 'package:daylex/features/document/render/page_fit.dart';
+import 'package:daylex/features/document/service/document_service.dart';
+import 'package:daylex/features/workspace/workspace_state.dart';
 
 import 'demo_fixture.dart';
 
@@ -41,6 +41,12 @@ class FakeHost implements ToolHost {
 
   @override
   AgentAttachment? attachment(String name) => null;
+
+  @override
+  DocTheme defaultTheme = DocTheme.legal;
+
+  @override
+  void saveDefaultTheme(DocTheme theme) => defaultTheme = theme;
 }
 
 /// Runs [prompt] through the mock agent and executes its tool calls.
@@ -207,7 +213,13 @@ void main() {
     expect(results, isNotEmpty);
     expect(results.every((r) => r.ok), isTrue);
     final after = host.activeDocument!.pages[2];
-    expect(after.layout, PageLayout.premium);
+    // The look is set on the page's own blocks (rfc/055): no layout draws it, and the other pages keep theirs.
+    expect(after.layout, before.layout);
+    final paragraphs = after.blocks.whereType<ParagraphBlock>();
+    expect(paragraphs, isNotEmpty);
+    expect(paragraphs.map((p) => p.style.lineHeight), everyElement(1.4));
+    expect(after.blocks.whereType<HeadingBlock>().map((h) => h.style.spaceBefore), everyElement(18));
+    expect(host.activeDocument!.theme.toJson(), original.theme.toJson());
     expect(after.wordCount, lessThan(before.wordCount));
     for (final i in [0, 1, 3, 4, 5]) {
       expect(host.activeDocument!.pages[i], same(original.pages[i]));

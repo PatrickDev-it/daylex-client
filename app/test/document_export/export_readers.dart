@@ -192,10 +192,11 @@ String rtfText(String rtf) {
 /// Markdown with its backslash escapes undone (CommonMark: a backslash before ASCII punctuation is that punctuation).
 String markdownText(String md) => md.replaceAllMapped(RegExp(r'\\([!-/:-@\[-`{-~])'), (m) => m[1]!).replaceAll('<br>', '\n');
 
-/// HTML as text: tags dropped, the five entities undone.
+/// HTML as text: tags dropped (the inline ones join their words, the rest break the line), the five entities undone.
 String htmlText(String html) {
   final body = html.replaceAll(RegExp(r'<style>.*?</style>', dotAll: true), '').replaceAll('<br>', '\n');
   return body
+      .replaceAll(RegExp(r'</?(?:strong|em|u|span)\b[^>]*>'), '')
       .replaceAll(RegExp(r'<[^>]*>'), '\n')
       .replaceAll('&lt;', '<')
       .replaceAll('&gt;', '>')

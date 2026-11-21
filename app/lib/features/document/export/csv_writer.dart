@@ -7,7 +7,6 @@ import 'dart:typed_data';
 
 import '../model/document.dart';
 import 'cell_value.dart';
-import 'export_model.dart';
 import 'export_sheets.dart';
 
 const _bom = [0xEF, 0xBB, 0xBF];
@@ -16,7 +15,7 @@ const _delimiter = ';';
 /// Every record has as many fields as the widest table: a reader that wants a rectangle gets one. A document with
 /// tables gives its tables (the data); one without gives its text, a paragraph per record.
 Uint8List encodeCsv(PaperDocument doc) {
-  final sheets = buildSheets(buildExportDoc(doc));
+  final sheets = exportSheets(doc).sheets;
   final tables = sheets.where((s) => !s.isText).toList();
   final records = tables.isEmpty ? sheets.first.rows : _tableRecords(tables);
 

@@ -4,14 +4,14 @@ import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart'
     show ChatMessage;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/agent/agent_controller.dart';
-import 'package:paper_agent/features/agent/chat_archive.dart';
-import 'package:paper_agent/features/agent/chat_cards.dart';
-import 'package:paper_agent/features/agent/data/mock_agent_client.dart';
-import 'package:paper_agent/features/agent/domain/agent_protocol.dart';
-import 'package:paper_agent/features/agent/presentation/conversation_presentation.dart';
-import 'package:paper_agent/features/agent/presentation/ui_components.dart';
-import 'package:paper_agent/features/workspace/workspace_state.dart';
+import 'package:daylex/features/agent/agent_controller.dart';
+import 'package:daylex/features/agent/chat_archive.dart';
+import 'package:daylex/features/agent/chat_cards.dart';
+import 'package:daylex/features/agent/data/mock_agent_client.dart';
+import 'package:daylex/features/agent/domain/agent_protocol.dart';
+import 'package:daylex/features/agent/presentation/conversation_presentation.dart';
+import 'package:daylex/features/agent/presentation/ui_components.dart';
+import 'package:daylex/features/workspace/workspace_state.dart';
 
 Map<String, dynamic> data(ChatMessage message) =>
     (message.customProperties!['resultData'] as Map).cast<String, dynamic>();

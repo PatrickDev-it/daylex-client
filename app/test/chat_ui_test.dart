@@ -1,18 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/agent/agent_controller.dart';
-import 'package:paper_agent/features/agent/data/mock_agent_client.dart';
-import 'package:paper_agent/features/agent/domain/agent_protocol.dart';
-import 'package:paper_agent/features/agent/domain/document_tools.dart';
-import 'package:paper_agent/features/agent/presentation/ui_components.dart';
-import 'package:paper_agent/features/document/model/document.dart';
-import 'package:paper_agent/features/document/model/operations.dart';
-import 'package:paper_agent/features/document/service/document_diff.dart';
-import 'package:paper_agent/features/document/service/document_service.dart';
-import 'package:paper_agent/features/workspace/chat_thread.dart';
-import 'package:paper_agent/features/workspace/workspace_state.dart';
-import 'package:paper_agent/ui/chat/components/agent_markdown.dart';
+import 'package:daylex/features/agent/agent_controller.dart';
+import 'package:daylex/features/agent/data/mock_agent_client.dart';
+import 'package:daylex/features/agent/domain/agent_protocol.dart';
+import 'package:daylex/features/agent/domain/document_tools.dart';
+import 'package:daylex/features/agent/presentation/ui_components.dart';
+import 'package:daylex/features/document/model/document.dart';
+import 'package:daylex/features/document/model/operations.dart';
+import 'package:daylex/features/document/service/document_diff.dart';
+import 'package:daylex/features/document/service/document_service.dart';
+import 'package:daylex/features/workspace/chat_thread.dart';
+import 'package:daylex/features/workspace/workspace_state.dart';
+import 'package:daylex/ui/chat/components/agent_markdown.dart';
 
 import 'demo_fixture.dart';
 import 'test_app.dart';
@@ -39,6 +41,20 @@ void main() {
 
     test('identical documents have no changes', () {
       expect(comparePages(before, before), isEmpty);
+    });
+
+    test('a style or a detail its headers print shows as an edit of the first page (rfc/055)', () {
+      final styled = before.copyWith(
+        theme: before.theme.withRegion(RegionSlot.footer, const PageRegion(right: 'pag. {pagina}')),
+      );
+      final client = before.copyWith(metadata: before.metadata.copyWith(client: 'Rossi S.p.A.'));
+      for (final after in [styled, client]) {
+        final changes = comparePages(before, after);
+        expect(changes.map((c) => (c.kind, c.beforeIndex, c.afterIndex)), [(PageChangeKind.edited, 0, 0)]);
+      }
+      // A first page the agent also edited is listed once.
+      final both = const DocumentService().applyAll(styled, [UpdatePage(0, title: 'Copertina')]);
+      expect(comparePages(before, both).where((c) => c.afterIndex == 0), hasLength(1));
     });
 
     test('line diff keeps common lines and marks the rest', () {
@@ -180,11 +196,15 @@ void main() {
       expect(session.isRunning, isFalse);
       final turn = session.turns.last;
       expect(turn.changes.keys, [demoDocumentId]);
-      expect(container.read(workspaceProvider).documents[demoDocumentId]!.pages[2].layout, PageLayout.premium);
+      final polished = container.read(workspaceProvider).documents[demoDocumentId]!.pages[2];
+      expect(polished.blocks.whereType<ParagraphBlock>().map((p) => p.style.lineHeight), everyElement(1.4));
       expect(container.read(workspaceProvider).activeThread!.tabs, contains(PanelTab.preview(demoDocumentId)));
 
       agent.undoTurn(id, turn.id, demoDocumentId);
-      expect(container.read(workspaceProvider).documents[demoDocumentId]!.pages[2].layout, original.pages[2].layout);
+      expect(
+        jsonEncode(container.read(workspaceProvider).documents[demoDocumentId]!.pages[2].toJson()),
+        jsonEncode(original.pages[2].toJson()),
+      );
     });
 
     test('deleting a page waits for approval', () async {

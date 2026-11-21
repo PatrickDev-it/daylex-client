@@ -41,11 +41,11 @@ export 'attachment_files.dart' show LeftOut;
 export 'session_state.dart';
 
 /// The self-hosted agent server (see [AgentServerConfig]). The scripted mock
-/// only in tests or when asked for (`PAPERAGENT_MOCK=1`): a missing or broken
+/// only in tests or when asked for (`DAYLEX_MOCK=1`): a missing or broken
 /// configuration is said, never covered by the mock's answers.
 final agentClientProvider = Provider<AgentClient>((ref) {
   final env = kIsWeb ? const <String, String>{} : Platform.environment;
-  if (!kReleaseMode && (env['FLUTTER_TEST'] == 'true' || env['PAPERAGENT_MOCK'] == '1')) {
+  if (!kReleaseMode && (env['FLUTTER_TEST'] == 'true' || env['DAYLEX_MOCK'] == '1')) {
     return MockAgentClient();
   }
   final AgentServerConfig config;
@@ -108,7 +108,7 @@ class _Session {
 /// units.
 class AgentController extends Notifier<AgentState> {
   static const user = lawyer;
-  static const agent = paperAgent;
+  static const agent = daylexAgent;
 
   /// Session key of the new-chat screen (attachments picked before sending).
   static const draftId = '_draft';
@@ -225,7 +225,7 @@ class AgentController extends Notifier<AgentState> {
           .deleteCaseFile(threadId)
           .catchError(
             (Object e) => debugPrint(
-              'PaperAgent: could not delete case file $threadId: $e',
+              'Daylex: could not delete case file $threadId: $e',
             ),
           ),
     );
@@ -541,7 +541,7 @@ class AgentController extends Notifier<AgentState> {
           await tools.run(event);
         } catch (e, stack) {
           // The server waits for every call's result: an app bug here must not leave the run hanging.
-          debugPrint('PaperAgent: tool ${event.name} crashed: $e\n$stack');
+          debugPrint('Daylex: tool ${event.name} crashed: $e\n$stack');
           _log(threadId, LogKind.error, _l.operationFailed, {
             'tool': event.name,
             'error': '$e',

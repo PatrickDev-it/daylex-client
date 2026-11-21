@@ -28,7 +28,7 @@ final class WindowWake {
   init(window: NSWindow, controller: FlutterViewController) {
     self.window = window
     channel = FlutterMethodChannel(
-      name: "paper_agent/window", binaryMessenger: controller.engine.binaryMessenger)
+      name: "daylex/window", binaryMessenger: controller.engine.binaryMessenger)
     channel.setMethodCallHandler(DesktopCredentialStore.handle)
     let system = NSWorkspace.shared.notificationCenter
     observe(system, NSWorkspace.screensDidWakeNotification, "display on")

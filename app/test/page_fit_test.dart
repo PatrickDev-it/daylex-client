@@ -1,22 +1,22 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/document/data/doc_templates.dart';
-import 'package:paper_agent/features/document/model/document.dart';
-import 'package:paper_agent/features/document/render/page_fit.dart';
-import 'package:paper_agent/features/document/render/pdf_renderer.dart';
-import 'package:paper_agent/features/document/service/document_service.dart';
+import 'package:daylex/features/document/data/doc_templates.dart';
+import 'package:daylex/features/document/model/document.dart';
+import 'package:daylex/features/document/render/page_fit.dart';
+import 'package:daylex/features/document/render/pdf_renderer.dart';
+import 'package:daylex/features/document/service/document_service.dart';
 
 import 'demo_fixture.dart';
 import 'pdf_renderer_test.dart' show pdfPageCount;
 
-/// All the visible text, without whitespace: what a split must keep exactly. A table cut in two repeats its
-/// header on the next page, so its rows are what counts.
+/// All the visible text, without whitespace, in reading order: what a split must keep exactly. A table cut in
+/// two repeats its header on the next page, so its rows and the caption under them are what counts.
 String text(PaperDocument doc) => [
   for (final page in doc.pages)
     for (final b in page.blocks)
       b is TableBlock
-          ? [b.caption, for (final r in b.rows) r.join()].join()
+          ? [for (final r in b.rows) r.join(), b.caption].join()
           : b.plainText,
 ].join().replaceAll(RegExp(r'\s+'), '');
 
@@ -163,6 +163,35 @@ void main() {
     expect(text(fitted.document), text(before));
   });
 
+  test('a table cut in two keeps its caption under its last rows', () async {
+    final doc = buildQ3Proposal();
+    const total = 'Totale dovuto: 80.000,00 €';
+    final before = doc.copyWith(
+      pages: [
+        page('Fatture', [
+          TableBlock(
+            id: newId(),
+            columns: const ['Fattura', 'Importo'],
+            rows: [
+              for (var i = 0; i < 80; i++) ['n. $i/2026', '1.000,00 €'],
+            ],
+            caption: total,
+          ),
+        ]),
+      ],
+    );
+    final fitted = await fitter.fit(before);
+    final tables = [
+      for (final p in fitted.document.pages) ...p.blocks.whereType<TableBlock>(),
+    ];
+    expect(tables.length, greaterThan(1));
+    expect(tables.map((t) => t.caption), [
+      ...List.filled(tables.length - 1, ''),
+      total,
+    ]);
+    expect(text(fitted.document), text(before));
+  });
+
   test('a block that cannot be cut is reported, not looped on', () async {
     final doc = buildQ3Proposal();
     final before = doc.copyWith(
@@ -176,6 +205,55 @@ void main() {
     final fitted = await fitter.fit(before);
     expect(fitted.overflowing, [1]);
     expect(text(fitted.document), text(before));
+  });
+
+  test('each page is measured where it goes, with its own header', () async {
+    final doc = buildQ3Proposal();
+    // Page 1 shows nothing above its text, every other page a tall
+    // letterhead: measured as page 1, a later page would fit where it does
+    // not.
+    final letterhead = [for (var i = 0; i < 8; i++) 'Riga $i'].join('\n');
+    final theme = doc.theme
+        .withRegion(
+          RegionSlot.header,
+          PageRegion(left: letterhead, style: BlockStyle.of({'size': 14})),
+        )
+        .withRegion(RegionSlot.firstHeader, const PageRegion());
+    final before = doc.copyWith(
+      theme: theme,
+      pages: [
+        page('Premessa', [p('Breve premessa.')]),
+        appeal(),
+      ],
+    );
+    final fitted = await fitter.fit(before);
+    expect(fitted.overflowing, isEmpty);
+    expect(
+      pdfPageCount(await renderer.render(fitted.document)),
+      fitted.document.pages.length,
+    );
+    expect(text(fitted.document), text(before));
+  });
+
+  test('a block cut in two keeps its style on every page', () async {
+    final doc = buildQ3Proposal();
+    final style = BlockStyle.of({
+      'lineHeight': 2,
+      'firstLineIndent': 1.25,
+      'align': 'justify',
+    });
+    final before = doc.copyWith(
+      pages: [
+        page('Unico', [
+          ParagraphBlock(id: newId(), text: 'parola ' * 1500, style: style),
+        ]),
+      ],
+    );
+    final fitted = await fitter.fit(before);
+    expect(fitted.document.pages.length, greaterThan(1));
+    for (final fittedPage in fitted.document.pages) {
+      expect(fittedPage.blocks.single.style, style);
+    }
   });
 
   test('fits on a background isolate', () async {

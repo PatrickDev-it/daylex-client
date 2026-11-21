@@ -2,7 +2,7 @@ import 'dart:io' show ZLibCodec;
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart' show getCrc32;
-import 'package:paper_agent/features/document/model/document.dart';
+import 'package:daylex/features/document/model/document.dart';
 
 /// Characters that break a naive writer: XML and HTML metacharacters, quotes, accents, an emoji (two UTF-16 units),
 /// and control characters no format can carry.
@@ -44,8 +44,9 @@ Uint8List _u32(int v) => Uint8List(4)..buffer.asByteData().setUint32(0, v);
 final fixtureCreated = DateTime.utc(2026, 3, 12, 9, 30);
 final fixtureUpdated = DateTime.utc(2026, 11, 20, 14, 5);
 
-/// A document with every kind of block, two pages, two tables (typed cells among the text), a picture, a placeholder
-/// picture and every awkward character.
+/// A document with every kind of block, two pages (the first a cover), two tables (typed cells among the text), a
+/// picture, a placeholder picture, every awkward character, a word in bold, a paragraph with a look of its own, and a
+/// header and a footer that print the document's details and page numbers on every page but the cover.
 PaperDocument fixtureDocument() => PaperDocument(
   id: 'doc-1',
   projectId: 'project-1',
@@ -58,7 +59,14 @@ PaperDocument fixtureDocument() => PaperDocument(
     createdAt: fixtureCreated,
     updatedAt: fixtureUpdated,
   ),
-  theme: const DocTheme(accent: 0xFF3B5BDB, brandName: 'Studio Bianchi'),
+  theme: const DocTheme(
+    accent: 0xFF3B5BDB,
+    brandName: 'Studio Bianchi',
+    regions: {
+      RegionSlot.header: PageRegion(left: '**{studio}**', right: '{sezione}', line: true),
+      RegionSlot.footer: PageRegion(left: '{titolo} · {cliente}', right: 'Pagina {pagina} di {pagine}'),
+    },
+  ),
   pages: [
     const DocPage(
       id: 'page-1',
@@ -97,7 +105,7 @@ PaperDocument fixtureDocument() => PaperDocument(
           ],
           caption: 'Importi in euro, IVA esclusa.',
         ),
-        const ParagraphBlock(id: 'b11', text: 'Fine della tabella.'),
+        ParagraphBlock(id: 'b11', text: 'Fine della **tabella**.', style: BlockStyle.fromJson({'align': 'center', 'size': 14})),
         ImageBlock(id: 'b12', bytes: gradientPng(), caption: 'Planimetria & rilievo', height: 120),
         const ImageBlock(id: 'b13', caption: 'Senza immagine'),
         const HeadingBlock(id: 'b14', text: 'Elenco parti', level: 1),
@@ -114,12 +122,9 @@ PaperDocument fixtureDocument() => PaperDocument(
   ],
 );
 
-/// Text every text format must carry from [fixtureDocument]: nothing here may be lost, escaped or cut.
+/// Text every format must carry from the pages of [fixtureDocument]: nothing here may be lost, escaped or cut. The
+/// details (title, client) are not here: like the PDF, a file prints them only where its header or footer says so.
 const fixtureWords = [
-  'Parere pro veritate — Società Rossi & Figli S.r.l.',
-  'Perché è così: àèéìòù ÀÈÉÌÒÙ perché città',
-  'Società "Rossi" <info@rossi.it>',
-  'Avv. Mario Bianchi',
   'Premessa',
   'Perché è così? Sì: città, università. Simboli &<>"\' e 😀 con un controllo nascosto.',
   'Sintesi dei fatti',
@@ -134,7 +139,6 @@ const fixtureWords = [
   'Aula di tribunale',
   'Attenzione',
   'Il termine scade il 12/03/2024: verificare.',
-  'Allegati e importi',
   'Importi e scadenze',
   'Onorari',
   '€ 1.234,56',
@@ -148,6 +152,13 @@ const fixtureWords = [
   'Elenco parti',
   'Rossi S.r.l.',
   'Convenuto',
+];
+
+/// What the header and the footer of [fixtureDocument] print on its second page, the emphasis markers gone.
+const fixtureRegionWords = [
+  'Studio Bianchi',
+  'Allegati e importi',
+  'Parere pro veritate — Società Rossi & Figli S.r.l. · Società "Rossi" <info@rossi.it>',
 ];
 
 /// A document with nothing in it.

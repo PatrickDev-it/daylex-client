@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:paper_agent/features/update/installer.dart';
+import 'package:daylex/features/update/installer.dart';
 
 Future<void> main(List<String> args) async {
   final root = Directory(args[0]).absolute.path;

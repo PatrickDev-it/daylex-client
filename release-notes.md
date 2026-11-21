@@ -4,9 +4,11 @@ L'app mostra all'avvocato, una volta installato l'aggiornamento, le righe di que
 trattino: da 1 a 12, al massimo 220 caratteri ciascuna, in parole semplici. Vanno riscritte a ogni rilascio
 (scripts/sign-release.py le firma con la release); un elenco già mostrato su un computer non viene mostrato di nuovo.
 
-- Nel pannello a destra puoi aprire schede web (Ctrl+T) e consultare Gazzetta Ufficiale, Normattiva, Italgiure, DeJure, OneLegale, Il Sole 24 Ore o i portali del tuo studio senza uscire da Daylex.
-- Entri con le tue credenziali e i tuoi abbonamenti, e l'accesso resta anche dopo il riavvio. In Impostazioni, «Esci da tutti i portali» li chiude tutti insieme.
-- Con «Allega» la pagina o il PDF che stai leggendo entra nella conversazione: l'agente lo legge come un documento del fascicolo.
-- Le schede sono le stesse in ogni conversazione: puoi tenerle accanto alla chat o aprirle a tutto schermo.
-- Su Linux e nella versione web le pagine si aprono nel browser del computer.
-- All'apertura puoi scrivere subito: il cursore è già nel campo della richiesta, anche dopo il controllo degli aggiornamenti.
+- Ogni parte della pagina è tua: chiedi all'agente di cambiare carattere, dimensione, interlinea, margini, allineamento e colori, di tutto il documento o di un solo paragrafo.
+- Intestazione e piè di pagina si chiedono a parole: carta intestata con il logo sulla prima pagina, dati dello studio, numero di pagina come «pag. 1 di 3».
+- Chiedi all'agente di salvare carta intestata e stile come quelli dello studio: ogni nuovo documento partirà da lì.
+- Nessuna fascia colorata fissa in alto: sulla pagina c'è solo ciò che il documento dice. I documenti nuovi partono dalle regole del DM 110/2023 (Times 12, interlinea 1,5, margini di 2,5 cm).
+- Caratteri equivalenti a Times, Arial, Courier e Calibri, e il Garamond, sono inclusi nell'app: la pagina resta la stessa su ogni computer.
+- Grassetto, corsivo e sottolineato dentro il testo restano anche in Word, OpenDocument, RTF e HTML.
+- L'app si chiama Daylex ovunque: conversazioni, documenti, impostazioni e accessi ai portali restano dove li avevi lasciati, senza fare nulla.
+- Daylex si collega al server anche sui computer con certificati di sistema non aggiornati.

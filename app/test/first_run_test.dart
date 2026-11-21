@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/agent/agent_controller.dart';
-import 'package:paper_agent/features/document/model/document.dart';
-import 'package:paper_agent/features/storage/local_store.dart';
-import 'package:paper_agent/features/workspace/chat_thread.dart';
-import 'package:paper_agent/features/workspace/legacy_demo.dart';
-import 'package:paper_agent/features/workspace/workspace_repository.dart';
-import 'package:paper_agent/features/workspace/workspace_state.dart';
+import 'package:daylex/features/agent/agent_controller.dart';
+import 'package:daylex/features/document/model/document.dart';
+import 'package:daylex/features/storage/local_store.dart';
+import 'package:daylex/features/workspace/chat_thread.dart';
+import 'package:daylex/features/workspace/legacy_demo.dart';
+import 'package:daylex/features/workspace/workspace_repository.dart';
+import 'package:daylex/features/workspace/workspace_state.dart';
 
 import 'demo_fixture.dart';
 

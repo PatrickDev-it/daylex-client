@@ -1,0 +1,4 @@
+#!/bin/sh
+# The name an install from before the rename (up to b2901) starts, from its updater and its .desktop file (rfc/054).
+# Deleted with lib/core/platform/renamed_data.dart once no such install remains.
+exec "$(dirname "$(readlink -f "$0")")/daylex" "$@"

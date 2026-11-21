@@ -22,7 +22,7 @@ from pathlib import PurePosixPath
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 
 PUBLIC_KEY = 'zd/PmMt2KpSg0aGGUaPqr8/PKgEjrtWiw2VZRO5vnng='
-UPDATES = Path('/opt/paperagent/updates')
+UPDATES = Path('/opt/daylex/updates')
 SITE = Path('/srv/daylex-site')
 STATE = Path('/srv/daylex-release')
 WEB = Path('/srv/daylex-pwa')

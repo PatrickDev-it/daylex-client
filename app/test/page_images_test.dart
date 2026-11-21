@@ -2,8 +2,8 @@ import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/document/render/page_images.dart';
-import 'package:paper_agent/features/workspace/pdf_export.dart';
+import 'package:daylex/features/document/render/page_images.dart';
+import 'package:daylex/features/workspace/pdf_export.dart';
 
 import 'demo_fixture.dart';
 

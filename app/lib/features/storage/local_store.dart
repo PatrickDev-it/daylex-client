@@ -76,6 +76,7 @@ class IndexRecoveredNotice extends StoreNotice {
 ///     snapshots/<id>.json     a document version a message refers to; immutable, written once
 ///     preferences.json        the theme and the language the lawyer picked, the side panel's width
 ///     browser.json            the web tabs and the portals (the sites' own cookies stay in the browser profile)
+///     document-style.json     the studio's style, which every new document starts from (rfc/055)
 class LocalStore {
   LocalStore(Directory root) : _root = root;
   LocalStore._browser() : _root = null {
@@ -119,10 +120,10 @@ class LocalStore {
     return LocalStore(Directory(dataPath()));
   }
 
-  /// Where the lawyer's work is kept: `data` in the platform's per-user app data folder, or `PAPERAGENT_DATA`.
+  /// Where the lawyer's work is kept: `data` in the platform's per-user app data folder, or `DAYLEX_DATA`.
   static String dataPath() {
     final env = Platform.environment;
-    final custom = env['PAPERAGENT_DATA'];
+    final custom = env['DAYLEX_DATA'];
     return custom != null && custom.isNotEmpty ? custom : '${appDataDir(env)}${Platform.pathSeparator}data';
   }
 
@@ -178,7 +179,7 @@ class LocalStore {
 
   /// [relative] could not be read, or set aside, for [e]: nothing more is written, so it is never written over.
   void _hold(String relative, FileSystemException e) {
-    debugPrint('PaperAgent: cannot read $relative now: $e');
+    debugPrint('Daylex: cannot read $relative now: $e');
     _held = true;
     notice.value = UnreadableNotice(e.osError?.message ?? e.message);
   }
@@ -303,12 +304,15 @@ class LocalStore {
   Map<String, dynamic>? readBrowser() => _read('browser.json');
   void writeBrowser(Map<String, dynamic> json) => _write('browser.json', json);
 
+  Map<String, dynamic>? readDocumentStyle() => _read('document-style.json');
+  void writeDocumentStyle(Map<String, dynamic> json) => _write('document-style.json', json);
+
   Map<String, dynamic>? readExports() => _read('exports.json');
   void writeExports(Map<String, dynamic> json) => _write('exports.json', json);
 
   /// A save that failed: the lawyer hears of it once, not at every keystroke.
   void saveFailed(FileSystemException e) {
-    debugPrint('PaperAgent: could not save: $e');
+    debugPrint('Daylex: could not save: $e');
     notice.value = SaveFailedNotice(e.osError?.message ?? e.message);
   }
 }

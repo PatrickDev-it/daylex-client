@@ -3,6 +3,7 @@ import 'dart:isolate';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../model/document.dart';
+import '../model/inline.dart';
 import '../model/operations.dart';
 import 'pdf_renderer.dart';
 
@@ -87,7 +88,7 @@ class PageFitter {
     final splits = <PageSplit>[];
     final overflowing = <int>[];
     for (var i = from; i < doc.pages.length; i++) {
-      final (parts, fits) = await _split(doc, doc.pages[i]);
+      final (parts, fits) = await _split(doc, doc.pages[i], pages.length);
       if (parts.length > 1) {
         splits.add(
           PageSplit(page: i + 1, first: pages.length + 1, count: parts.length),
@@ -103,21 +104,22 @@ class PageFitter {
     );
   }
 
-  Future<bool> _fits(PaperDocument doc, DocPage page) async {
+  /// Whether [page] fits as page [at] (0-based) of [doc]: there, with that page's header and footer.
+  Future<bool> _fits(PaperDocument doc, DocPage page, int at) async {
     try {
-      await renderer.render(doc.copyWith(pages: [page]));
+      await renderer.render(doc.copyWith(pages: [page]), firstPage: at, pageCount: doc.pages.length);
       return true;
     } on PdfLayoutException {
       return false;
     }
   }
 
-  /// [page] as pages that each fit, and whether the last one does.
-  Future<(List<DocPage>, bool)> _split(PaperDocument doc, DocPage page) async {
+  /// [page], placed at [at], as pages that each fit, and whether the last one does.
+  Future<(List<DocPage>, bool)> _split(PaperDocument doc, DocPage page, int at) async {
     final parts = <DocPage>[];
     var rest = page;
-    while (!await _fits(doc, rest)) {
-      final head = await _head(doc, rest);
+    while (!await _fits(doc, rest, at + parts.length)) {
+      final head = await _head(doc, rest, at + parts.length);
       if (head == null) return ([...parts, rest], false);
       parts.add(head.$1);
       rest = head.$2;
@@ -127,17 +129,17 @@ class PageFitter {
 
   /// The most of [page] that fits one page, and the page that continues it; null when not even the start of
   /// its first block fits.
-  Future<(DocPage, DocPage)?> _head(PaperDocument doc, DocPage page) async {
+  Future<(DocPage, DocPage)?> _head(PaperDocument doc, DocPage page, int at) async {
     final blocks = page.blocks;
     // Leading whole blocks that fit: the page as a whole does not, so fewer than all of them.
     final whole = await _largest(
       1,
       blocks.length - 1,
-      (k) => _fits(doc, page.copyWith(blocks: blocks.sublist(0, k))),
+      (k) => _fits(doc, page.copyWith(blocks: blocks.sublist(0, k)), at),
     );
     final kept = blocks.sublist(0, whole);
     final cut = whole < blocks.length
-        ? await _cut(doc, page, kept, blocks[whole])
+        ? await _cut(doc, page, at, kept, blocks[whole])
         : null;
     var taken = whole;
     if (cut == null && whole > 1 && kept.last is HeadingBlock) {
@@ -158,10 +160,12 @@ class PageFitter {
     );
   }
 
-  /// [block] cut in two so that the first part fits after [before] on [page]; null when no part does.
+  /// [block] cut in two so that the first part fits after [before] on [page], placed at [at]; null when no part
+  /// does.
   Future<(DocBlock, DocBlock)?> _cut(
     PaperDocument doc,
     DocPage page,
+    int at,
     List<DocBlock> before,
     DocBlock block,
   ) async {
@@ -170,7 +174,7 @@ class PageFitter {
     final n = await _largest(
       1,
       pieces.length - 1,
-      (m) => _fits(doc, page.copyWith(blocks: [...before, pieces.head(m)])),
+      (m) => _fits(doc, page.copyWith(blocks: [...before, pieces.head(m)]), at),
     );
     return n == 0 ? null : (pieces.head(n), pieces.tail(n));
   }
@@ -197,7 +201,7 @@ class PageFitter {
 }
 
 /// The places a block can be cut: [length] pieces, of which [head] keeps the first m and [tail] the rest under a
-/// new id. Headings, figures and images are never cut.
+/// new id, in the block's style. Headings, figures and images are never cut.
 class _Pieces {
   _Pieces(this.length, this.head, this.tail);
 
@@ -210,32 +214,33 @@ class _Pieces {
       ParagraphBlock(:final text) => _text(
         text,
         (t) => block.copyWith(text: t),
-        (t) => ParagraphBlock(id: newId(), text: t),
+        (t) => ParagraphBlock(id: newId(), style: block.style, text: t),
       ),
       QuoteBlock(:final text, :final author) => _text(
         text,
         (t) => block.copyWith(text: t, author: ''),
-        (t) => QuoteBlock(id: newId(), text: t, author: author),
+        (t) => QuoteBlock(id: newId(), style: block.style, text: t, author: author),
       ),
       CalloutBlock(:final title, :final text) => _text(
         text,
         (t) => block.copyWith(text: t),
-        (t) => CalloutBlock(id: newId(), title: title, text: t),
+        (t) => CalloutBlock(id: newId(), style: block.style, title: title, text: t),
       ),
       BulletListBlock(:final items) when items.length > 1 => _Pieces(
         items.length,
         (m) => block.copyWith(items: items.sublist(0, m)),
-        (m) => BulletListBlock(id: newId(), items: items.sublist(m)),
+        (m) => BulletListBlock(id: newId(), style: block.style, items: items.sublist(m)),
       ),
       BulletListBlock(:final items) when items.length == 1 => _text(
         items.single,
         (t) => block.copyWith(items: [t]),
-        (t) => BulletListBlock(id: newId(), items: [t]),
+        (t) => BulletListBlock(id: newId(), style: block.style, items: [t]),
       ),
-      TableBlock(:final columns, :final rows) when rows.length > 1 => _Pieces(
+      // The caption is drawn under the table, so it goes with the last rows, as a quote's author does.
+      TableBlock(:final columns, :final rows, :final caption) when rows.length > 1 => _Pieces(
         rows.length,
-        (m) => block.copyWith(rows: rows.sublist(0, m)),
-        (m) => TableBlock(id: newId(), columns: columns, rows: rows.sublist(m)),
+        (m) => block.copyWith(rows: rows.sublist(0, m), caption: ''),
+        (m) => TableBlock(id: newId(), style: block.style, columns: columns, rows: rows.sublist(m), caption: caption),
       ),
       _ => null,
     };
@@ -243,7 +248,8 @@ class _Pieces {
   }
 
   /// Text cut after a sentence (or a line) when it has more than one, else between words. The text itself is
-  /// kept exactly; only the whitespace at the cut goes.
+  /// kept exactly; only the whitespace at the cut goes, and emphasis open across it is closed and reopened
+  /// ([splitInline]).
   static _Pieces _text(
     String text,
     DocBlock Function(String) first,
@@ -253,8 +259,8 @@ class _Pieces {
     if (ends.length < 2) ends = _ends(text, _space);
     return _Pieces(
       ends.length,
-      (m) => first(text.substring(0, ends[m - 1]).trimRight()),
-      (m) => rest(text.substring(ends[m - 1]).trimLeft()),
+      (m) => first(splitInline(text, ends[m - 1]).$1),
+      (m) => rest(splitInline(text, ends[m - 1]).$2),
     );
   }
 
@@ -265,6 +271,6 @@ class _Pieces {
     text.length,
   ];
 
-  static final _sentenceEnd = RegExp(r'[.!?;:]["»”’)\]]*\s+|\n\s*');
+  static final _sentenceEnd = RegExp(r'[.!?;:]["»”’)\]*_]*\s+|\n\s*');
   static final _space = RegExp(r'\s+');
 }

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:paper_agent/core/platform/instance_lock.dart';
+import 'package:daylex/core/platform/instance_lock.dart';
 
 Future<void> main(List<String> args) async {
   if (args.isNotEmpty) {

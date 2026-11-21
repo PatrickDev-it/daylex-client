@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/agent/domain/agent_protocol.dart';
-import 'package:paper_agent/features/agent/domain/document_tools.dart';
-import 'package:paper_agent/features/agent/presentation/ui_components.dart';
-import 'package:paper_agent/features/document/data/doc_templates.dart';
-import 'package:paper_agent/features/document/export/document_export.dart';
-import 'package:paper_agent/features/document/model/document.dart';
-import 'package:paper_agent/features/document/model/operations.dart';
-import 'package:paper_agent/features/document/render/page_fit.dart';
-import 'package:paper_agent/ui/chat/components/action_cards.dart';
+import 'package:daylex/features/agent/domain/agent_protocol.dart';
+import 'package:daylex/features/agent/domain/document_tools.dart';
+import 'package:daylex/features/agent/presentation/ui_components.dart';
+import 'package:daylex/features/document/data/doc_templates.dart';
+import 'package:daylex/features/document/export/document_export.dart';
+import 'package:daylex/features/document/model/document.dart';
+import 'package:daylex/features/document/model/operations.dart';
+import 'package:daylex/features/document/render/page_fit.dart';
+import 'package:daylex/ui/chat/components/action_cards.dart';
 
 import 'test_app.dart';
 
@@ -98,4 +98,10 @@ class _Host implements ToolHost {
 
   @override
   AgentAttachment? attachment(String name) => null;
+
+  @override
+  DocTheme defaultTheme = DocTheme.legal;
+
+  @override
+  void saveDefaultTheme(DocTheme theme) => defaultTheme = theme;
 }

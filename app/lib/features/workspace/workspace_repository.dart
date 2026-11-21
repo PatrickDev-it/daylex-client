@@ -92,7 +92,7 @@ class WorkspaceRepository {
       return fromJson(json, _store.readDocument);
     } on Object catch (e) {
       // JSON, but not an index this app can read: kept for a human, and the work is rebuilt from its files.
-      debugPrint('PaperAgent: workspace index unreadable: $e');
+      debugPrint('Daylex: workspace index unreadable: $e');
       _store.setAside('workspace.json');
       return null;
     }
@@ -106,7 +106,7 @@ class WorkspaceRepository {
       try {
         if (_store.readDocument(id) case final json?) documents[id] = PaperDocument.fromJson(json);
       } on Object catch (e) {
-        debugPrint('PaperAgent: document $id unreadable: $e');
+        debugPrint('Daylex: document $id unreadable: $e');
       }
     }
     final chats = _store.chatIds();

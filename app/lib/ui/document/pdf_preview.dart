@@ -49,7 +49,9 @@ class PdfPreview extends ConsumerWidget {
     if (pdf == null) {
       body = rendered.hasError
           ? EmptyState(icon: LucideIcons.alertTriangle, title: l.previewRenderFailed, message: failure, actions: [?split])
-          : const _PageSkeleton();
+          : _PageSkeleton(
+              aspectRatio: ref.watch(activeDocumentProvider.select((d) => d == null ? kA4AspectRatio : pageAspectRatio(d))),
+            );
     } else {
       final state = ref.read(viewerProvider);
       body = SfPdfViewerTheme(
@@ -191,15 +193,18 @@ class _ViewerControls extends ConsumerWidget {
   }
 }
 
-/// A4-shaped placeholder shown before the first render completes.
+/// A page-shaped placeholder shown before the first render completes.
 class _PageSkeleton extends StatelessWidget {
-  const _PageSkeleton();
+  const _PageSkeleton({required this.aspectRatio});
+
+  /// The document's page, upright or landscape.
+  final double aspectRatio;
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: AspectRatio(
-        aspectRatio: kA4AspectRatio,
+        aspectRatio: aspectRatio,
         child: Padding(
           padding: const EdgeInsets.all(32),
           child: OutlinedBox(

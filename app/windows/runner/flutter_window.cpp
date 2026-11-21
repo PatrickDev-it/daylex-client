@@ -31,7 +31,7 @@ bool FlutterWindow::OnCreate() {
 
   window_channel_ =
       std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
-          flutter_controller_->engine()->messenger(), "paper_agent/window",
+          flutter_controller_->engine()->messenger(), "daylex/window",
           &flutter::StandardMethodCodec::GetInstance());
   window_channel_->SetMethodCallHandler(HandleCredentialCall);
   WTSRegisterSessionNotification(GetHandle(), NOTIFY_FOR_THIS_SESSION);

@@ -52,12 +52,22 @@ ToolSpec? toolSpec(String name) =>
     appToolSpecs.where((t) => t.name == name).firstOrNull;
 
 /// The tools the agent can call. Declared once, in the server's registry
-/// (paperagent_server/tools.py), and generated into tool_specs.g.dart: a tool
+/// (daylex_server/tools.py), and generated into tool_specs.g.dart: a tool
 /// is never added or changed here.
 final appToolSpecs = [
   for (final spec in jsonDecode(_toolsJson) as List)
     ToolSpec.fromJson((spec as Map).cast<String, dynamic>()),
 ];
+
+/// The fields of a block's style and of the page (rfc/055), each with its
+/// schema, as the server's registry declares them; a margin is
+/// `margins.<side>`. The tools name them in prose: declared as properties,
+/// they would fix the order the model can write them in.
+final Map<String, Map<String, dynamic>> styleFieldSpecs = {
+  for (final MapEntry(:key, :value)
+      in (jsonDecode(_styleFieldsJson) as Map).entries)
+    key as String: (value as Map).cast<String, dynamic>(),
+};
 
 /// What the executor needs from the app. Implemented by the agent controller
 /// on top of the workspace state, so tools never reach into widgets.
@@ -76,6 +86,12 @@ abstract interface class ToolHost {
   Future<String?> exportActiveDocument({ExportFormat format = ExportFormat.pdf});
 
   AgentAttachment? attachment(String name);
+
+  /// The studio's style, which a new document starts from (rfc/055).
+  DocTheme get defaultTheme;
+
+  /// Makes [theme] the studio's style.
+  void saveDefaultTheme(DocTheme theme);
 }
 
 class ToolResult {
@@ -117,6 +133,9 @@ abstract final class ToolNames {
   static const addImage = 'add_image';
   static const changeLayout = 'change_layout';
   static const setTheme = 'set_theme';
+  static const setStyle = 'set_style';
+  static const setHeaderFooter = 'set_header_footer';
+  static const formatBlock = 'format_block';
   static const updateMetadata = 'update_metadata';
   static const exportPdf = 'export_pdf';
   static const exportFile = 'export_file';
@@ -135,6 +154,9 @@ abstract final class ToolNames {
     addImage,
     changeLayout,
     setTheme,
+    setStyle,
+    setHeaderFooter,
+    formatBlock,
     updateMetadata,
     exportPdf,
     exportFile,
@@ -165,6 +187,9 @@ String describeToolCall(
     ToolNames.addImage => l.toolAddImage(on),
     ToolNames.changeLayout => l.toolChangeLayout(on),
     ToolNames.setTheme => l.toolSetTheme,
+    ToolNames.setStyle => l.toolSetStyle,
+    ToolNames.setHeaderFooter => l.toolSetHeaderFooter,
+    ToolNames.formatBlock => l.toolFormatBlock('${args['block'] ?? ''}', on),
     ToolNames.updateMetadata => l.toolUpdateMetadata,
     ToolNames.exportPdf => l.toolExportPdf,
     ToolNames.exportFile => l.toolExportFile(
@@ -195,6 +220,9 @@ class DocumentToolExecutor {
     ToolNames.addImage: _addImage,
     ToolNames.changeLayout: _changeLayout,
     ToolNames.setTheme: _setTheme,
+    ToolNames.setStyle: _setStyle,
+    ToolNames.setHeaderFooter: _setHeaderFooter,
+    ToolNames.formatBlock: _formatBlock,
     ToolNames.updateMetadata: _updateMetadata,
     ToolNames.exportPdf: _exportPdf,
     ToolNames.exportFile: _exportFile,
@@ -209,6 +237,8 @@ class DocumentToolExecutor {
     } on DocumentOperationException catch (e) {
       return ToolResult.error(e.message);
     } on _ArgumentError catch (e) {
+      return ToolResult.error(e.message);
+    } on StyleException catch (e) {
       return ToolResult.error(e.message);
     } catch (e) {
       // Arguments of the wrong type (a string where a list is due) throw a TypeError, not an
@@ -235,7 +265,7 @@ class DocumentToolExecutor {
       ToolResult.ok('Lette ${r.doc.pages.length} pagine', data: r.doc.toJson());
 
   Future<ToolResult> _addPage(_Run r) async {
-    final page = DocPage.fromJson(_map(r.args['page']));
+    final page = DocPage.fromJson(_pageJson(r.args['page']));
     final at = r.position() ?? r.doc.pages.length;
     return r.apply(
       [AddPage(page, index: at)],
@@ -297,7 +327,7 @@ class DocumentToolExecutor {
 
   Future<ToolResult> _insertBlock(_Run r) async {
     final i = r.pageIndex();
-    final block = DocBlock.fromJson(_map(r.args['block']));
+    final block = DocBlock.fromJson(_blockJson(r.args['block']));
     return r.apply(
       [InsertBlock(i, block, index: r.position())],
       'Inserito un blocco a pagina ${i + 1}',
@@ -307,8 +337,11 @@ class DocumentToolExecutor {
 
   Future<ToolResult> _updateBlock(_Run r) async {
     final (i, b, current) = _locateBlock(r);
+    final content = _blockJson(r.args['content']);
+    // New content keeps the block's look unless it says otherwise.
     final block = DocBlock.fromJson({
-      ..._map(r.args['content']),
+      if (!current.style.isEmpty) 'style': current.style.toJson(),
+      ...content,
       'id': current.id,
     });
     return r.apply(
@@ -418,6 +451,79 @@ class DocumentToolExecutor {
     ], 'Tema aggiornato');
   }
 
+  Future<ToolResult> _setStyle(_Run r) async {
+    final done = await r.apply([SetTheme(r.doc.theme.patchStyle(r.args))], 'Stile aggiornato');
+    return _savedAsDefault(r, done);
+  }
+
+  Future<ToolResult> _setHeaderFooter(_Run r) async {
+    final a = r.args;
+    final slot =
+        RegionSlot.parse(a['region']) ??
+        (throw _ArgumentError('Manca "region": uno tra ${RegionSlot.values.map((s) => s.name).join(', ')}.'));
+    final PageRegion? region;
+    if (a['reset'] == true) {
+      region = null;
+    } else if (a['remove'] == true) {
+      region = const PageRegion();
+    } else {
+      final shown = DocStyles(r.doc.theme).region(slot);
+      // A first page set for the first time starts blank, in the style of the other pages.
+      final current =
+          r.doc.theme.regions[slot] ?? (slot.isFirst ? PageRegion(style: shown.style, line: shown.line) : shown);
+      final patched = current.patch(a);
+      region = a.containsKey('logo') ? patched.withLogo(a['logo'] == null ? null : _logo(a['logo'])) : patched;
+    }
+    final done = await r.apply([SetTheme(r.doc.theme.withRegion(slot, region))], switch (slot) {
+      RegionSlot.header => 'Intestazione aggiornata',
+      RegionSlot.footer => 'Piè di pagina aggiornato',
+      RegionSlot.firstHeader => 'Intestazione della prima pagina aggiornata',
+      RegionSlot.firstFooter => 'Piè di pagina della prima pagina aggiornato',
+    });
+    return _savedAsDefault(r, done);
+  }
+
+  /// The logo `set_header_footer` names: an attachment of the chat, its height in points and its side.
+  RegionLogo _logo(Object? value) {
+    final a = _map(value);
+    final name = a['attachment'];
+    final file = name is String ? host.attachment(name) : null;
+    if (file == null) throw _ArgumentError('Allegato "${name ?? ''}" non trovato.');
+    final height = a['height'] ?? 40;
+    if (height is! num || height < 8 || height > 200) {
+      throw const StyleException('Stile non valido: "height" deve essere un numero da 8 a 200.');
+    }
+    final align = a['align'] ?? 'left';
+    if (align != 'left' && align != 'center' && align != 'right') {
+      throw const StyleException('Stile non valido: "align" deve essere uno tra left, center, right.');
+    }
+    return RegionLogo(
+      bytes: file.bytes,
+      height: height.toDouble(),
+      align: BlockAlign.values.byName(align as String),
+    );
+  }
+
+  Future<ToolResult> _formatBlock(_Run r) async {
+    final (i, b, current) = _locateBlock(r);
+    final style = r.args['style'] == null ? BlockStyle.empty : current.style.patch(r.args['style']);
+    return r.apply(
+      [UpdateBlock(current.withStyle(style))],
+      'Formattato il blocco ${b + 1} a pagina ${i + 1}',
+      focus: i + 1,
+    );
+  }
+
+  /// [done], and the document's style saved as the studio's when the call asks (`saveAsDefault`).
+  ToolResult _savedAsDefault(_Run r, ToolResult done) {
+    if (r.args['saveAsDefault'] != true) return done;
+    host.saveDefaultTheme(host.activeDocument!.theme);
+    return ToolResult.ok(
+      '${done.summary}. Salvato come stile dello studio: i nuovi documenti partiranno da qui',
+      focusPage: done.focusPage,
+    );
+  }
+
   Future<ToolResult> _updateMetadata(_Run r) async {
     final a = r.args;
     return r.apply([
@@ -454,7 +560,7 @@ class DocumentToolExecutor {
       throw _ArgumentError('Manca il titolo.');
     }
     final pages = (a['pages'] as List? ?? const [])
-        .map((p) => DocPage.fromJson(_map(p)))
+        .map((p) => DocPage.fromJson(_pageJson(p)))
         .toList();
     if (pages.isEmpty) {
       throw _ArgumentError(DocumentOperationException.lastPageMessage);
@@ -472,9 +578,9 @@ class DocumentToolExecutor {
         createdAt: now,
         updatedAt: now,
       ),
-      theme: DocTheme(
-        accent: parseColor(a['accent']) ?? kDefaultDocAccent,
-        brandName: a['brandName'] as String? ?? '',
+      theme: host.defaultTheme.copyWith(
+        accent: parseColor(a['accent']),
+        brandName: a['brandName'] as String?,
       ),
       pages: pages,
     );
@@ -507,7 +613,7 @@ class DocumentToolExecutor {
         if (service.countOccurrences(doc, find, pageIndex: p) > 0) p + 1,
     ];
     final where = pages.isEmpty
-        ? 'solo nel titolo, nel sottotitolo o nel cliente del documento'
+        ? 'solo nel titolo, nel sottotitolo o nel cliente del documento, o in intestazione e piè di pagina'
         : 'a pagina ${pages.join(', ')}';
     return '"$find" non è a pagina ${pageIndex + 1}: è $where. '
         'Ometti "page" per sostituirlo ovunque.';
@@ -552,8 +658,25 @@ class DocumentToolExecutor {
   }
 
   static List<DocBlock> _blocks(Object? value) => (value as List? ?? const [])
-      .map((b) => DocBlock.fromJson(_map(b)))
+      .map((b) => DocBlock.fromJson(_blockJson(b)))
       .toList();
+
+  /// [value] as a block's JSON, its `style` read as strictly as `format_block` reads one: a saved document drops
+  /// what it cannot read, a tool call is told.
+  static Map<String, dynamic> _blockJson(Object? value) {
+    final json = _map(value);
+    if (json['style'] != null) BlockStyle.empty.patch(json['style']);
+    return json;
+  }
+
+  /// [value] as a page's JSON, each of its blocks read as [_blockJson] reads one (a page skips what is not a block).
+  static Map<String, dynamic> _pageJson(Object? value) {
+    final json = _map(value);
+    for (final b in (json['blocks'] as List? ?? const []).whereType<Map>()) {
+      _blockJson(b);
+    }
+    return json;
+  }
 }
 
 /// One tool call on the open document: the arguments to read and the one way to apply a change.

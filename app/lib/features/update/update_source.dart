@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:cryptography/cryptography.dart';
 
+import '../../core/platform/http_transport.dart';
 import 'release.dart';
 
 /// Where the app's new versions come from: the signed manifest `<channel>/<platform>.json` and the archive it
 /// names, both static files (scripts/release.py publishes them; Caddy serves them whether the agent is on or off).
 class UpdateSource {
   UpdateSource({required this.channel, required this.publicKey, required this.platform})
-    : _http = HttpClient()
+    : _http = serverHttpClient()
         ..connectionTimeout = _connect
         ..idleTimeout = _connect;
 

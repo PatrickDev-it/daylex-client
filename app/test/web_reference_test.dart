@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/core/theme/app_theme.dart';
-import 'package:paper_agent/ui/chat/components/agent_markdown.dart';
-import 'package:paper_agent/ui/chat/components/legal_card_parts.dart';
-import 'package:paper_agent/ui/chat/components/source_link.dart';
-import 'package:paper_agent/ui/common/web_link.dart';
+import 'package:daylex/core/theme/app_theme.dart';
+import 'package:daylex/ui/chat/components/agent_markdown.dart';
+import 'package:daylex/ui/chat/components/legal_card_parts.dart';
+import 'package:daylex/ui/chat/components/source_link.dart';
+import 'package:daylex/ui/common/web_link.dart';
 
 import 'test_app.dart';
 

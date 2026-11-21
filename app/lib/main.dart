@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
 import 'core/theme/app_theme.dart';
+import 'core/platform/renamed_data.dart';
 import 'core/platform/sandbox_migration.dart';
 import 'core/platform/instance_lock.dart';
 import 'core/platform/retired_whatsapp.dart';
@@ -19,6 +20,8 @@ InstanceLock? _instanceLock;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Before the lock, which opens the data folder: an app from before the rename kept it under another name.
+  if (!kIsWeb) migrateRenamedData();
   try {
     if (!kIsWeb) {
       _instanceLock ??= InstanceLock.acquire(Directory(appDataDir()));
@@ -43,11 +46,12 @@ Future<void> main() async {
   // Before anything reads the saved work: on a Mac coming from the sandboxed app, it is still in the container.
   if (!kIsWeb) migrateSandboxData();
   if (!kIsWeb) unawaited(forgetWhatsappSession());
+  if (!kIsWeb) unawaited(retargetLegacyLaunchers());
   await DesktopCredentials.instance.initialize();
   runApp(
     ProviderScope(
       overrides: [desktopAccessEnabledProvider.overrideWithValue(true)],
-      child: const PaperAgentApp(),
+      child: const DaylexApp(),
     ),
   );
 }

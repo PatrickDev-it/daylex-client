@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../model/document.dart';
 
 enum PageChangeKind { added, removed, edited }
@@ -59,13 +61,13 @@ List<PageChange> comparePages(PaperDocument before, PaperDocument after) {
       changes.add(PageChange(kind: PageChangeKind.removed, title: page.title, beforeIndex: i, before: page));
     }
   }
-  // Theme and details show on every page (cover, headers), so surface them
-  // as an edit of the first page when nothing else touched it.
-  final detailsChanged = before.theme.accent != after.theme.accent ||
-      before.theme.brandName != after.theme.brandName ||
+  // The style (fonts, page, headers and footers) and the details its placeholders print show on every page, so
+  // surface them as an edit of the first page when nothing else touched it.
+  final detailsChanged = jsonEncode(before.theme.toJson()) != jsonEncode(after.theme.toJson()) ||
       before.title != after.title ||
       before.metadata.subtitle != after.metadata.subtitle ||
-      before.metadata.client != after.metadata.client;
+      before.metadata.client != after.metadata.client ||
+      before.metadata.author != after.metadata.author;
   if (detailsChanged &&
       after.pages.isNotEmpty &&
       before.pages.isNotEmpty &&

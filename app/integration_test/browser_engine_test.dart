@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:paper_agent/features/browser/engine/engine.dart';
-import 'package:paper_agent/features/browser/engine/webkit_page.dart';
-import 'package:paper_agent/features/browser/engine/windows_page.dart';
+import 'package:daylex/features/browser/engine/engine.dart';
+import 'package:daylex/features/browser/engine/webkit_page.dart';
+import 'package:daylex/features/browser/engine/windows_page.dart';
 
 /// The integrated browser on this computer's own engine (rfc/052): WebView2 on Windows, WebKit on the Mac. The widget
 /// tests take every path through the panel with a fake engine; this one checks, on pages a local server serves, that

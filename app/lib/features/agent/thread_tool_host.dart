@@ -6,6 +6,7 @@ import '../document/model/document.dart';
 import '../document/model/operations.dart';
 import '../document/render/page_fit.dart';
 import '../workspace/pdf_export.dart';
+import '../workspace/studio_style.dart';
 import '../workspace/workspace_state.dart';
 import 'domain/agent_protocol.dart';
 import 'domain/document_tools.dart';
@@ -55,4 +56,11 @@ class ThreadToolHost implements ToolHost {
   @override
   AgentAttachment? attachment(String name) =>
       _attachments().where((a) => a.name == name).firstOrNull;
+
+  @override
+  DocTheme get defaultTheme => _ref.read(studioStyleProvider);
+
+  @override
+  void saveDefaultTheme(DocTheme theme) =>
+      _ref.read(studioStyleProvider.notifier).save(theme);
 }

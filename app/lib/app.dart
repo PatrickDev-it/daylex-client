@@ -20,8 +20,8 @@ import 'ui/shortcuts.dart';
 import 'ui/access/access_gate.dart';
 import 'ui/update/update_screen.dart';
 
-class PaperAgentApp extends ConsumerWidget {
-  const PaperAgentApp({super.key});
+class DaylexApp extends ConsumerWidget {
+  const DaylexApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

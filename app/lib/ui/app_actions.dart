@@ -256,7 +256,7 @@ class AppActions {
       final path = await ref.read(exportServiceProvider).export(doc);
       if (path != null) toast(_l.exportedTo(path));
     } catch (e) {
-      debugPrint('PaperAgent export: $e');
+      debugPrint('Daylex export: $e');
       toast(_l.exportFailed(describePdfFailure(_l, e)));
     }
   }

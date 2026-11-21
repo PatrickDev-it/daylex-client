@@ -1,10 +1,11 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/document/export/cell_value.dart';
-import 'package:paper_agent/features/document/export/export_model.dart';
-import 'package:paper_agent/features/document/export/export_text.dart';
-import 'package:paper_agent/features/document/export/image_info.dart';
+import 'package:daylex/features/document/export/cell_value.dart';
+import 'package:daylex/features/document/export/export_model.dart';
+import 'package:daylex/features/document/export/export_text.dart';
+import 'package:daylex/features/document/export/image_info.dart';
+import 'package:daylex/features/document/model/document.dart';
 
 import 'export_fixture.dart';
 
@@ -154,18 +155,11 @@ void main() {
   group('buildExportDoc', () {
     final d = buildExportDoc(fixtureDocument());
 
-    test('opens with the title, the subtitle and the facts, then the pages', () {
-      expect(d.blocks.take(d.bodyStart).map((b) => b.runtimeType), [ExTitle, ExSubtitle, ExFact, ExFact, ExFact]);
-      expect((d.blocks[2] as ExFact).label, 'Destinatario');
-      expect((d.blocks[4] as ExFact).value, 'novembre 2026');
+    test('opens with the first page, with no front matter of its own (rfc/055)', () {
+      expect(d.blocks.first, isA<ExHeading>().having((h) => h.text, 'text', 'Premessa'));
+      expect(d.blocks.whereType<ExPageBreak>(), hasLength(1));
       expect(d.creator, 'Avv. Mario Bianchi');
       expect(d.status, 'In revisione');
-    });
-
-    test('labels a page unless its first heading says the same', () {
-      final labels = d.blocks.whereType<ExSectionLabel>().map((l) => l.text);
-      expect(labels, ['Allegati e importi'], reason: 'the first page starts with the heading Premessa');
-      expect(d.blocks.whereType<ExPageBreak>(), hasLength(1));
     });
 
     test('numbers the tables and names them after the heading before', () {
@@ -187,6 +181,58 @@ void main() {
     test('pads a table to its widest row', () {
       final doc = sheetNamesDocument(['x']);
       expect(buildExportDoc(doc).tables.single.rows.single, hasLength(2));
+    });
+  });
+
+  group('the headers and footers of the files (rfc/055)', () {
+    const legal = DocTheme(base: StyleBase.legal);
+    PaperDocument doc(DocTheme theme, {List<PageLayout> layouts = const [PageLayout.standard, PageLayout.standard]}) =>
+        PaperDocument(
+          id: 'r',
+          projectId: 'project-1',
+          metadata: DocMetadata(title: 'Atto', createdAt: fixtureCreated, updatedAt: fixtureUpdated),
+          theme: theme,
+          pages: [
+            for (final (i, layout) in layouts.indexed)
+              DocPage(id: 'p$i', title: 'Sezione $i', layout: layout, blocks: [ParagraphBlock(id: 'b$i', text: 'Testo.')]),
+          ],
+        );
+
+    test('a first page that repeats the others is not set apart, and the page number is left to the file', () {
+      final d = buildExportDoc(doc(legal));
+      expect(d.firstDiffers, isFalse);
+      expect(d.perPage, isFalse);
+      expect(d.first.footer.center, '{pagina}');
+      expect(d.first.header.isEmpty, isTrue);
+    });
+
+    test('a first header with the text of the others in another style is set apart', () {
+      const header = PageRegion(center: 'Studio Neri');
+      final same = legal.withRegion(RegionSlot.header, header).withRegion(RegionSlot.firstHeader, header);
+      expect(buildExportDoc(doc(same)).firstDiffers, isFalse);
+      final bigger = same.withRegion(RegionSlot.firstHeader, header.copyWith(style: BlockStyle.of({'size': 14})));
+      expect(buildExportDoc(doc(bigger)).firstDiffers, isTrue);
+      expect(buildExportDoc(doc(bigger)).first.header.style!.size, 14);
+    });
+
+    test('a cover page shows neither header nor footer', () {
+      final d = buildExportDoc(doc(legal, layouts: const [PageLayout.cover, PageLayout.standard]));
+      expect(d.first.footer.isEmpty, isTrue);
+      expect(d.pages.first.footer.isEmpty, isTrue);
+      expect(d.pages.last.footer.center, '{pagina}');
+      expect(d.perPage, isTrue);
+    });
+
+    test('a header naming the section changes with each page', () {
+      final d = buildExportDoc(doc(legal.withRegion(RegionSlot.header, const PageRegion(right: '{sezione}'))));
+      expect(d.pages.map((p) => p.header.right), ['Sezione 0', 'Sezione 1']);
+      expect(d.perPage, isTrue);
+    });
+
+    test('a header whose texts all come out empty is no header', () {
+      final d = buildExportDoc(doc(legal.withRegion(RegionSlot.header, const PageRegion(left: '{cliente}', line: true))));
+      expect(d.pages.first.header.isEmpty, isTrue);
+      expect(d.pages.first.header.key, isEmpty);
     });
   });
 }

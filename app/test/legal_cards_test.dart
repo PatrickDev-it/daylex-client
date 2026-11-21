@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/agent/agent_controller.dart';
-import 'package:paper_agent/ui/chat/components/legal_cards.dart';
+import 'package:daylex/features/agent/agent_controller.dart';
+import 'package:daylex/ui/chat/components/legal_cards.dart';
 
 import 'test_app.dart';
 

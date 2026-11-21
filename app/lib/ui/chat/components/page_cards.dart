@@ -4,8 +4,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../features/document/render/page_images.dart';
-import '../../../features/document/render/pdf_renderer.dart'
-    show kA4AspectRatio;
 import '../../../features/workspace/workspace_state.dart';
 import '../../../l10n/l10n.dart';
 import '../../../l10n/labels.dart';
@@ -52,7 +50,7 @@ class PageThumbnail extends ConsumerWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: AspectRatio(
-        aspectRatio: kA4AspectRatio,
+        aspectRatio: ref.watch(snapshotAspectRatioProvider(snapshot)),
         child: switch (image) {
           AsyncData(:final value) => Image.memory(
             value,

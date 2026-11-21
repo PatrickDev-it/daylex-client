@@ -8,6 +8,7 @@ import 'package:printing/printing.dart';
 import '../../storage/local_store.dart';
 import '../../workspace/pdf_export.dart';
 import '../model/document.dart';
+import 'pdf_renderer.dart';
 
 /// Immutable document versions referenced by chat components.
 ///
@@ -33,7 +34,7 @@ class SnapshotStore {
       try {
         disk.writeSnapshot(id, doc.toJson());
       } on FileSystemException catch (e) {
-        debugPrint('PaperAgent: could not save version $id: $e');
+        debugPrint('Daylex: could not save version $id: $e');
       }
     }
     return id;
@@ -57,6 +58,13 @@ void _keepAWhile(Ref ref) {
   ref.onResume(() => release?.cancel());
   ref.onDispose(() => release?.cancel());
 }
+
+/// Width over height of a snapshot's pages, upright or landscape as its style says: the shape a card keeps before
+/// and after its page is drawn.
+final snapshotAspectRatioProvider = Provider.autoDispose.family<double, String>((ref, id) {
+  final doc = ref.read(snapshotStoreProvider).get(id);
+  return doc == null ? kA4AspectRatio : pageAspectRatio(doc);
+});
 
 /// PDF bytes of a snapshot, rendered once on a background isolate and kept while any of its pages is.
 final snapshotPdfProvider = FutureProvider.autoDispose.family<Uint8List, String>((ref, id) async {

@@ -1,10 +1,10 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
-project(paper_agent LANGUAGES CXX)
+project(daylex LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
-set(BINARY_NAME "paper_agent")
+set(BINARY_NAME "Daylex")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
@@ -52,6 +52,9 @@ add_subdirectory(${FLUTTER_MANAGED_DIR})
 # Application build; see runner/CMakeLists.txt.
 add_subdirectory("runner")
 
+# What an install from before the rename starts; see legacy_launcher/CMakeLists.txt.
+add_subdirectory("legacy_launcher")
+
 
 # Generated plugin build rules, which manage building the plugins and adding
 # them to the application.
@@ -82,6 +85,9 @@ if(NOT CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS)
 endif()
 
 install(TARGETS ${BINARY_NAME} RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}"
+  COMPONENT Runtime)
+
+install(TARGETS paper_agent RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}"
   COMPONENT Runtime)
 
 install(FILES "${FLUTTER_ICU_DATA_FILE}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"

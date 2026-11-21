@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/document/export/export_model.dart';
-import 'package:paper_agent/features/document/export/export_sheets.dart';
-import 'package:paper_agent/features/document/export/xlsx_writer.dart';
-import 'package:paper_agent/features/document/model/document.dart';
+import 'package:daylex/features/document/export/export_model.dart';
+import 'package:daylex/features/document/export/export_sheets.dart';
+import 'package:daylex/features/document/export/xlsx_writer.dart';
+import 'package:daylex/features/document/model/document.dart';
 import 'package:xml/xml.dart';
 
 import 'export_fixture.dart';
@@ -172,11 +172,12 @@ void main() {
       expectWords(strings, fixtureWords.where((w) => !const ['€ 1.234,56', '12/03/2024', '18,5%'].contains(w)), reason: 'sharedStrings');
       expect(forbiddenChars.hasMatch(textOf(parts, 'xl/sharedStrings.xml')), isFalse);
       final testo = _rows(parts, 3).map((r) => r.single.value).toList();
-      expect(testo.first, 'Parere pro veritate — Società Rossi & Figli S.r.l.');
+      expect(testo.first, 'Premessa', reason: 'the first page opens the text, with no title of its own');
+      expect(testo, contains('Fine della tabella.'), reason: 'the text without its styling (rfc/055)');
       expect(testo, contains('• Primo punto: àèéìòù'));
       expect(testo, contains('Valore della causa: € 125.000,00 (+12%)'));
       expect(testo, contains('[Immagine: Planimetria & rilievo]'));
-      expect(_bold(parts, _rows(parts, 3).first.single.style), isTrue, reason: 'the title row is bold');
+      expect(_bold(parts, _rows(parts, 3).first.single.style), isTrue, reason: 'a heading row is bold');
     });
 
     test('names the application, the author and the dates in the properties', () {
@@ -223,7 +224,7 @@ void main() {
       expectWellFormed(p);
       expectConsistentOpc(p);
       final values = _rows(p, 1).map((r) => r.isEmpty ? '' : r.single.value).toList();
-      expect(values, containsAll(['Solo testo', 'Titolo del paragrafo', 'Primo paragrafo; con punto e virgola.', 'Secondo "paragrafo"\ncon a capo.', '=1+1']));
+      expect(values, containsAll(['Titolo del paragrafo', 'Primo paragrafo; con punto e virgola.', 'Secondo "paragrafo"\ncon a capo.', '=1+1']));
       expect(elements(xmlOf(p, 'xl/worksheets/sheet1.xml'), 'pane'), isEmpty);
     });
 

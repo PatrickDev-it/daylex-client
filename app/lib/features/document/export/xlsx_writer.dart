@@ -27,8 +27,7 @@ const _xfHeader = 1, _xfText = 2, _xfCurrency = 3, _xfDate = 4, _xfPercent = 5, 
 const _maxCell = 32767;
 
 Uint8List encodeXlsx(PaperDocument doc) {
-  final d = buildExportDoc(doc);
-  final sheets = buildSheets(d);
+  final (doc: d, :sheets) = exportSheets(doc);
   final strings = _SharedStrings();
   final xml = [for (final (i, s) in sheets.indexed) _sheet(s, selected: i == 0, strings: strings)];
 

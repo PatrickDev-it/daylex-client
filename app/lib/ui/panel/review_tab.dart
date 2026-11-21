@@ -5,7 +5,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../core/theme/app_theme.dart';
 import '../../features/agent/agent_controller.dart';
 import '../../features/document/render/page_images.dart';
-import '../../features/document/render/pdf_renderer.dart';
 import '../../features/document/service/document_diff.dart';
 import '../../features/workspace/review_state.dart';
 import '../../l10n/l10n.dart';
@@ -294,7 +293,8 @@ class _PageDiff extends ConsumerWidget {
           const SizedBox(height: 8),
           if (snapshot == null || index == null)
             AspectRatio(
-              aspectRatio: kA4AspectRatio,
+              // The page this side lacks takes the shape of the one the other side shows.
+              aspectRatio: ref.watch(snapshotAspectRatioProvider(after ? entry.before : entry.after)),
               child: OutlinedBox(
                 radius: AppTheme.radiusXs,
                 child: Center(

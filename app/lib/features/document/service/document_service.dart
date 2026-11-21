@@ -180,8 +180,8 @@ class DocumentService {
       }
     });
     if (pageIndex != null) return next;
-    // A document-wide replace also covers the details shown on the cover
-    // and in the library, so renaming or anonymising a party is complete.
+    // A document-wide replace also covers the details shown in the library and the headers and footers, so
+    // renaming or anonymising a party is complete.
     final meta = next.metadata;
     return next.copyWith(
       metadata: meta.copyWith(
@@ -189,6 +189,7 @@ class DocumentService {
         subtitle: meta.subtitle.replaceAll(find, replace),
         client: meta.client.replaceAll(find, replace),
       ),
+      theme: next.theme.replaceText(find, replace),
     );
   }
 
@@ -198,7 +199,7 @@ class DocumentService {
     var count = 0;
     if (pageIndex == null) {
       final meta = doc.metadata;
-      for (final t in [meta.title, meta.subtitle, meta.client]) {
+      for (final t in [meta.title, meta.subtitle, meta.client, ...doc.theme.regionTexts]) {
         count += find.allMatches(t).length;
       }
     }

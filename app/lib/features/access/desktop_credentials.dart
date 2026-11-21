@@ -16,7 +16,7 @@ abstract interface class CredentialVault {
 
 class SystemCredentialVault implements CredentialVault {
   const SystemCredentialVault();
-  static const _channel = MethodChannel('paper_agent/window');
+  static const _channel = MethodChannel('daylex/window');
   @override
   Future<String?> read(String key) =>
       _channel.invokeMethod<String>('readCredential', {'key': key});
@@ -59,8 +59,7 @@ class DesktopCredentials extends ChangeNotifier {
 
   static File? get legacyFile {
     if (kIsWeb) return null;
-    final home = userHome();
-    return home == null ? null : File('$home/.paperagent/server.json');
+    return serverConfigFile();
   }
 
   Future<void> initialize({File? legacy}) async {

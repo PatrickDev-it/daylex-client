@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:cryptography/cryptography.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/update/installer.dart';
+import 'package:daylex/features/update/installer.dart';
 
 void main() {
   for (final scenario in ['success', 'tampered', 'invalid']) {
@@ -9,10 +9,10 @@ void main() {
       final root = Directory.systemTemp.createTempSync('daylex-installer-');
       addTearDown(() => root.deleteSync(recursive: true));
       final app = Directory('${root.path}/Installed App')..createSync();
-      final old = File('${app.path}/paper_agent')..writeAsStringSync('#!/bin/sh\nexit 0\n');
+      final old = File('${app.path}/daylex')..writeAsStringSync('#!/bin/sh\nexit 0\n');
       await Process.run('chmod', ['+x', old.path]);
       final source = Directory('${root.path}/source')..createSync();
-      final next = File('${source.path}/paper_agent')..writeAsStringSync('#!/bin/sh\n# updated\nexit 0\n');
+      final next = File('${source.path}/daylex')..writeAsStringSync('#!/bin/sh\n# updated\nexit 0\n');
       await Process.run('chmod', ['+x', next.path]);
       if (scenario != 'invalid') {
         Directory('${source.path}/lib').createSync();

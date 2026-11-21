@@ -8,7 +8,7 @@ import 'presentation/ui_components.dart';
 const lawyer = ChatUser(id: 'user', name: 'Tu');
 
 /// The agent's side of every chat.
-const paperAgent = ChatUser(id: 'agent', name: 'PaperAgent');
+const daylexAgent = ChatUser(id: 'agent', name: 'Daylex');
 
 /// Keys of a chat message's `customProperties` that the app reads back.
 abstract final class ChatProps {
@@ -77,11 +77,11 @@ class ChatCards {
 
   /// A short line of the app's own, e.g. "_Stopped._".
   ChatMessage note(String text) =>
-      say(paperAgent, text, id: clock.id('a'), at: clock.stamp());
+      say(daylexAgent, text, id: clock.id('a'), at: clock.stamp());
 
   ChatMessage failure(String message) => ChatMessage(
     text: message,
-    user: paperAgent,
+    user: daylexAgent,
     createdAt: clock.stamp(),
     hasError: true,
     errorMessage: message,
@@ -99,7 +99,7 @@ class ChatCards {
     String text, {
     required bool streaming,
   }) => say(
-    paperAgent,
+    daylexAgent,
     text,
     id: id,
     at: at,
@@ -174,7 +174,7 @@ class ChatCards {
     required String text,
     required Map<String, dynamic> data,
   }) => ChatMessage.rich(
-    user: paperAgent,
+    user: daylexAgent,
     resultKind: kind,
     id: id,
     createdAt: at,

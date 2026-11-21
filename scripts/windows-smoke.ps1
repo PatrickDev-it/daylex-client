@@ -9,7 +9,7 @@ if ($Installer) {
 } else {
   Expand-Archive -LiteralPath $Archive -DestinationPath $target
 }
-$exe = Join-Path $target 'paper_agent.exe'
+$exe = Join-Path $target 'Daylex.exe'
 $runtimeNames = @('msvcp140.dll','vcruntime140.dll','vcruntime140_1.dll')
 foreach ($name in $runtimeNames) {
   if (!(Test-Path -LiteralPath (Join-Path $target $name))) { throw "Package missing required runtime: $name" }
