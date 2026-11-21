@@ -28,6 +28,28 @@ class WebKitBrowser implements BrowserEngine {
   }
 }
 
+/// What a failed load of the page means to the lawyer, from what WebKit reports; null when nothing failed. WebKit
+/// names a network failure only by its code in NSURLErrorDomain, and ends a load whose certificate was refused
+/// ([refusedHost], the site that presented it) as cancelled (-999), as it does when the lawyer goes elsewhere.
+@visibleForTesting
+PageProblem? webKitProblem(int code, {String? domain, Uri? url, String? refusedHost}) {
+  if (domain == 'NSURLErrorDomain') {
+    return switch (code) {
+      -999 => refusedHost != null && url?.host == refusedHost ? PageProblem.certificate : null,
+      -1001 => PageProblem.timeout,
+      // The site's name unknown, no connection to it, the connection lost, no network at all.
+      -1003 || -1004 || -1005 || -1006 || -1009 => PageProblem.unreachable,
+      // No secure connection: the certificate expired, untrusted, of an unknown root, not yet valid, or one of ours
+      // refused or required.
+      <= -1200 && >= -1206 => PageProblem.certificate,
+      _ => PageProblem.other,
+    };
+  }
+  // A policy took the load over (102, a download or the system), or a plug-in shows it (204, a PDF): nothing failed.
+  if (code == 102 || code == 204) return null;
+  return PageProblem.other;
+}
+
 class WebKitPage extends ScriptedPage {
   WebKitPage._(PageOptions options)
     : _script = pageScript(appKeys: options.appKeys, outsideFieldKeys: options.outsideFieldKeys, post: _post) {
@@ -38,12 +60,10 @@ class WebKitPage extends ScriptedPage {
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: _decide,
-          onPageStarted: (url) => current = current.copyWith(
-            url: Uri.tryParse(url),
-            loading: true,
-            problem: () => null,
-            icon: () => null,
-          ),
+          onPageStarted: (url) {
+            _refusedHost = null;
+            current = current.copyWith(url: Uri.tryParse(url), loading: true, problem: () => null, icon: () => null);
+          },
           // The page script has no "before the page's own" slot here: it goes in as early as the page lets it.
           onProgress: (_) => unawaited(_install()),
           onPageFinished: (_) async {
@@ -65,11 +85,22 @@ class WebKitPage extends ScriptedPage {
             );
           },
           onWebResourceError: (e) {
-            // Cancelled (-999), or interrupted by a policy (102): the lawyer went elsewhere, nothing failed.
-            if (e.isForMainFrame == false || e.errorCode == -999 || e.errorCode == 102) return;
-            current = current.copyWith(loading: false, problem: () => _problemOf(e.errorType));
+            if (e.isForMainFrame == false) return;
+            final problem = webKitProblem(
+              e.errorCode,
+              domain: e is WebKitWebResourceError ? e.domain : null,
+              url: Uri.tryParse(e.url ?? ''),
+              refusedHost: _refusedHost,
+            );
+            if (problem != null) current = current.copyWith(loading: false, problem: () => problem);
           },
-          onSslAuthError: (e) => e.cancel(),
+          // A certificate that is not valid is never accepted (rfc/052 §9). WebKit reports the refused load only as
+          // cancelled: the site that presented it is kept to tell the two apart.
+          onSslAuthError: (e) {
+            final error = e.platform;
+            if (error is WebKitSslAuthError) _refusedHost = error.host;
+            unawaited(e.cancel());
+          },
         ),
       );
     if (dialogs != null) {
@@ -80,7 +111,8 @@ class WebKitPage extends ScriptedPage {
     }
     final platform = _controller.platform;
     if (platform is WebKitWebViewController) {
-      unawaited(platform.setInspectable(false));
+      // Not inspectable is already WebKit's default; before macOS 13.3 the setting does not exist and the call fails.
+      platform.setInspectable(false).ignore();
       unawaited(platform.setAllowsBackForwardNavigationGestures(true));
     }
   }
@@ -91,6 +123,9 @@ class WebKitPage extends ScriptedPage {
   /// Camera, microphone and the rest: no site gets them here (rfc/052 §9).
   final _controller = WebViewController(onPermissionRequest: (request) => request.deny());
   final String _script;
+
+  /// The site whose certificate this load refused, until the next load starts.
+  String? _refusedHost;
 
   Future<void> _install() async {
     try {
@@ -115,13 +150,6 @@ class WebKitPage extends ScriptedPage {
         return NavigationDecision.prevent;
     }
   }
-
-  static PageProblem _problemOf(WebResourceErrorType? type) => switch (type) {
-    WebResourceErrorType.failedSslHandshake => PageProblem.certificate,
-    WebResourceErrorType.timeout => PageProblem.timeout,
-    WebResourceErrorType.connect || WebResourceErrorType.hostLookup => PageProblem.unreachable,
-    _ => PageProblem.other,
-  };
 
   @override
   Future<void> load(Uri uri) {

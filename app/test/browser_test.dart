@@ -14,6 +14,7 @@ import 'package:paper_agent/features/browser/browser_state.dart';
 import 'package:paper_agent/features/browser/engine/engine.dart';
 import 'package:paper_agent/features/browser/engine/page_script.dart' hide KeyMessage;
 import 'package:paper_agent/features/browser/engine/page_script.dart' as script show KeyMessage;
+import 'package:paper_agent/features/browser/engine/webkit_page.dart' show webKitProblem;
 import 'package:paper_agent/features/browser/live_pages.dart';
 import 'package:paper_agent/features/browser/page_file.dart';
 import 'package:paper_agent/features/browser/portals.dart';
@@ -347,6 +348,24 @@ void main() {
       expect(file.name, 'Sentenza 2026-11-21 09.30.pdf');
       expect(file.bytes, bytes);
     });
+  });
+
+  test('WebKit: a network failure is named by its code, and a refused certificate is not a page left behind', () {
+    PageProblem? url(int code, {String? at, String? refused}) =>
+        webKitProblem(code, domain: 'NSURLErrorDomain', url: at == null ? null : Uri.parse(at), refusedHost: refused);
+    expect(url(-1003), PageProblem.unreachable, reason: 'the name of the site is unknown');
+    expect(url(-1004), PageProblem.unreachable, reason: 'the site does not answer');
+    expect(url(-1009), PageProblem.unreachable, reason: 'no network');
+    expect(url(-1001), PageProblem.timeout);
+    expect(url(-1202), PageProblem.certificate);
+    expect(url(-1201), PageProblem.certificate);
+    expect(url(-1100), PageProblem.other);
+    expect(url(-999, at: 'https://a.it/', refused: 'a.it'), PageProblem.certificate);
+    expect(url(-999, at: 'https://a.it/', refused: 'cdn.b.it'), isNull, reason: 'another site, refused alone');
+    expect(url(-999, at: 'https://a.it/'), isNull, reason: 'the lawyer went elsewhere');
+    expect(webKitProblem(102, domain: 'WebKitErrorDomain'), isNull);
+    expect(webKitProblem(204, domain: 'WebKitErrorDomain'), isNull);
+    expect(webKitProblem(2, domain: 'WKErrorDomain'), PageProblem.other, reason: 'the page process ended');
   });
 
   group('live pages', () {
