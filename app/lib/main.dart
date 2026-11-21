@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'app.dart';
 import 'core/theme/app_theme.dart';
 import 'core/platform/sandbox_migration.dart';
 import 'core/platform/instance_lock.dart';
+import 'core/platform/retired_whatsapp.dart';
 import 'core/platform/user_dirs.dart';
 import 'features/access/desktop_credentials.dart';
 import 'features/access/service_status.dart';
@@ -40,6 +42,7 @@ Future<void> main() async {
   }
   // Before anything reads the saved work: on a Mac coming from the sandboxed app, it is still in the container.
   if (!kIsWeb) migrateSandboxData();
+  if (!kIsWeb) unawaited(forgetWhatsappSession());
   await DesktopCredentials.instance.initialize();
   runApp(
     ProviderScope(

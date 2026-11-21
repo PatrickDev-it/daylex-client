@@ -22,8 +22,57 @@ const maxHistoryTurns = 200;
 /// into memory at once.
 const maxAttachmentBytes = 146800640;
 
-const maxFileBytes = 41943040;
+/// One file of the case file, sent in chunks of [uploadChunkBytes] read from
+/// disk; a file sent whole, base64 inside a request, is at most
+/// [maxInlineFileBytes].
+const maxFileBytes = 2147483648;
+const maxInlineFileBytes = 67108864;
+const uploadChunkBytes = 8388608;
 const maxCaseDocuments = 300;
+
+/// The files a case file takes, by extension, with the media type sent for
+/// each: every one is read, or kept and said unread (recordings, DICOM).
+const attachableMediaTypes = <String, String>{
+  'pdf': 'application/pdf',
+  'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  'odt': 'application/vnd.oasis.opendocument.text',
+  'ods': 'application/vnd.oasis.opendocument.spreadsheet',
+  'odp': 'application/vnd.oasis.opendocument.presentation',
+  'rtf': 'application/rtf',
+  'eml': 'message/rfc822',
+  'msg': 'application/vnd.ms-outlook',
+  'zip': 'application/zip',
+  'html': 'text/html',
+  'xml': 'application/xml',
+  'csv': 'text/csv',
+  'txt': 'text/plain',
+  'heic': 'image/heic',
+  'doc': 'application/msword',
+  'xls': 'application/vnd.ms-excel',
+  'ppt': 'application/vnd.ms-powerpoint',
+  'p7m': 'application/pkcs7-mime',
+  'tsd': 'application/timestamped-data',
+  'm7m': 'message/rfc822',
+  'dcm': 'application/dicom',
+  'htm': 'text/html',
+  'md': 'text/markdown',
+  'png': 'image/png',
+  'jpg': 'image/jpeg',
+  'jpeg': 'image/jpeg',
+  'tif': 'image/tiff',
+  'tiff': 'image/tiff',
+  'gif': 'image/gif',
+  'bmp': 'image/bmp',
+  'webp': 'image/webp',
+  'heif': 'image/heif',
+  'mp3': 'audio/mpeg',
+  'wav': 'audio/wav',
+  'm4a': 'audio/mp4',
+  'mp4': 'video/mp4',
+  'mov': 'video/quicktime',
+};
 
 /// What one page of a document holds: the PDF lays each page on one A4 sheet,
 /// and the agent writes at most this many words per page.

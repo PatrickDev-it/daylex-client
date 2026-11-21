@@ -9,10 +9,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/app_localizations.dart';
 
+import '../document/export/document_export.dart';
 import '../document/model/document.dart';
 import '../document/model/document_review.dart';
 import '../document/render/page_fit.dart';
 import '../document/render/pdf_renderer.dart';
+import '../storage/local_store.dart';
 import 'workspace_state.dart';
 import 'document_review.dart';
 
@@ -113,47 +115,91 @@ String describePdfFailure(AppLocalizations l, Object? error) =>
       _ => l.failureUnexpected,
     };
 
+/// The files this app exported on this computer, oldest first: the only paths an export card looks at, opens or
+/// shows in their folder. A path a chat carries from anywhere else — the server, the model's text, a chat saved
+/// by an older version — is never touched. Kept across launches, the oldest dropped past [ExportedFiles.kept].
+final exportedFilesProvider = NotifierProvider<ExportedFiles, List<String>>(
+  ExportedFiles.new,
+);
+
+class ExportedFiles extends Notifier<List<String>> {
+  static const kept = 200;
+
+  @override
+  List<String> build() => [
+    for (final path
+        in ref.read(localStoreProvider)?.readExports()?['paths'] as List? ??
+            const [])
+      if (path is String) path,
+  ];
+
+  void add(String path) {
+    final paths = [...state.where((p) => p != path), path];
+    state = paths.length > kept ? paths.sublist(paths.length - kept) : paths;
+    final store = ref.read(localStoreProvider);
+    if (store == null) return;
+    try {
+      store.writeExports({'paths': state});
+    } on FileSystemException catch (e) {
+      store.saveFailed(e);
+    }
+  }
+}
+
 final exportServiceProvider = Provider((ref) => ExportService(ref));
+
+/// The bytes of a document in a format other than the PDF, off the interface thread ([compute]).
+Uint8List _encode((PaperDocument, ExportFormat) job) =>
+    encodeDocument(job.$1, job.$2);
 
 class ExportService {
   ExportService(this._ref);
 
   final Ref _ref;
 
-  /// Asks for a location and writes the PDF. Returns the path, or null if
-  /// the user cancelled.
-  Future<String?> export(PaperDocument doc) async {
-    final bytes = await _ref.read(documentPdfBytesProvider(doc).future);
+  /// Asks for a location and writes [doc] in [format]: the PDF the renderer draws, or a file written from the same
+  /// document (rfc/051). Every format passes the same review, made on the PDF. Returns the path, or null if the
+  /// user cancelled.
+  Future<String?> export(
+    PaperDocument doc, {
+    ExportFormat format = ExportFormat.pdf,
+  }) async {
+    final pdf = await _ref.read(documentPdfBytesProvider(doc).future);
     // Fresh pre-export check; an earlier draft's report never authorises these bytes.
     final review = await _ref
         .read(documentReviewerProvider)
-        .reviewDocument(doc, pdf: bytes);
+        .reviewDocument(doc, pdf: pdf);
     review.requireExport(_ref.read(confirmedTermsProvider));
     if (!identical(_ref.read(workspaceProvider).documents[doc.id], doc)) {
       throw const DocumentReviewFailure(
         'Il documento è stato modificato durante la verifica. Ripeti l’esportazione.',
       );
     }
+    final bytes = format == ExportFormat.pdf
+        ? pdf
+        : await compute(_encode, (doc, format));
+    final name = format.fileNameOf(doc);
     if (kIsWeb) {
-      browser.download(bytes, doc.fileName, 'application/pdf');
-      return doc.fileName;
+      browser.download(bytes, name, format.mimeType);
+      return name;
     }
     final location = await getSaveLocation(
-      suggestedName: doc.fileName,
-      acceptedTypeGroups: const [
-        XTypeGroup(label: 'PDF', extensions: ['pdf']),
+      suggestedName: name,
+      acceptedTypeGroups: [
+        XTypeGroup(label: format.label, extensions: [format.extension]),
       ],
     );
     if (location == null) return null;
-    final path = location.path.toLowerCase().endsWith('.pdf')
+    final path = location.path.toLowerCase().endsWith('.${format.extension}')
         ? location.path
-        : '${location.path}.pdf';
+        : '${location.path}.${format.extension}';
     if (!identical(_ref.read(workspaceProvider).documents[doc.id], doc)) {
       throw const DocumentReviewFailure(
         'Il documento è stato modificato. Ripeti l’esportazione della versione aggiornata.',
       );
     }
     await File(path).writeAsBytes(bytes, flush: true);
+    _ref.read(exportedFilesProvider.notifier).add(path);
     return path;
   }
 }

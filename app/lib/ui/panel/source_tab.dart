@@ -81,12 +81,12 @@ class _SourceTabState extends ConsumerState<SourceTab> {
             widget.threadId,
             widget.sourceId.isEmpty ? widget.name : 'sha256:${widget.sourceId}',
             page,
-            includeOriginal: _pdf == null,
           );
       if (!mounted || request != _request) return;
       setState(() {
         _source = source;
-        _pdf = source == null ? null : source.pdfBytes ?? _pdf;
+        _pdf = source?.pdfBytes;
+        _pdfFailed = false;
         _loading = false;
       });
       if (_pdf != null && !_pdfFailed) _reveal();
@@ -109,10 +109,13 @@ class _SourceTabState extends ConsumerState<SourceTab> {
           ) ??
           false);
 
+  /// Where [_page] is in [_pdf]: the original of that page alone, or the whole file from a server before rfc/051.
+  int get _pdfPage => _viewer.pageCount > 1 ? _page : 1;
+
   void _reveal() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || _viewer.pageCount < _page) return;
-      _viewer.jumpToPage(_page);
+      if (!mounted || _viewer.pageCount < _pdfPage) return;
+      _viewer.jumpToPage(_pdfPage);
       if (_hasQuote) _viewer.searchText(widget.quote.trim());
     });
   }
@@ -181,16 +184,12 @@ class _SourceTabState extends ConsumerState<SourceTab> {
               IconButton(
                 tooltip: l.sourcePrevious,
                 icon: const Icon(LucideIcons.chevronLeft, size: 18),
-                onPressed: _page > 1
-                    ? () => pdf ? _viewer.previousPage() : _load(_page - 1)
-                    : null,
+                onPressed: _page > 1 ? () => _load(_page - 1) : null,
               ),
               IconButton(
                 tooltip: l.sourceNext,
                 icon: const Icon(LucideIcons.chevronRight, size: 18),
-                onPressed: _page < source.pages
-                    ? () => pdf ? _viewer.nextPage() : _load(_page + 1)
-                    : null,
+                onPressed: _page < source.pages ? () => _load(_page + 1) : null,
               ),
             ],
           ),
@@ -210,18 +209,14 @@ class _SourceTabState extends ConsumerState<SourceTab> {
           child: pdf
               ? SfPdfViewer.memory(
                   _pdf!,
-                  key: ValueKey('${widget.threadId}/${source.name}'),
+                  key: ValueKey('${widget.threadId}/${source.name}/$_page'),
                   controller: _viewer,
-                  initialPageNumber: _page,
                   canShowScrollHead: false,
                   canShowScrollStatus: false,
                   canShowPaginationDialog: false,
                   onDocumentLoaded: (_) => _reveal(),
                   onDocumentLoadFailed: (_) {
                     if (mounted) setState(() => _pdfFailed = true);
-                  },
-                  onPageChanged: (details) {
-                    if (mounted) setState(() => _page = details.newPageNumber);
                   },
                 )
               : _SourcePageText(

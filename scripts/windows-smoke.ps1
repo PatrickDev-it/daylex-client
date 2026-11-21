@@ -29,8 +29,6 @@ try {
   foreach ($module in $runtimeModules) {
     if ([IO.Path]::GetDirectoryName($module.FileName) -ne $target) { throw "Runtime loaded outside the package: $($module.ModuleName)" }
   }
-  & (Join-Path $target 'whatsapp_bridge/node.exe') --version
-  if ($LASTEXITCODE -ne 0) { throw 'Bundled Node failed' }
   [ordered]@{os=$os.Caption;build=$os.BuildNumber;architecture=$env:PROCESSOR_ARCHITECTURE;package='x64';version=(Get-Item $exe).VersionInfo.ProductVersion;startup=$true;appLocalRuntime=$true;sha256=(Get-FileHash $Archive -Algorithm SHA256).Hash} | ConvertTo-Json | Set-Content app/dist/windows-startup.json
 } catch {
   $startupError = $_

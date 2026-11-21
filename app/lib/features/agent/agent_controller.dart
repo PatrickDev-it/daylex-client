@@ -36,7 +36,6 @@ import 'thread_tool_host.dart';
 import 'tool_runner.dart';
 import 'turn_tracker.dart';
 import 'turn_progress.dart';
-import 'whatsapp_bridge.dart';
 
 export 'attachment_files.dart' show LeftOut;
 export 'session_state.dart';
@@ -264,9 +263,9 @@ class AgentController extends Notifier<AgentState> {
   Future<LeftOut> pickAttachments(String threadId) async =>
       addFiles(threadId, await pickAttachable(_l.attachmentTypeGroup));
 
-  /// Files picked or dropped on the window, folders opened: all of them read at once, as long as the chat's
-  /// attachments stay within [maxAttachmentBytes] (they travel in one request, and sit in memory until sent).
-  /// Returns what was left out, and why.
+  /// Files picked or dropped on the window, folders opened: all of them read at once. A file on disk stays there
+  /// until it is sent in chunks, up to [maxFileBytes]; only a file held in memory counts against the
+  /// [maxAttachmentBytes] the chat holds. Returns what was left out, and why.
   Future<LeftOut> addFiles(String threadId, List<XFile> files) async {
     final held = _state(threadId).attachments
         .fold(0, (n, a) => n + a.bytes.length);
@@ -446,7 +445,6 @@ class AgentController extends Notifier<AgentState> {
       turn,
       session.approvals,
       ref.read(snapshotStoreProvider),
-      whatsapp: kIsWeb ? null : ref.read(whatsappProvider),
     );
     final reply = session.reply = StreamedReply(
       chat,
@@ -562,6 +560,7 @@ class AgentController extends Notifier<AgentState> {
           component,
           props,
           fallback: host.activeDocument,
+          allowed: UiComponents.fromAgent,
         );
       case AgentDone():
         reply.close();
@@ -665,14 +664,16 @@ class AgentController extends Notifier<AgentState> {
     }
   }
 
-  /// Adds a rich component, snapshotting the document it shows if needed.
+  /// Adds a rich component, snapshotting the document it shows if needed. A kind outside [allowed] is logged
+  /// and dropped.
   void _addComponent(
     String threadId,
     String kind,
     Map<String, dynamic> props, {
     PaperDocument? fallback,
+    Set<String> allowed = UiComponents.all,
   }) {
-    if (!UiComponents.all.contains(kind)) {
+    if (!allowed.contains(kind)) {
       _log(threadId, LogKind.error, _l.logUnknownComponent(kind), props);
       return;
     }

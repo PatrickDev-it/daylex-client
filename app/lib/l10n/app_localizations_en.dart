@@ -55,37 +55,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings => 'Settings';
 
   @override
-  String get whatsappTitle => 'WhatsApp';
-
-  @override
-  String get whatsappConnect => 'Connect WhatsApp';
-
-  @override
-  String get whatsappConnected => 'Connected';
-
-  @override
-  String get whatsappWaiting => 'Waiting for connection';
-
-  @override
-  String get whatsappScanQr => 'Scan the QR in WhatsApp > Linked devices';
-
-  @override
-  String get whatsappUnavailable => 'WhatsApp unavailable';
-
-  @override
-  String get whatsappHelp =>
-      'Text messages and appointments through the agent, with the session saved on this computer.';
-
-  @override
-  String get whatsappCheckStatus => 'Checking WhatsApp';
-
-  @override
-  String get whatsappSearchContact => 'Searching WhatsApp contacts';
-
-  @override
-  String get whatsappSendText => 'Sending a WhatsApp message';
-
-  @override
   String pageCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -981,7 +950,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatDropFormats =>
-      'PDF, signed .p7m, DOCX, TXT and scans · several files or a whole folder';
+      'PDF, Word, Excel, PEC and e-mail, ZIP, signed .p7m and scans · several files or a whole folder';
 
   @override
   String get composerHint => 'Ask for a change, or describe a document…';
@@ -1644,6 +1613,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get toolExportPdf => 'Exporting the PDF';
+
+  @override
+  String toolExportFile(String format) {
+    return 'Exporting to $format';
+  }
 
   @override
   String get storeNoticeNewer =>

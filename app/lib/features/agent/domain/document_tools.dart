@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import '../../../l10n/app_localizations.dart';
+import '../../document/export/document_export.dart';
 import '../../document/model/document.dart';
 import '../../document/model/operations.dart';
 import '../../document/render/page_fit.dart';
@@ -58,10 +59,6 @@ final appToolSpecs = [
     ToolSpec.fromJson((spec as Map).cast<String, dynamic>()),
 ];
 
-final documentToolSpecs = appToolSpecs
-    .where((t) => !t.name.startsWith('whatsapp_'))
-    .toList();
-
 /// What the executor needs from the app. Implemented by the agent controller
 /// on top of the workspace state, so tools never reach into widgets.
 abstract interface class ToolHost {
@@ -75,8 +72,8 @@ abstract interface class ToolHost {
   /// [doc] with every page the PDF cannot hold split into pages it can ([PageFitter]).
   Future<FittedDocument> fitPages(PaperDocument doc);
 
-  /// Returns the saved path, or null if the user cancelled.
-  Future<String?> exportActiveDocument();
+  /// Saves the active document as a file in [format]. Returns the saved path, or null if the user cancelled.
+  Future<String?> exportActiveDocument({ExportFormat format = ExportFormat.pdf});
 
   AgentAttachment? attachment(String name);
 }
@@ -104,7 +101,7 @@ class ToolResult {
   };
 }
 
-/// The names of the tools, as the server's registry declares them (see [documentToolSpecs]): the one place the
+/// The names of the tools, as the server's registry declares them (see [appToolSpecs]): the one place the
 /// app spells them.
 abstract final class ToolNames {
   static const createDocument = 'create_document';
@@ -122,6 +119,7 @@ abstract final class ToolNames {
   static const setTheme = 'set_theme';
   static const updateMetadata = 'update_metadata';
   static const exportPdf = 'export_pdf';
+  static const exportFile = 'export_file';
 
   static const all = {
     createDocument,
@@ -139,6 +137,7 @@ abstract final class ToolNames {
     setTheme,
     updateMetadata,
     exportPdf,
+    exportFile,
   };
 }
 
@@ -151,9 +150,6 @@ String describeToolCall(
   final page = args['page'];
   final on = page is num ? l.toolOnPage('$page') : '';
   return switch (name) {
-    'whatsapp_status' => l.whatsappCheckStatus,
-    'whatsapp_find_contact' => l.whatsappSearchContact,
-    'whatsapp_send_message' => l.whatsappSendText,
     ToolNames.createDocument => l.toolCreateDocument(
       '${args['title'] ?? l.toolDocumentFallback}',
     ),
@@ -171,6 +167,9 @@ String describeToolCall(
     ToolNames.setTheme => l.toolSetTheme,
     ToolNames.updateMetadata => l.toolUpdateMetadata,
     ToolNames.exportPdf => l.toolExportPdf,
+    ToolNames.exportFile => l.toolExportFile(
+      exportFileFormats[args['format']]?.label ?? '${args['format']}',
+    ),
     _ => l.operationRunning,
   };
 }
@@ -198,6 +197,7 @@ class DocumentToolExecutor {
     ToolNames.setTheme: _setTheme,
     ToolNames.updateMetadata: _updateMetadata,
     ToolNames.exportPdf: _exportPdf,
+    ToolNames.exportFile: _exportFile,
   };
 
   /// The tools it runs on the open document, besides [ToolNames.createDocument] which opens one.
@@ -433,12 +433,20 @@ class DocumentToolExecutor {
     ], 'Dati aggiornati');
   }
 
-  Future<ToolResult> _exportPdf(_Run r) async {
-    final path = await host.exportActiveDocument();
-    return path == null
-        ? const ToolResult.error('Esportazione annullata.')
-        : ToolResult.ok('Salvato in $path', data: {'path': path});
+  Future<ToolResult> _exportPdf(_Run r) async =>
+      _saved(await host.exportActiveDocument());
+
+  Future<ToolResult> _exportFile(_Run r) async {
+    final format = exportFileFormats[r.args['format']];
+    if (format == null) {
+      throw _ArgumentError('Formato "${r.args['format']}" non supportato.');
+    }
+    return _saved(await host.exportActiveDocument(format: format));
   }
+
+  static ToolResult _saved(String? path) => path == null
+      ? const ToolResult.error('Esportazione annullata.')
+      : ToolResult.ok('Salvato in $path', data: {'path': path});
 
   Future<ToolResult> _create(Map<String, dynamic> a) async {
     final title = (a['title'] as String?)?.trim();

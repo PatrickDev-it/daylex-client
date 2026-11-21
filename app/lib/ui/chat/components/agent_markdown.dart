@@ -22,6 +22,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../l10n/l10n.dart';
 import '../../../l10n/labels.dart';
 import '../../../features/agent/domain/source_reference.dart';
+import '../../../features/agent/presentation/ui_components.dart';
 import '../../common/copy_feedback.dart';
 import '../../common/widgets.dart';
 import '../../common/web_link.dart';
@@ -488,6 +489,9 @@ class _ComponentFence extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!UiComponents.fromAgent.contains(kind)) {
+      return Text(context.l10n.cardUnavailable);
+    }
     if (!closed) {
       return ComponentFrame(
         icon: LucideIcons.loader2,

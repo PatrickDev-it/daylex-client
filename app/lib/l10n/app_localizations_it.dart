@@ -55,38 +55,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get settings => 'Impostazioni';
 
   @override
-  String get whatsappTitle => 'WhatsApp';
-
-  @override
-  String get whatsappConnect => 'Collega WhatsApp';
-
-  @override
-  String get whatsappConnected => 'Collegato';
-
-  @override
-  String get whatsappWaiting => 'In attesa del collegamento';
-
-  @override
-  String get whatsappScanQr =>
-      'Scansiona il QR da WhatsApp > Dispositivi collegati';
-
-  @override
-  String get whatsappUnavailable => 'WhatsApp non disponibile';
-
-  @override
-  String get whatsappHelp =>
-      'Messaggi di testo e appuntamenti tramite l\'agente, con sessione salvata su questo computer.';
-
-  @override
-  String get whatsappCheckStatus => 'Verifico WhatsApp';
-
-  @override
-  String get whatsappSearchContact => 'Cerco un contatto WhatsApp';
-
-  @override
-  String get whatsappSendText => 'Invio un messaggio WhatsApp';
-
-  @override
   String pageCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -985,7 +953,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get chatDropFormats =>
-      'PDF, .p7m firmati, DOCX, TXT e scansioni · più documenti o un\'intera cartella';
+      'PDF, Word, Excel, PEC ed e-mail, ZIP, .p7m firmati e scansioni · più documenti o un\'intera cartella';
 
   @override
   String get composerHint => 'Chiedi una modifica o descrivi un documento…';
@@ -1649,6 +1617,11 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get toolExportPdf => 'Esporto il PDF';
+
+  @override
+  String toolExportFile(String format) {
+    return 'Esporto in $format';
+  }
 
   @override
   String get storeNoticeNewer =>

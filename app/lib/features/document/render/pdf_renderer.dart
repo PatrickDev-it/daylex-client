@@ -9,18 +9,20 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import '../model/document.dart';
+import 'pdfa.dart';
 
 /// Width over height of the pages the renderer makes (A4): placeholders and thumbnails take this shape.
 final kA4AspectRatio = PdfPageFormat.a4.width / PdfPageFormat.a4.height;
 
-/// Raw font files handed to the renderer. Plain bytes, so they can cross an
-/// isolate boundary together with the document.
+/// Raw font files handed to the renderer, and the colour profile its PDF/A output intent embeds. Plain bytes,
+/// so they can cross an isolate boundary together with the document.
 class PdfFontSet {
   const PdfFontSet({
     required this.regular,
     required this.medium,
     required this.semiBold,
     required this.bold,
+    required this.colorProfile,
   });
 
   final Uint8List regular;
@@ -28,21 +30,26 @@ class PdfFontSet {
   final Uint8List semiBold;
   final Uint8List bold;
 
+  /// sRGB2014.icc, unchanged (assets/icc/LICENSE.txt).
+  final Uint8List colorProfile;
+
   static Future<PdfFontSet> load() async {
-    Future<Uint8List> read(String name) async =>
-        (await rootBundle.load('assets/fonts/$name')).buffer.asUint8List();
+    Future<Uint8List> read(String path) async =>
+        (await rootBundle.load('assets/$path')).buffer.asUint8List();
     return PdfFontSet(
-      regular: await read('Inter-Regular.ttf'),
-      medium: await read('Inter-Medium.ttf'),
-      semiBold: await read('Inter-SemiBold.ttf'),
-      bold: await read('Inter-Bold.ttf'),
+      regular: await read('fonts/Inter-Regular.ttf'),
+      medium: await read('fonts/Inter-Medium.ttf'),
+      semiBold: await read('fonts/Inter-SemiBold.ttf'),
+      bold: await read('fonts/Inter-Bold.ttf'),
+      colorProfile: await read('icc/sRGB2014.icc'),
     );
   }
 }
 
 /// Converts a [PaperDocument] into PDF bytes. One model page always produces
 /// exactly one PDF page, so "page 3" means the same thing to the user, the
-/// agent and the viewer.
+/// agent and the viewer. Every PDF it makes, the preview's included, is PDF/A-1b
+/// ([newPdfaDocument]): the lawyer exports what the preview shows.
 class PdfRenderer {
   const PdfRenderer(this.fonts);
 
@@ -62,10 +69,11 @@ class PdfRenderer {
       semiBold: pw.Font.ttf(_byteData(fonts.semiBold)),
       bold: pw.Font.ttf(_byteData(fonts.bold)),
     );
-    final pdf = pw.Document(
+    final pdf = newPdfaDocument(
       title: doc.title,
       author: doc.metadata.author,
-      creator: 'PaperAgent',
+      application: 'PaperAgent',
+      colorProfile: fonts.colorProfile,
       theme: pw.ThemeData.withFont(base: f.regular, bold: f.bold),
     );
     final style = _Style(PdfColor.fromInt(doc.theme.accent), f);
@@ -775,7 +783,7 @@ class _PageBuilder {
             horizontalRadius: 6,
             verticalRadius: 6,
             child: pw.Image(
-              pw.MemoryImage(bytes),
+              OpaqueImage(bytes),
               height: img.height,
               fit: pw.BoxFit.cover,
             ),

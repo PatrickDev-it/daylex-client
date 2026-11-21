@@ -13,7 +13,6 @@ import 'domain/document_tools.dart';
 import 'presentation/ui_components.dart';
 import 'session_state.dart';
 import 'turn_tracker.dart';
-import 'whatsapp_bridge.dart';
 
 /// What a tool call reaches of the chat it runs in.
 abstract interface class ToolSurface {
@@ -49,9 +48,8 @@ class ToolRunner {
     this._host,
     this._turn,
     this._approvals,
-    this._snapshots, {
-    this._whatsapp,
-  }) : _executor = DocumentToolExecutor(_host),
+    this._snapshots,
+  ) : _executor = DocumentToolExecutor(_host),
        _expectedDocument = jsonEncode(_host.activeDocument?.toJson());
 
   final ToolSurface _surface;
@@ -61,7 +59,6 @@ class ToolRunner {
   final Approvals _approvals;
   final SnapshotStore _snapshots;
   final DocumentToolExecutor _executor;
-  final WhatsappBridge? _whatsapp;
   final _receipts = ActionReceipts();
   String _expectedDocument;
 
@@ -139,9 +136,6 @@ class ToolRunner {
             'Il documento è cambiato dopo la richiesta. Nessuna modifica applicata: '
             'chiedi di avviare una nuova richiesta sul documento aggiornato.',
           )
-        : call.name.startsWith('whatsapp_')
-        ? await (_whatsapp?.execute(call) ??
-              Future.value(const ToolResult.error('WhatsApp non disponibile.')))
         : await _executor.execute(call);
     final after = _host.activeDocument;
     if (result.ok && (spec?.mutates ?? false)) {

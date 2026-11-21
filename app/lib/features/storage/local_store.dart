@@ -295,6 +295,9 @@ class LocalStore {
   Map<String, dynamic>? readPreferences() => _read('preferences.json');
   void writePreferences(Map<String, dynamic> json) => _write('preferences.json', json);
 
+  Map<String, dynamic>? readExports() => _read('exports.json');
+  void writeExports(Map<String, dynamic> json) => _write('exports.json', json);
+
   /// A save that failed: the lawyer hears of it once, not at every keystroke.
   void saveFailed(FileSystemException e) {
     debugPrint('PaperAgent: could not save: $e');

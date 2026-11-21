@@ -175,7 +175,7 @@ void main() {
         ),
       );
       await tester.pump(const Duration(milliseconds: 500));
-      expect(find.text('WhatsApp'), findsNothing);
+      expect(find.text('Aggiornamenti'), findsNothing);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox());
     });

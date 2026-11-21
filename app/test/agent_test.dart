@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:paper_agent/features/agent/data/mock_agent_client.dart';
 import 'package:paper_agent/features/agent/domain/agent_protocol.dart';
 import 'package:paper_agent/features/agent/domain/document_tools.dart';
+import 'package:paper_agent/features/document/export/document_export.dart';
 import 'package:paper_agent/features/document/model/document.dart';
 import 'package:paper_agent/features/document/model/operations.dart';
 import 'package:paper_agent/features/document/render/page_fit.dart';
@@ -32,7 +33,7 @@ class FakeHost implements ToolHost {
   void openNewDocument(PaperDocument doc) => activeDocument = doc;
 
   @override
-  Future<String?> exportActiveDocument() async => 'C:/out.pdf';
+  Future<String?> exportActiveDocument({ExportFormat format = ExportFormat.pdf}) async => 'C:/out.pdf';
 
   @override
   Future<FittedDocument> fitPages(PaperDocument doc) async =>
@@ -67,28 +68,11 @@ Future<(List<AgentEvent>, List<ToolResult>)> runPrompt(
 
 void main() {
   test('every tool spec is a valid object schema', () {
-    final names = documentToolSpecs.map((t) => t.name).toSet();
-    expect(names.length, documentToolSpecs.length);
-    for (final spec in documentToolSpecs) {
+    final names = appToolSpecs.map((t) => t.name).toSet();
+    expect(names.length, appToolSpecs.length);
+    for (final spec in appToolSpecs) {
       expect(spec.parameters['type'], 'object', reason: spec.name);
     }
-  });
-
-  test('WhatsApp tools are exposed without entering the document executor', () {
-    final names = appToolSpecs.map((t) => t.name).toSet();
-    expect(
-      names,
-      containsAll({
-        'whatsapp_status',
-        'whatsapp_find_contact',
-        'whatsapp_send_message',
-      }),
-    );
-    expect(
-      documentToolSpecs.map((t) => t.name),
-      isNot(contains('whatsapp_send_message')),
-    );
-    expect(toolSpec('whatsapp_send_message')!.mutates, isFalse);
   });
 
   test('executor uses 1-based pages and reports errors', () async {
