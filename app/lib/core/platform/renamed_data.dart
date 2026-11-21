@@ -13,9 +13,6 @@ import 'user_dirs.dart';
 const legacyAppName = 'PaperAgent';
 const legacyBundleId = 'com.daylex.paperAgent';
 
-/// The Mac app's bundle id now: WebKit keeps the browser's logins under it.
-const bundleId = 'it.daylex.desktop';
-
 /// The developer configuration folder in the home folder, before the rename.
 const legacyConfigDir = '.paperagent';
 
@@ -39,12 +36,12 @@ void migrateRenamedData({Map<String, String>? environment, bool? macOS, Diagnost
   final home = userHome(env);
   final notes = <String>[];
   for (final (from, to) in [
-    (legacy, appDataFolder(appFolderName, env, mac)),
+    (legacy, currentAppDataDir(env, mac)),
     if (home != null) ('$home/$legacyConfigDir', '$home/$configDirName'),
     if (home != null && mac) ...[
-      ('$home/Library/WebKit/$legacyBundleId', '$home/Library/WebKit/$bundleId'),
-      ('$home/Library/HTTPStorages/$legacyBundleId', '$home/Library/HTTPStorages/$bundleId'),
-      ('$home/Library/HTTPStorages/$legacyBundleId.binarycookies', '$home/Library/HTTPStorages/$bundleId.binarycookies'),
+      ('$home/Library/WebKit/$legacyBundleId', '$home/Library/WebKit/$appId'),
+      ('$home/Library/HTTPStorages/$legacyBundleId', '$home/Library/HTTPStorages/$appId'),
+      ('$home/Library/HTTPStorages/$legacyBundleId.binarycookies', '$home/Library/HTTPStorages/$appId.binarycookies'),
     ],
   ]) {
     final type = FileSystemEntity.typeSync(from, followLinks: false);

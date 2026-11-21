@@ -21,7 +21,7 @@ void migrateSandboxData({Map<String, String>? environment, bool? macOS, Diagnost
   if (!Directory(container).existsSync()) return;
   log ??= DiagnosticLog.open('migration.log');
   for (final (from, to) in [
-    ('$container/Library/Application Support/$legacyAppName', appDataFolder(appFolderName, env, true)),
+    ('$container/Library/Application Support/$legacyAppName', currentAppDataDir(env, true)),
     ('$container/$legacyConfigDir', '$home/$configDirName'),
   ]) {
     if (!Directory(from).existsSync() || Directory(to).existsSync()) continue;

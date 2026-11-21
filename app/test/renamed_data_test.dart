@@ -33,7 +33,7 @@ void main() {
   for (final mac in [false, true]) {
     group(mac ? 'on the Mac' : 'on Windows and Linux', () {
       String legacy() => legacyAppDataDir(env, mac);
-      String current() => appDataFolder(appFolderName, env, mac);
+      String current() => currentAppDataDir(env, mac);
 
       test('the data folder and the developer configuration move to their new names', () {
         expect(current(), isNot(legacy()));
@@ -79,9 +79,9 @@ void main() {
     write('Library/HTTPStorages/$legacyBundleId/httpstorages.sqlite', 'store');
     write('Library/HTTPStorages/$legacyBundleId.binarycookies', 'cookies');
     migrateRenamedData(environment: env, macOS: true, log: log);
-    expect(file('Library/WebKit/$bundleId/WebsiteData/cookies').readAsStringSync(), 'session');
-    expect(file('Library/HTTPStorages/$bundleId/httpstorages.sqlite').readAsStringSync(), 'store');
-    expect(file('Library/HTTPStorages/$bundleId.binarycookies').readAsStringSync(), 'cookies');
+    expect(file('Library/WebKit/$appId/WebsiteData/cookies').readAsStringSync(), 'session');
+    expect(file('Library/HTTPStorages/$appId/httpstorages.sqlite').readAsStringSync(), 'store');
+    expect(file('Library/HTTPStorages/$appId.binarycookies').readAsStringSync(), 'cookies');
     expect(Directory('${home.path}/Library/WebKit/$legacyBundleId').existsSync(), isFalse);
   });
 
@@ -102,11 +102,33 @@ void main() {
   test(
     'the Windows data folder keeps its place in Roaming',
     () {
-      expect(appDataFolder(appFolderName, env, false), '${home.path}\\Roaming\\Daylex');
+      expect(currentAppDataDir(env, false), '${home.path}\\Roaming\\Daylex');
       expect(legacyAppDataDir(env, false), '${home.path}\\Roaming\\PaperAgent');
     },
     skip: Platform.isWindows ? false : 'a Windows path',
   );
+
+  test(
+    'on Linux, the lawyer\'s work moves out of the old folder although the app is installed in share/daylex',
+    () {
+      // install-linux.sh, b2901's as Daylex's, puts the app in ~/.local/share/daylex/app.
+      write('share/daylex/app/daylex', 'app');
+      write('share/paperagent/data/chats/c1.json', 'chat');
+      migrateRenamedData(environment: env, log: log);
+      expect(file('${appDataDir(env)}/data/chats/c1.json').readAsStringSync(), 'chat');
+      expect(Directory(legacyAppDataDir(env)).existsSync(), isFalse);
+      expect(file('share/daylex/app/daylex').readAsStringSync(), 'app');
+    },
+    skip: Platform.isLinux ? false : 'a Linux path',
+  );
+
+  test('the app id is the one the Mac and Linux builds declare', () {
+    expect(
+      File('macos/Runner/Configs/AppInfo.xcconfig').readAsStringSync(),
+      contains(RegExp('^PRODUCT_BUNDLE_IDENTIFIER = ${RegExp.escape(appId)}\\s*\$', multiLine: true)),
+    );
+    expect(File('linux/CMakeLists.txt').readAsStringSync(), contains('set(APPLICATION_ID "$appId")'));
+  });
 }
 
 /// Holds the lock an app open on [dir] holds, as an older app would: from another process, since elsewhere than

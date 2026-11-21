@@ -10,8 +10,12 @@ String? userHome([Map<String, String>? environment]) {
   return Platform.isWindows ? env['USERPROFILE'] ?? env['HOME'] : env['HOME'];
 }
 
-/// The app's folder name in the per-user app data folders.
-const appFolderName = 'Daylex';
+/// The app's id: the Mac app's bundle id (macos/Runner/Configs/AppInfo.xcconfig), under which WebKit keeps the
+/// browser's logins, and the Linux application id (linux/CMakeLists.txt), which names the Linux data folder.
+const appId = 'it.daylex.desktop';
+
+/// The app's folder name in the per-user app data folders of Windows and the Mac.
+const _appFolderName = 'Daylex';
 
 /// The developer configuration folder in the home folder.
 const configDirName = '.daylex';
@@ -27,9 +31,18 @@ File? serverConfigFile([Map<String, String>? environment]) {
 /// move it there, the folder an app from before the rename made (rfc/054). [macOS] stands in for the platform check,
 /// for tests.
 String appDataDir([Map<String, String>? environment, bool? macOS]) {
-  final current = appDataFolder(appFolderName, environment, macOS);
+  final current = currentAppDataDir(environment, macOS);
   final legacy = legacyAppDataDir(environment, macOS);
   return !Directory(current).existsSync() && Directory(legacy).existsSync() ? legacy : current;
+}
+
+/// The app data folder of Daylex itself, where [migrateRenamedData] moves the one from before the rename. On Linux it
+/// is named after [appId], where Flutter puts an app's support folder: install-linux.sh installs the app itself in
+/// `~/.local/share/daylex/app`, so a data folder `daylex` would exist from the first install on and the move would
+/// never happen.
+String currentAppDataDir([Map<String, String>? environment, bool? macOS]) {
+  final xdg = !(macOS ?? Platform.isMacOS) && !Platform.isWindows;
+  return appDataFolder(xdg ? appId : _appFolderName, environment, macOS);
 }
 
 /// The per-user app data folder called [name] on this platform, in lower case on Linux.
