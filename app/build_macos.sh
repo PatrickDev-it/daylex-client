@@ -76,7 +76,6 @@ if [[ -d "${built}/Contents/Frameworks" ]]; then
     codesign --force "${sign_flags[@]}" "$nested"
   done < <(find "${built}/Contents/Frameworks" -depth \( -type f -name '*.dylib' -o -type d -name '*.framework' \) -print0)
 fi
-codesign --force "${sign_flags[@]}" --entitlements macos/Runner/Node.entitlements "$node_helper"
 codesign --force "${sign_flags[@]}" --entitlements macos/Runner/Release.entitlements "$built"
 verify_app() { codesign --verify --deep --strict --verbose=2 "$1"; }
 verify_app "$built"

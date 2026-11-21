@@ -1,4 +1,5 @@
-"""Expose real fonts to Flutter's browser-test server, which serves test/ only."""
+"""Expose the app's real assets (fonts, the PDF/A colour profile) to Flutter's browser-test server, which serves
+test/ only."""
 import os
 from pathlib import Path
 import shutil
@@ -11,7 +12,7 @@ generated = [app / 'test/assets', app / 'test/canvaskit']
 if any(path.exists() for path in generated):
     raise SystemExit('Browser test staging already exists; refusing to replace it')
 try:
-    shutil.copytree(app / 'assets/fonts', generated[0] / 'assets/fonts')
+    shutil.copytree(app / 'assets', generated[0] / 'assets')
     # Flutter 3.47's test CanvasKit handler compares a URI to a Windows path.
     # Its test-directory fallback can serve the same unmodified SDK files.
     if os.name == 'nt':
