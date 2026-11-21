@@ -217,7 +217,7 @@
   "shortcutLibraryTab": "Libreria",
   "shortcutReviewTab": "Revisione delle modifiche",
   "shortcutLogTab": "Registro dell'agente",
-  "shortcutCloseTab": "Chiudi il scheda",
+  "shortcutCloseTab": "Chiudi la scheda",
   "shortcutToggleSidebar": "Mostra o nascondi la barra laterale",
   "shortcutTogglePanel": "Mostra o nascondi il pannello laterale",
   "shortcutToggleTheme": "Tema chiaro o scuro",
@@ -399,10 +399,10 @@
   },
   "settingsShortcuts": "Scorciatoie da tastiera",
   "panelHide": "Nascondi il pannello laterale",
-  "panelOpenTab": "Apri un scheda",
+  "panelOpenTab": "Apri una scheda",
   "panelNothingOpenTitle": "Ancora niente di aperto",
   "panelNothingOpenMessage": "Inizia una conversazione. Il documento su cui lavora compare qui in anteprima, accanto alla revisione di ogni modifica dell'agente.",
-  "panelNoTabsTitle": "Nessun scheda aperto",
+  "panelNoTabsTitle": "Nessuna scheda aperta",
   "panelNoTabsMessage": "Apri l'anteprima di un documento, rivedi cosa ha cambiato l'agente o segui le sue chiamate agli strumenti.",
   "logEventCount": "{count, plural, =1{1 evento} other{{count} eventi}}",
   "@logEventCount": {
@@ -506,7 +506,7 @@
   "editorTableRemoveRow": "Rimuovi l'ultima riga",
   "editorCaptionHint": "Didascalia",
   "previewNotFoundTitle": "Documento non trovato",
-  "previewNotFoundMessage": "Potrebbe essere stato eliminato. Chiudi questo scheda o apri un altro documento.",
+  "previewNotFoundMessage": "Potrebbe essere stato eliminato. Chiudi questa scheda o apri un altro documento.",
   "previewModePreview": "Anteprima",
   "@previewModePreview": {
     "description": "Segment that shows the rendered PDF"
@@ -1752,5 +1752,126 @@
   "exitDiscard": "Esci senza salvare",
   "accessKeyHint": "dlx_…",
   "webAccessHelp": "Inserisci una chiave dedicata a questo browser, ricevuta dall’amministratore. La chiave già associata all’app desktop non si trasferisce automaticamente.",
-  "webSessionHelp": "La chiave resta solo in questa sessione: dovrai reinserirla quando ricarichi o riapri Daylex. Documenti e chat rimangono in questo browser; scarica regolarmente una copia dell’archivio."
+  "webSessionHelp": "La chiave resta solo in questa sessione: dovrai reinserirla quando ricarichi o riapri Daylex. Documenti e chat rimangono in questo browser; scarica regolarmente una copia dell’archivio.",
+  "shortcutNewWebTab": "Nuova scheda web",
+  "shortcutReopenTab": "Riapri la scheda chiusa",
+  "shortcutNextTab": "Scheda successiva",
+  "shortcutPreviousTab": "Scheda precedente",
+  "shortcutFocusAddress": "Vai alla barra degli indirizzi",
+  "shortcutReload": "Ricarica la pagina web",
+  "shortcutFullPanel": "Pannello a tutta larghezza",
+  "browserNewTab": "Nuova scheda",
+  "browserBack": "Indietro",
+  "browserForward": "Avanti",
+  "browserReload": "Ricarica",
+  "browserStop": "Interrompi il caricamento",
+  "browserAddressHint": "Cerca su Google o scrivi un indirizzo",
+  "browserNotSecure": "Non sicuro",
+  "browserSecure": "Connessione cifrata",
+  "browserAttach": "Allega alla chat",
+  "browserAttachShort": "Allega",
+  "browserAttachHelp": "Allega questa pagina alla chat: l'agente la legge come un documento del fascicolo",
+  "browserAttached": "«{name}» allegato alla chat",
+  "@browserAttached": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "browserAttachFailed": "Non riesco ad allegare questa pagina. Scaricala e trascinala nella chat.",
+  "browserCaptureNote": "Pagina web acquisita con Daylex il {date} alle {time} da:",
+  "@browserCaptureNote": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "browserOpenOutside": "Apri nel browser",
+  "browserOpenOutsideHelp": "Apri questa pagina nel browser di sistema",
+  "browserMore": "Altre azioni",
+  "browserCopyAddress": "Copia l'indirizzo",
+  "browserAddressCopied": "Indirizzo copiato",
+  "browserAddPortal": "Aggiungi ai portali",
+  "browserPortalAdded": "«{name}» è tra i tuoi portali",
+  "@browserPortalAdded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "browserZoom": "Zoom {percent}%",
+  "@browserZoom": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "browserRefused": "Daylex apre solo indirizzi web (http e https).",
+  "browserProblemUnreachableTitle": "Sito non raggiungibile",
+  "browserProblemUnreachableMessage": "Controlla la connessione a internet e l'indirizzo, poi riprova.",
+  "browserProblemTimeoutTitle": "Il sito non risponde",
+  "browserProblemTimeoutMessage": "Il sito ci sta mettendo troppo. Riprova tra poco.",
+  "browserProblemCertificateTitle": "Connessione non sicura",
+  "browserProblemCertificateMessage": "Il certificato di questo sito non è valido, quindi Daylex non apre la pagina. Se il sito è quello giusto, avvisa chi lo gestisce.",
+  "browserProblemEngineTitle": "Il browser integrato non è partito",
+  "browserProblemEngineMessage": "Riavvia Daylex. Se succede ancora, apri la pagina nel browser di sistema.",
+  "browserProblemOtherTitle": "La pagina non si è aperta",
+  "browserProblemOtherMessage": "Riprova, oppure aprila nel browser di sistema.",
+  "browserRetry": "Riprova",
+  "browserOpenWww": "Apri {host}",
+  "@browserOpenWww": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "browserRuntimeTitle": "Manca un componente di Windows",
+  "browserRuntimeMessage": "Per aprire le pagine dentro Daylex serve Microsoft Edge WebView2. Installalo dal sito di Microsoft, poi riavvia Daylex.",
+  "browserRuntimeDownload": "Scarica WebView2",
+  "browserExternalTitle": "Le pagine si aprono nel tuo browser",
+  "browserExternalMessage": "Su questo computer Daylex non può mostrare pagine web nel pannello: ogni scheda apre il suo indirizzo nel browser di sistema.",
+  "browserDownloaded": "Scaricato: {name}",
+  "@browserDownloaded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "browserShowInFolder": "Mostra nella cartella",
+  "browserPortalsOfficial": "Fonti ufficiali",
+  "browserPortalsDatabases": "Banche dati e stampa",
+  "browserPortalsMine": "I tuoi portali",
+  "browserPortalsMineEmpty": "Aggiungi i siti che usi più spesso: apri la pagina e scegli «Aggiungi ai portali» dal menu della scheda.",
+  "browserAddPortalButton": "Aggiungi un portale",
+  "browserPortalRemove": "Rimuovi dai portali",
+  "browserPortalDialogTitle": "Nuovo portale",
+  "browserPortalRenameTitle": "Rinomina il portale",
+  "browserPortalName": "Nome",
+  "browserPortalAddress": "Indirizzo",
+  "browserPortalAddressInvalid": "Scrivi un indirizzo web, ad esempio www.sito.it",
+  "browserPortalsMenu": "Portali",
+  "browserNewTabHint": "Accedi ai portali con le tue credenziali, come in un browser: l'accesso resta anche dopo il riavvio. Daylex non legge né conserva le tue password.",
+  "panelFull": "Pannello a tutta larghezza",
+  "panelSplit": "Pannello accanto alla chat",
+  "panelResize": "Trascina per allargare o restringere · doppio clic per la larghezza iniziale",
+  "sidebarBrowser": "Browser",
+  "settingsBrowser": "Browser",
+  "settingsBrowserSignOut": "Esci da tutti i portali",
+  "settingsBrowserSignOutHelp": "Cancella gli accessi, i cookie e i dati che i siti hanno salvato nel browser di Daylex. Per rientrare ti serviranno di nuovo le credenziali.",
+  "settingsBrowserSignOutButton": "Esci",
+  "settingsBrowserSignOutConfirmTitle": "Uscire da tutti i portali?",
+  "settingsBrowserSignOutConfirmMessage": "Dovrai accedere di nuovo a ogni banca dati e portale. Le schede aperte restano dove sono.",
+  "settingsBrowserSignedOut": "Sei uscito da tutti i portali",
+  "browserPortalAdd": "Aggiungi",
+  "browserDialogOk": "OK",
+  "settingsBrowserSignOutFailed": "Non sono riuscito a farti uscire da tutti i portali. Riavvia Daylex e riprova."
 }

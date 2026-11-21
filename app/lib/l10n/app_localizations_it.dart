@@ -270,7 +270,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get shortcutLogTab => 'Registro dell\'agente';
 
   @override
-  String get shortcutCloseTab => 'Chiudi il scheda';
+  String get shortcutCloseTab => 'Chiudi la scheda';
 
   @override
   String get shortcutToggleSidebar => 'Mostra o nascondi la barra laterale';
@@ -545,7 +545,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get panelHide => 'Nascondi il pannello laterale';
 
   @override
-  String get panelOpenTab => 'Apri un scheda';
+  String get panelOpenTab => 'Apri una scheda';
 
   @override
   String get panelNothingOpenTitle => 'Ancora niente di aperto';
@@ -555,7 +555,7 @@ class AppLocalizationsIt extends AppLocalizations {
       'Inizia una conversazione. Il documento su cui lavora compare qui in anteprima, accanto alla revisione di ogni modifica dell\'agente.';
 
   @override
-  String get panelNoTabsTitle => 'Nessun scheda aperto';
+  String get panelNoTabsTitle => 'Nessuna scheda aperta';
 
   @override
   String get panelNoTabsMessage =>
@@ -713,7 +713,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get previewNotFoundMessage =>
-      'Potrebbe essere stato eliminato. Chiudi questo scheda o apri un altro documento.';
+      'Potrebbe essere stato eliminato. Chiudi questa scheda o apri un altro documento.';
 
   @override
   String get previewModePreview => 'Anteprima';
@@ -2223,4 +2223,261 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get webSessionHelp =>
       'La chiave resta solo in questa sessione: dovrai reinserirla quando ricarichi o riapri Daylex. Documenti e chat rimangono in questo browser; scarica regolarmente una copia dell’archivio.';
+
+  @override
+  String get shortcutNewWebTab => 'Nuova scheda web';
+
+  @override
+  String get shortcutReopenTab => 'Riapri la scheda chiusa';
+
+  @override
+  String get shortcutNextTab => 'Scheda successiva';
+
+  @override
+  String get shortcutPreviousTab => 'Scheda precedente';
+
+  @override
+  String get shortcutFocusAddress => 'Vai alla barra degli indirizzi';
+
+  @override
+  String get shortcutReload => 'Ricarica la pagina web';
+
+  @override
+  String get shortcutFullPanel => 'Pannello a tutta larghezza';
+
+  @override
+  String get browserNewTab => 'Nuova scheda';
+
+  @override
+  String get browserBack => 'Indietro';
+
+  @override
+  String get browserForward => 'Avanti';
+
+  @override
+  String get browserReload => 'Ricarica';
+
+  @override
+  String get browserStop => 'Interrompi il caricamento';
+
+  @override
+  String get browserAddressHint => 'Cerca su Google o scrivi un indirizzo';
+
+  @override
+  String get browserNotSecure => 'Non sicuro';
+
+  @override
+  String get browserSecure => 'Connessione cifrata';
+
+  @override
+  String get browserAttach => 'Allega alla chat';
+
+  @override
+  String get browserAttachShort => 'Allega';
+
+  @override
+  String get browserAttachHelp =>
+      'Allega questa pagina alla chat: l\'agente la legge come un documento del fascicolo';
+
+  @override
+  String browserAttached(String name) {
+    return '«$name» allegato alla chat';
+  }
+
+  @override
+  String get browserAttachFailed =>
+      'Non riesco ad allegare questa pagina. Scaricala e trascinala nella chat.';
+
+  @override
+  String browserCaptureNote(String date, String time) {
+    return 'Pagina web acquisita con Daylex il $date alle $time da:';
+  }
+
+  @override
+  String get browserOpenOutside => 'Apri nel browser';
+
+  @override
+  String get browserOpenOutsideHelp =>
+      'Apri questa pagina nel browser di sistema';
+
+  @override
+  String get browserMore => 'Altre azioni';
+
+  @override
+  String get browserCopyAddress => 'Copia l\'indirizzo';
+
+  @override
+  String get browserAddressCopied => 'Indirizzo copiato';
+
+  @override
+  String get browserAddPortal => 'Aggiungi ai portali';
+
+  @override
+  String browserPortalAdded(String name) {
+    return '«$name» è tra i tuoi portali';
+  }
+
+  @override
+  String browserZoom(int percent) {
+    return 'Zoom $percent%';
+  }
+
+  @override
+  String get browserRefused => 'Daylex apre solo indirizzi web (http e https).';
+
+  @override
+  String get browserProblemUnreachableTitle => 'Sito non raggiungibile';
+
+  @override
+  String get browserProblemUnreachableMessage =>
+      'Controlla la connessione a internet e l\'indirizzo, poi riprova.';
+
+  @override
+  String get browserProblemTimeoutTitle => 'Il sito non risponde';
+
+  @override
+  String get browserProblemTimeoutMessage =>
+      'Il sito ci sta mettendo troppo. Riprova tra poco.';
+
+  @override
+  String get browserProblemCertificateTitle => 'Connessione non sicura';
+
+  @override
+  String get browserProblemCertificateMessage =>
+      'Il certificato di questo sito non è valido, quindi Daylex non apre la pagina. Se il sito è quello giusto, avvisa chi lo gestisce.';
+
+  @override
+  String get browserProblemEngineTitle => 'Il browser integrato non è partito';
+
+  @override
+  String get browserProblemEngineMessage =>
+      'Riavvia Daylex. Se succede ancora, apri la pagina nel browser di sistema.';
+
+  @override
+  String get browserProblemOtherTitle => 'La pagina non si è aperta';
+
+  @override
+  String get browserProblemOtherMessage =>
+      'Riprova, oppure aprila nel browser di sistema.';
+
+  @override
+  String get browserRetry => 'Riprova';
+
+  @override
+  String browserOpenWww(String host) {
+    return 'Apri $host';
+  }
+
+  @override
+  String get browserRuntimeTitle => 'Manca un componente di Windows';
+
+  @override
+  String get browserRuntimeMessage =>
+      'Per aprire le pagine dentro Daylex serve Microsoft Edge WebView2. Installalo dal sito di Microsoft, poi riavvia Daylex.';
+
+  @override
+  String get browserRuntimeDownload => 'Scarica WebView2';
+
+  @override
+  String get browserExternalTitle => 'Le pagine si aprono nel tuo browser';
+
+  @override
+  String get browserExternalMessage =>
+      'Su questo computer Daylex non può mostrare pagine web nel pannello: ogni scheda apre il suo indirizzo nel browser di sistema.';
+
+  @override
+  String browserDownloaded(String name) {
+    return 'Scaricato: $name';
+  }
+
+  @override
+  String get browserShowInFolder => 'Mostra nella cartella';
+
+  @override
+  String get browserPortalsOfficial => 'Fonti ufficiali';
+
+  @override
+  String get browserPortalsDatabases => 'Banche dati e stampa';
+
+  @override
+  String get browserPortalsMine => 'I tuoi portali';
+
+  @override
+  String get browserPortalsMineEmpty =>
+      'Aggiungi i siti che usi più spesso: apri la pagina e scegli «Aggiungi ai portali» dal menu della scheda.';
+
+  @override
+  String get browserAddPortalButton => 'Aggiungi un portale';
+
+  @override
+  String get browserPortalRemove => 'Rimuovi dai portali';
+
+  @override
+  String get browserPortalDialogTitle => 'Nuovo portale';
+
+  @override
+  String get browserPortalRenameTitle => 'Rinomina il portale';
+
+  @override
+  String get browserPortalName => 'Nome';
+
+  @override
+  String get browserPortalAddress => 'Indirizzo';
+
+  @override
+  String get browserPortalAddressInvalid =>
+      'Scrivi un indirizzo web, ad esempio www.sito.it';
+
+  @override
+  String get browserPortalsMenu => 'Portali';
+
+  @override
+  String get browserNewTabHint =>
+      'Accedi ai portali con le tue credenziali, come in un browser: l\'accesso resta anche dopo il riavvio. Daylex non legge né conserva le tue password.';
+
+  @override
+  String get panelFull => 'Pannello a tutta larghezza';
+
+  @override
+  String get panelSplit => 'Pannello accanto alla chat';
+
+  @override
+  String get panelResize =>
+      'Trascina per allargare o restringere · doppio clic per la larghezza iniziale';
+
+  @override
+  String get sidebarBrowser => 'Browser';
+
+  @override
+  String get settingsBrowser => 'Browser';
+
+  @override
+  String get settingsBrowserSignOut => 'Esci da tutti i portali';
+
+  @override
+  String get settingsBrowserSignOutHelp =>
+      'Cancella gli accessi, i cookie e i dati che i siti hanno salvato nel browser di Daylex. Per rientrare ti serviranno di nuovo le credenziali.';
+
+  @override
+  String get settingsBrowserSignOutButton => 'Esci';
+
+  @override
+  String get settingsBrowserSignOutConfirmTitle => 'Uscire da tutti i portali?';
+
+  @override
+  String get settingsBrowserSignOutConfirmMessage =>
+      'Dovrai accedere di nuovo a ogni banca dati e portale. Le schede aperte restano dove sono.';
+
+  @override
+  String get settingsBrowserSignedOut => 'Sei uscito da tutti i portali';
+
+  @override
+  String get browserPortalAdd => 'Aggiungi';
+
+  @override
+  String get browserDialogOk => 'OK';
+
+  @override
+  String get settingsBrowserSignOutFailed =>
+      'Non sono riuscito a farti uscire da tutti i portali. Riavvia Daylex e riprova.';
 }

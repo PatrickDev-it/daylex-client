@@ -9,6 +9,7 @@ import '../../features/workspace/ui_state.dart';
 import '../../features/workspace/workspace_state.dart';
 import '../../l10n/l10n.dart';
 import '../app_actions.dart';
+import '../browser/browser_host.dart';
 import '../common/prompt_dialog.dart';
 import '../common/widgets.dart';
 import '../shortcuts.dart';
@@ -129,6 +130,13 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
                   onTap: ws.activeThread == null
                       ? null
                       : () => actions.openTab(PanelTab.library),
+                ),
+                // The web tabs as they were left; a new one when there is none (Ctrl+T always opens one).
+                NavRow(
+                  icon: LucideIcons.globe,
+                  label: l.sidebarBrowser,
+                  active: ref.watch(visibleWebTabProvider) != null,
+                  onTap: actions.showBrowser,
                 ),
               ],
             ),

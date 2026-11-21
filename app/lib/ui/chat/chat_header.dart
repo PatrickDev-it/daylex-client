@@ -82,10 +82,10 @@ class ChatHeader extends ConsumerWidget {
                 onPressed: () => actions.newChat(projectId: thread.projectId),
               ),
               ToolbarButton(
-                icon: ui.panelOpen
+                icon: ui.panelShown
                     ? LucideIcons.panelRightClose
                     : LucideIcons.panelRightOpen,
-                tooltip: ui.panelOpen ? l.chatHidePanel : l.chatShowPanel,
+                tooltip: ui.panelShown ? l.chatHidePanel : l.chatShowPanel,
                 shortcut: AppShortcut.togglePanel,
                 onPressed: ref.read(uiProvider.notifier).togglePanel,
               ),

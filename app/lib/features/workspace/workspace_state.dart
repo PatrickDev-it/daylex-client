@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
+import '../browser/browser_state.dart';
 import '../../l10n/labels.dart';
 import '../document/data/doc_templates.dart';
 import '../document/model/document.dart';
@@ -140,12 +141,23 @@ class WorkspaceNotifier extends Notifier<WorkspaceState> {
 
   // -- side-panel tabs ----------------------------------------------------------
 
-  /// Opens [tab] in [threadId] (the active chat by default) and focuses it.
-  void openTab(PanelTab tab, {String? threadId}) =>
-      _changeTabs(threadId, (t) => t.opening(tab));
+  /// Opens [tab] in [threadId] (the active chat by default) and focuses it. In the chat on screen it comes in
+  /// front of a web tab.
+  void openTab(PanelTab tab, {String? threadId}) {
+    _changeTabs(threadId, (t) => t.opening(tab));
+    _bringForward(threadId);
+  }
 
-  void activateTab(PanelTab tab, {String? threadId}) =>
-      _changeTabs(threadId, (t) => t.activating(tab));
+  void activateTab(PanelTab tab, {String? threadId}) {
+    _changeTabs(threadId, (t) => t.activating(tab));
+    _bringForward(threadId);
+  }
+
+  void _bringForward(String? threadId) {
+    if (threadId == null || threadId == state.activeThreadId) {
+      ref.read(browserProvider.notifier).yieldToChat();
+    }
+  }
 
   void closeTab(PanelTab tab, {String? threadId}) =>
       _changeTabs(threadId, (t) => t.closing(tab));

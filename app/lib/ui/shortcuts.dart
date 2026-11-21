@@ -44,12 +44,26 @@ enum AppShortcut {
     SingleActivator(LogicalKeyboardKey.numpadSubtract, control: _ctrl),
   ]),
   zoomReset([SingleActivator(LogicalKeyboardKey.digit0, control: _ctrl)]),
-  libraryTab([SingleActivator(LogicalKeyboardKey.keyT, control: _ctrl)]),
+  // Ctrl+Shift+O as Firefox's Library: Ctrl+T is a new tab, in every browser.
+  libraryTab([SingleActivator(LogicalKeyboardKey.keyO, control: _ctrl, shift: true)]),
   reviewTab([SingleActivator(LogicalKeyboardKey.keyR, control: _ctrl)]),
   logTab([SingleActivator(LogicalKeyboardKey.backquote, control: _ctrl)]),
   closeTab([SingleActivator(LogicalKeyboardKey.keyW, control: _ctrl)]),
+  newWebTab([SingleActivator(LogicalKeyboardKey.keyT, control: _ctrl)]),
+  reopenTab([SingleActivator(LogicalKeyboardKey.keyT, control: _ctrl, shift: true)]),
+  nextTab([
+    SingleActivator(LogicalKeyboardKey.tab, control: _ctrl),
+    SingleActivator(LogicalKeyboardKey.pageDown, control: _ctrl),
+  ]),
+  previousTab([
+    SingleActivator(LogicalKeyboardKey.tab, control: _ctrl, shift: true),
+    SingleActivator(LogicalKeyboardKey.pageUp, control: _ctrl),
+  ]),
+  focusAddress([SingleActivator(LogicalKeyboardKey.keyL, control: _ctrl)]),
+  reload([SingleActivator(LogicalKeyboardKey.f5)]),
   toggleSidebar([SingleActivator(LogicalKeyboardKey.keyB, control: _ctrl)]),
   togglePanel([SingleActivator(LogicalKeyboardKey.keyJ, control: _ctrl)]),
+  fullPanel([SingleActivator(LogicalKeyboardKey.keyJ, control: _ctrl, shift: true)]),
   toggleTheme([SingleActivator(LogicalKeyboardKey.keyL, control: _ctrl, shift: true)]);
 
   const AppShortcut(this.activators, {this.scope = ShortcutScope.global});
@@ -85,8 +99,15 @@ enum AppShortcut {
     AppShortcut.reviewTab => l.shortcutReviewTab,
     AppShortcut.logTab => l.shortcutLogTab,
     AppShortcut.closeTab => l.shortcutCloseTab,
+    AppShortcut.newWebTab => l.shortcutNewWebTab,
+    AppShortcut.reopenTab => l.shortcutReopenTab,
+    AppShortcut.nextTab => l.shortcutNextTab,
+    AppShortcut.previousTab => l.shortcutPreviousTab,
+    AppShortcut.focusAddress => l.shortcutFocusAddress,
+    AppShortcut.reload => l.shortcutReload,
     AppShortcut.toggleSidebar => l.shortcutToggleSidebar,
     AppShortcut.togglePanel => l.shortcutTogglePanel,
+    AppShortcut.fullPanel => l.shortcutFullPanel,
     AppShortcut.toggleTheme => l.shortcutToggleTheme,
   };
 }
@@ -104,5 +125,8 @@ String _keyName(LogicalKeyboardKey key) => switch (key) {
   LogicalKeyboardKey.numpadAdd => 'Num +',
   LogicalKeyboardKey.numpadSubtract => 'Num −',
   LogicalKeyboardKey.backquote => '`',
+  LogicalKeyboardKey.tab => 'Tab',
+  LogicalKeyboardKey.pageUp => 'Pag ↑',
+  LogicalKeyboardKey.pageDown => 'Pag ↓',
   _ => key.keyLabel.toUpperCase(),
 };

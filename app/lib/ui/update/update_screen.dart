@@ -7,8 +7,9 @@ import '../../l10n/l10n.dart';
 import '../app_actions.dart';
 
 /// Covers the app while it updates itself: as it opens and checks, while the update it found downloads and
-/// installs, and as it restarts into a new version. The app underneath keeps its state but takes no input. Once
-/// the app runs a new version, says once what that version improves.
+/// installs, and as it restarts into a new version. The app underneath keeps its state but takes no input, and
+/// gets the keyboard back when the cover lifts. Once the app runs a new version, says once what that version
+/// improves.
 class UpdateGate extends ConsumerStatefulWidget {
   const UpdateGate({super.key, required this.child});
 
@@ -21,9 +22,28 @@ class UpdateGate extends ConsumerStatefulWidget {
 class _UpdateGateState extends ConsumerState<UpdateGate> {
   bool _telling = false;
 
+  /// The cover lifted while the window was in the background: the keyboard goes back when the lawyer returns.
+  bool _keyboardOwed = false;
+  late final AppLifecycleListener _lifecycle;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle = AppLifecycleListener(onResume: () => _keyboardOwed ? _giveKeyboardBack() : null);
+  }
+
+  @override
+  void dispose() {
+    _lifecycle.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen(updateProvider, (_, update) => _tellWhatsNew(update));
+    ref.listen(updateProvider.select((u) => u.covering), (was, covering) {
+      if (was == true && !covering) _giveKeyboardBack();
+    });
     final update = ref.watch(updateProvider);
     final covering = update.covering;
     return Stack(
@@ -42,6 +62,23 @@ class _UpdateGateState extends ConsumerState<UpdateGate> {
         ),
       ],
     );
+  }
+
+  /// While covered nothing in the app can hold the keyboard, not even what asks for it as the app opens, so it
+  /// is parked outside every shortcut. Once the cover is gone (after this frame), it goes to what held it last in
+  /// the app, or to the page on screen; never while the window is in the background, which would pull it forward.
+  void _giveKeyboardBack() {
+    WidgetsBinding.instance
+      ..addPostFrameCallback((_) {
+        if (!mounted) return;
+        // Not known yet as the window first opens: it opens in front.
+        final state = WidgetsBinding.instance.lifecycleState;
+        _keyboardOwed = state != null && state != AppLifecycleState.resumed;
+        final scope = FocusScope.of(context);
+        if (!_keyboardOwed && !scope.hasFocus) scope.requestFocus();
+      })
+      // Returning to the window draws nothing by itself.
+      ..ensureVisualUpdate();
   }
 
   /// The improvements of the version the app was restarted into, once the app is usable again.

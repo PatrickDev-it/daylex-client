@@ -4,6 +4,7 @@ import 'dart:ui' show AppExitResponse;
 
 import 'package:cryptography/cryptography.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:paper_agent/features/update/installer.dart';
@@ -507,6 +508,61 @@ void main() {
       expect(find.text(itL10n.updateDownloading(42)), findsOneWidget);
       await tester.tap(find.text('x'), warnIfMissed: false);
       expect(taps, 0);
+    });
+
+    /// As in the app: a global shortcut (Ctrl+T, counted) above the gate, with a home for the keyboard, and the
+    /// app opening behind the check.
+    Future<ValueGetter<int>> openingBehindCheck(WidgetTester tester, _FixedUpdate update) async {
+      var newTabs = 0;
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [updateProvider.overrideWith(() => update)],
+          child: MaterialApp(
+            theme: AppTheme.light(),
+            locale: const Locale('it'),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            builder: (context, child) => CallbackShortcuts(
+              bindings: {const SingleActivator(LogicalKeyboardKey.keyT, control: true): () => newTabs++},
+              child: Focus(autofocus: true, child: UpdateGate(child: child!)),
+            ),
+            home: const Scaffold(body: SizedBox()),
+          ),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 300));
+      return () => newTabs;
+    }
+
+    Future<void> pressCtrlT(WidgetTester tester) async {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyT);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    }
+
+    testWidgets('gives the keyboard back once the opening check is done: the shortcuts work at once', (tester) async {
+      final update = _FixedUpdate(const UpdateState(phase: UpdatePhase.idle, launching: true));
+      final newTabs = await openingBehindCheck(tester, update);
+      update.state = update.state.copyWith(launching: false);
+      await tester.pumpAndSettle();
+      await pressCtrlT(tester);
+      expect(newTabs(), 1);
+    });
+
+    testWidgets('a check done with the window behind another gives the keyboard back when the lawyer returns', (
+      tester,
+    ) async {
+      final update = _FixedUpdate(const UpdateState(phase: UpdatePhase.idle, launching: true));
+      final newTabs = await openingBehindCheck(tester, update);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      update.state = update.state.copyWith(launching: false);
+      await tester.pumpAndSettle();
+      // Not taken while in the background: that would pull the window forward.
+      expect(FocusManager.instance.primaryFocus, FocusManager.instance.rootScope);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+      await pressCtrlT(tester);
+      expect(newTabs(), 1);
     });
 
     testWidgets('shows the improvements once the app is in use, and remembers they were read', (tester) async {
