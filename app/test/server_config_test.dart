@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/agent/data/http_agent_client.dart';
-import 'package:paper_agent/l10n/l10n.dart';
+import 'package:daylex/features/agent/data/http_agent_client.dart';
+import 'package:daylex/l10n/l10n.dart';
 
 void main() {
   final l = lookupAppLocalizations(const Locale('it'));

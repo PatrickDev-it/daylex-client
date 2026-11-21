@@ -1,7 +1,7 @@
 // Launches the production updater against an explicitly selected QA installation.
 import 'dart:io';
 
-import 'package:paper_agent/features/update/installer.dart';
+import 'package:daylex/features/update/installer.dart';
 
 Future<void> main(List<String> args) async {
   if (args.length != 4) {

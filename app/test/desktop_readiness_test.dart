@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/core/theme/app_theme.dart';
-import 'package:paper_agent/l10n/l10n.dart';
-import 'package:paper_agent/ui/access/access_gate.dart';
-import 'package:paper_agent/ui/settings/settings_view.dart';
-import 'package:paper_agent/ui/shell/app_shell.dart';
+import 'package:daylex/core/theme/app_theme.dart';
+import 'package:daylex/l10n/l10n.dart';
+import 'package:daylex/ui/access/access_gate.dart';
+import 'package:daylex/ui/settings/settings_view.dart';
+import 'package:daylex/ui/shell/app_shell.dart';
 
 import 'test_app.dart';
 

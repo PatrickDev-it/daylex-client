@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/document/model/document.dart';
-import 'package:paper_agent/features/document/model/operations.dart';
-import 'package:paper_agent/features/document/service/document_service.dart';
+import 'package:daylex/features/document/model/document.dart';
+import 'package:daylex/features/document/model/operations.dart';
+import 'package:daylex/features/document/service/document_service.dart';
 
 import 'demo_fixture.dart';
 

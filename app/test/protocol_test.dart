@@ -4,11 +4,11 @@ import 'dart:io';
 import 'dart:ui' show Locale;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/l10n/app_localizations.dart';
-import 'package:paper_agent/features/agent/data/http_agent_client.dart';
-import 'package:paper_agent/features/agent/domain/agent_protocol.dart';
-import 'package:paper_agent/features/agent/presentation/ui_components.dart';
-import 'package:paper_agent/ui/chat/components/component_registry.dart';
+import 'package:daylex/l10n/app_localizations.dart';
+import 'package:daylex/features/agent/data/http_agent_client.dart';
+import 'package:daylex/features/agent/domain/agent_protocol.dart';
+import 'package:daylex/features/agent/presentation/ui_components.dart';
+import 'package:daylex/ui/chat/components/component_registry.dart';
 
 void main() {
   test('every card the server sends has a builder', () {

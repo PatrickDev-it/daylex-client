@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:cryptography/cryptography.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/core/platform/http_transport_io.dart' show serverHttpClient, trusting;
-import 'package:paper_agent/core/platform/server_roots.dart';
+import 'package:daylex/core/platform/http_transport_io.dart' show serverHttpClient, trusting;
+import 'package:daylex/core/platform/server_roots.dart';
 
 /// The app reaches its server on a computer whose system store lacks the server's roots (rfc/053).
 void main() {

@@ -62,7 +62,7 @@ abstract class Installer {
   }
 }
 
-/// The Windows app is a folder (paper_agent.exe and what it loads), the one the lawyer unpacked it into.
+/// The Windows app is a folder (Daylex.exe and what it loads), the one the lawyer unpacked it into.
 class WindowsInstaller extends Installer {
   const WindowsInstaller(this.executable);
 
@@ -240,7 +240,7 @@ set -u
 app_pid="$1"; archive="$2"; app="$3"; log="$4"; expected="$5"
 note() { printf '%s installer: %s\n' "$(date -u +%FT%TZ)" "$*" >> "$log"; }
 case "$app" in /*) ;; *) exit 1;; esac
-if [ "$app" = / ] || [ ! -x "$app/paper_agent" ] || [ -L "$app" ]; then exit 1; fi
+if [ "$app" = / ] || [ ! -x "$app/daylex" ] || [ -L "$app" ]; then exit 1; fi
 for ((i=0; i<120; i++)); do
   kill -0 "$app_pid" 2>/dev/null || break
   sleep 0.5
@@ -253,7 +253,7 @@ parent="$(dirname "$app")"
 stage="$(mktemp -d "$parent/.daylex-update.XXXXXX")" || exit 1
 cleanup() { rm -rf -- "$stage"; }
 trap cleanup EXIT
-if ! unzip -q "$archive" -d "$stage/new" || [ ! -x "$stage/new/paper_agent" ] || [ ! -f "$stage/new/lib/libapp.so" ]; then
+if ! unzip -q "$archive" -d "$stage/new" || [ ! -x "$stage/new/daylex" ] || [ ! -f "$stage/new/lib/libapp.so" ]; then
   note 'invalid Linux bundle'; exit 1
 fi
 if ! mv -- "$app" "$stage/previous"; then note 'cannot move old bundle'; exit 1; fi
@@ -264,7 +264,7 @@ else
   note 'installed verified Linux bundle'
 fi
 cd "$app"
-nohup "$app/paper_agent" >> "$log" 2>&1 < /dev/null &
+nohup "$app/daylex" >> "$log" 2>&1 < /dev/null &
 ''';
 
 // The scripts keep the old version until the new one is in place, put it back on any failure, and always start

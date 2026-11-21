@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/agent/domain/agent_protocol.dart';
-import 'package:paper_agent/features/agent/domain/document_tools.dart';
-import 'package:paper_agent/features/document/render/page_fit.dart';
-import 'package:paper_agent/features/document/render/pdf_renderer.dart';
+import 'package:daylex/features/agent/domain/agent_protocol.dart';
+import 'package:daylex/features/agent/domain/document_tools.dart';
+import 'package:daylex/features/document/render/page_fit.dart';
+import 'package:daylex/features/document/render/pdf_renderer.dart';
 
 import 'agent_test.dart' show FakeHost;
 import 'demo_fixture.dart';

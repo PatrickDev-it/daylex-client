@@ -52,7 +52,7 @@ ToolSpec? toolSpec(String name) =>
     appToolSpecs.where((t) => t.name == name).firstOrNull;
 
 /// The tools the agent can call. Declared once, in the server's registry
-/// (paperagent_server/tools.py), and generated into tool_specs.g.dart: a tool
+/// (daylex_server/tools.py), and generated into tool_specs.g.dart: a tool
 /// is never added or changed here.
 final appToolSpecs = [
   for (final spec in jsonDecode(_toolsJson) as List)

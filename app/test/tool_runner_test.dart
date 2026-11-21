@@ -2,15 +2,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart'
     hide AgentRequest;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/agent/approvals.dart';
-import 'package:paper_agent/features/agent/chat_cards.dart';
-import 'package:paper_agent/features/agent/domain/agent_protocol.dart';
-import 'package:paper_agent/features/agent/domain/document_tools.dart';
-import 'package:paper_agent/features/agent/session_state.dart';
-import 'package:paper_agent/features/agent/tool_runner.dart';
-import 'package:paper_agent/features/agent/turn_tracker.dart';
-import 'package:paper_agent/features/document/render/page_images.dart';
-import 'package:paper_agent/l10n/l10n.dart';
+import 'package:daylex/features/agent/approvals.dart';
+import 'package:daylex/features/agent/chat_cards.dart';
+import 'package:daylex/features/agent/domain/agent_protocol.dart';
+import 'package:daylex/features/agent/domain/document_tools.dart';
+import 'package:daylex/features/agent/session_state.dart';
+import 'package:daylex/features/agent/tool_runner.dart';
+import 'package:daylex/features/agent/turn_tracker.dart';
+import 'package:daylex/features/document/render/page_images.dart';
+import 'package:daylex/l10n/l10n.dart';
 
 import 'agent_test.dart' show FakeHost;
 import 'demo_fixture.dart';

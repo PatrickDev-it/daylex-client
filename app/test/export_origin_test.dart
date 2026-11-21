@@ -3,16 +3,16 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/agent/agent_controller.dart';
-import 'package:paper_agent/features/agent/data/mock_agent_client.dart';
-import 'package:paper_agent/features/agent/domain/agent_protocol.dart';
-import 'package:paper_agent/features/agent/presentation/ui_components.dart';
-import 'package:paper_agent/features/storage/local_store.dart';
-import 'package:paper_agent/features/workspace/pdf_export.dart';
-import 'package:paper_agent/features/workspace/workspace_state.dart';
-import 'package:paper_agent/ui/chat/components/action_cards.dart';
-import 'package:paper_agent/ui/chat/components/agent_markdown.dart';
-import 'package:paper_agent/ui/chat/components/card_chrome.dart';
+import 'package:daylex/features/agent/agent_controller.dart';
+import 'package:daylex/features/agent/data/mock_agent_client.dart';
+import 'package:daylex/features/agent/domain/agent_protocol.dart';
+import 'package:daylex/features/agent/presentation/ui_components.dart';
+import 'package:daylex/features/storage/local_store.dart';
+import 'package:daylex/features/workspace/pdf_export.dart';
+import 'package:daylex/features/workspace/workspace_state.dart';
+import 'package:daylex/ui/chat/components/action_cards.dart';
+import 'package:daylex/ui/chat/components/agent_markdown.dart';
+import 'package:daylex/ui/chat/components/card_chrome.dart';
 
 import 'test_app.dart';
 

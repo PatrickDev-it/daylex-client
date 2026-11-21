@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/document/export/cell_value.dart';
-import 'package:paper_agent/features/document/export/export_model.dart';
-import 'package:paper_agent/features/document/export/export_text.dart';
-import 'package:paper_agent/features/document/export/image_info.dart';
+import 'package:daylex/features/document/export/cell_value.dart';
+import 'package:daylex/features/document/export/export_model.dart';
+import 'package:daylex/features/document/export/export_text.dart';
+import 'package:daylex/features/document/export/image_info.dart';
 
 import 'export_fixture.dart';
 

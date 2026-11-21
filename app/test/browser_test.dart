@@ -8,23 +8,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/app.dart';
-import 'package:paper_agent/features/agent/agent_controller.dart';
-import 'package:paper_agent/features/browser/browser_state.dart';
-import 'package:paper_agent/features/browser/engine/engine.dart';
-import 'package:paper_agent/features/browser/engine/page_script.dart' hide KeyMessage;
-import 'package:paper_agent/features/browser/engine/page_script.dart' as script show KeyMessage;
-import 'package:paper_agent/features/browser/engine/webkit_page.dart' show webKitProblem;
-import 'package:paper_agent/features/browser/engine/windows_page.dart' show webView2Problem;
-import 'package:paper_agent/features/browser/live_pages.dart';
-import 'package:paper_agent/features/browser/page_file.dart';
-import 'package:paper_agent/features/browser/portals.dart';
-import 'package:paper_agent/features/browser/web_address.dart';
-import 'package:paper_agent/features/workspace/ui_state.dart';
-import 'package:paper_agent/ui/browser/address_bar.dart';
-import 'package:paper_agent/ui/browser/browser_host.dart';
-import 'package:paper_agent/ui/chat/composer_inputs.dart';
-import 'package:paper_agent/ui/shortcuts.dart';
+import 'package:daylex/app.dart';
+import 'package:daylex/features/agent/agent_controller.dart';
+import 'package:daylex/features/browser/browser_state.dart';
+import 'package:daylex/features/browser/engine/engine.dart';
+import 'package:daylex/features/browser/engine/page_script.dart' hide KeyMessage;
+import 'package:daylex/features/browser/engine/page_script.dart' as script show KeyMessage;
+import 'package:daylex/features/browser/engine/webkit_page.dart' show webKitProblem;
+import 'package:daylex/features/browser/engine/windows_page.dart' show webView2Problem;
+import 'package:daylex/features/browser/live_pages.dart';
+import 'package:daylex/features/browser/page_file.dart';
+import 'package:daylex/features/browser/portals.dart';
+import 'package:daylex/features/browser/web_address.dart';
+import 'package:daylex/features/workspace/ui_state.dart';
+import 'package:daylex/ui/browser/address_bar.dart';
+import 'package:daylex/ui/browser/browser_host.dart';
+import 'package:daylex/ui/chat/composer_inputs.dart';
+import 'package:daylex/ui/shortcuts.dart';
 import 'package:webview_flutter_windows/webview_flutter_windows.dart' show WebErrorStatus;
 
 import 'test_app.dart';
@@ -858,10 +858,10 @@ Future<ProviderContainer> _pumpApp(WidgetTester tester, FakeEngine engine, {Size
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
-    ProviderScope(overrides: [browserEngineProvider.overrideWithValue(engine)], child: const PaperAgentApp()),
+    ProviderScope(overrides: [browserEngineProvider.overrideWithValue(engine)], child: const DaylexApp()),
   );
   await tester.pump(const Duration(seconds: 1));
-  final container = ProviderScope.containerOf(tester.element(find.byType(PaperAgentApp)));
+  final container = ProviderScope.containerOf(tester.element(find.byType(DaylexApp)));
   // What the engine supports is asked once, when the first tab shows: answered here already.
   await container.read(browserSupportProvider.future);
   return container;

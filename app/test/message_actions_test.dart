@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:paper_agent/ui/chat/message_actions.dart';
-import 'package:paper_agent/ui/common/time_format.dart';
+import 'package:daylex/ui/chat/message_actions.dart';
+import 'package:daylex/ui/common/time_format.dart';
 
 import 'test_app.dart';
 

@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.daylex" "\0"
-            VALUE "FileDescription", "paper_agent" "\0"
+            VALUE "CompanyName", "Daylex" "\0"
+            VALUE "FileDescription", "Daylex" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "paper_agent" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 com.daylex. All rights reserved." "\0"
-            VALUE "OriginalFilename", "paper_agent.exe" "\0"
-            VALUE "ProductName", "paper_agent" "\0"
+            VALUE "InternalName", "Daylex" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 Daylex. All rights reserved." "\0"
+            VALUE "OriginalFilename", "Daylex.exe" "\0"
+            VALUE "ProductName", "Daylex" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

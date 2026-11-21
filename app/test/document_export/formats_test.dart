@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/document/export/document_export.dart';
+import 'package:daylex/features/document/export/document_export.dart';
 
 import 'export_fixture.dart';
 import 'export_readers.dart';

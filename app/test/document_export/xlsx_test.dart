@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/document/export/export_model.dart';
-import 'package:paper_agent/features/document/export/export_sheets.dart';
-import 'package:paper_agent/features/document/export/xlsx_writer.dart';
-import 'package:paper_agent/features/document/model/document.dart';
+import 'package:daylex/features/document/export/export_model.dart';
+import 'package:daylex/features/document/export/export_sheets.dart';
+import 'package:daylex/features/document/export/xlsx_writer.dart';
+import 'package:daylex/features/document/model/document.dart';
 import 'package:xml/xml.dart';
 
 import 'export_fixture.dart';

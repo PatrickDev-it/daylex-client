@@ -36,9 +36,12 @@ def package(platform):
     archive = DIST / f'daylex-{platform}-{name}-b{build}.zip'
     if platform in ('windows', 'linux'):
         bundle = APP / ('build/windows/x64/runner/Release' if platform == 'windows' else 'build/linux/x64/release/bundle')
-        executable = bundle / ('paper_agent.exe' if platform == 'windows' else 'paper_agent')
-        if not executable.is_file():
-            raise ValueError(f'Missing executable: {executable}')
+        executable = bundle / ('Daylex.exe' if platform == 'windows' else 'daylex')
+        # What an install from before the rename starts when it updates (rfc/054).
+        launcher = bundle / ('paper_agent.exe' if platform == 'windows' else 'paper_agent')
+        for required in (executable, launcher):
+            if not required.is_file():
+                raise ValueError(f'Missing executable: {required}')
         if platform == 'windows':
             built = subprocess.check_output(['powershell', '-NoProfile', '-Command',
                 f"(Get-Item -LiteralPath '{executable}').VersionInfo.ProductVersion"], text=True).strip()

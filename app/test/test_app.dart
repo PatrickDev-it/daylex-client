@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:paper_agent/core/theme/app_theme.dart';
-import 'package:paper_agent/l10n/l10n.dart';
+import 'package:daylex/core/theme/app_theme.dart';
+import 'package:daylex/l10n/l10n.dart';
 
 /// The Italian strings, as the app starts.
 final itL10n = lookupAppLocalizations(const Locale('it'));

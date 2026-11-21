@@ -6,14 +6,14 @@ import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart'
     hide AgentRequest, AgentState;
 import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/agent/case_file_uploads.dart';
-import 'package:paper_agent/features/agent/chat_archive.dart';
-import 'package:paper_agent/features/agent/chat_cards.dart';
-import 'package:paper_agent/features/agent/data/mock_agent_client.dart';
-import 'package:paper_agent/features/agent/domain/agent_protocol.dart';
-import 'package:paper_agent/features/agent/presentation/ui_components.dart';
-import 'package:paper_agent/features/agent/run_stream.dart';
-import 'package:paper_agent/l10n/l10n.dart';
+import 'package:daylex/features/agent/case_file_uploads.dart';
+import 'package:daylex/features/agent/chat_archive.dart';
+import 'package:daylex/features/agent/chat_cards.dart';
+import 'package:daylex/features/agent/data/mock_agent_client.dart';
+import 'package:daylex/features/agent/domain/agent_protocol.dart';
+import 'package:daylex/features/agent/presentation/ui_components.dart';
+import 'package:daylex/features/agent/run_stream.dart';
+import 'package:daylex/l10n/l10n.dart';
 
 /// The units a turn is made of: the events read in order, the streamed reply, the uploads, the saved chat.
 void main() {
@@ -185,7 +185,7 @@ void main() {
       final back = ChatArchive.messageFromJson(json);
       expect(
         (back.user.id, back.customProperties?['resultKind']),
-        (paperAgent.id, UiComponents.approval),
+        (daylexAgent.id, UiComponents.approval),
       );
     },
   );

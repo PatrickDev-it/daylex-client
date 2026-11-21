@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/document/data/doc_templates.dart';
-import 'package:paper_agent/features/document/model/document.dart';
-import 'package:paper_agent/features/document/render/page_fit.dart';
-import 'package:paper_agent/features/document/render/pdf_renderer.dart';
-import 'package:paper_agent/features/document/service/document_service.dart';
+import 'package:daylex/features/document/data/doc_templates.dart';
+import 'package:daylex/features/document/model/document.dart';
+import 'package:daylex/features/document/render/page_fit.dart';
+import 'package:daylex/features/document/render/pdf_renderer.dart';
+import 'package:daylex/features/document/service/document_service.dart';
 
 import 'demo_fixture.dart';
 import 'pdf_renderer_test.dart' show pdfPageCount;

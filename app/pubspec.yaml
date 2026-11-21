@@ -1,5 +1,5 @@
-name: paper_agent
-description: "PaperAgent — AI document workspace for professional PDFs."
+name: daylex
+description: "Daylex — AI document workspace for professional PDFs."
 publish_to: 'none'
 version: 0.1.0+14
 

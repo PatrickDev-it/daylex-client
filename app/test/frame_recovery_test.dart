@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/core/platform/frame_recovery.dart';
+import 'package:daylex/core/platform/frame_recovery.dart';
 
 /// What the system tells the app about its window, sent the way the engine sends it.
 Future<void> _systemSays(WidgetTester tester, AppLifecycleState state) =>

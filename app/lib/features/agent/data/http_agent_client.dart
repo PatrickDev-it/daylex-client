@@ -18,7 +18,7 @@ import 'server_endpoint.g.dart';
 /// The server is [publicServerUrl], built in from the server's deploy
 /// configuration. The access key is the one the lawyer entered in the settings,
 /// kept in the OS credential vault. On a developer's
-/// machine `PAPERAGENT_URL` / `PAPERAGENT_TOKEN`, or a `"url"` in the legacy config,
+/// machine `DAYLEX_URL` / `DAYLEX_TOKEN`, or a `"url"` in the legacy config,
 /// name another server (a tunnel, the host's own token).
 class AgentServerConfig {
   const AgentServerConfig({required this.url, required this.token});
@@ -29,8 +29,7 @@ class AgentServerConfig {
   /// Optional endpoint override. Credentials belong only to DesktopCredentials.
   static File? get file {
     if (kIsWeb) return null;
-    final home = userHome(Platform.environment);
-    return home == null ? null : File('$home/.paperagent/server.json');
+    return serverConfigFile();
   }
 
   /// The configured server. Throws [AgentConfigException] with what is wrong,
@@ -56,9 +55,9 @@ class AgentServerConfig {
 
   static (String?, String?, String) _read(AppLocalizations l) {
     final env = kIsWeb ? const <String, String>{} : Platform.environment;
-    var url = kIsWeb ? Uri.base.origin : kReleaseMode ? null : env['PAPERAGENT_URL'];
-    var token = kReleaseMode ? null : env['PAPERAGENT_TOKEN'];
-    var source = 'PAPERAGENT_URL / PAPERAGENT_TOKEN';
+    var url = kIsWeb ? Uri.base.origin : kReleaseMode ? null : env['DAYLEX_URL'];
+    var token = kReleaseMode ? null : env['DAYLEX_TOKEN'];
+    var source = 'DAYLEX_URL / DAYLEX_TOKEN';
     final file = AgentServerConfig.file;
     if (url == null && token == null && file != null && file.existsSync()) {
       source = file.path;
@@ -141,7 +140,7 @@ class AgentServerConfig {
   /// Environment overrides are managed by the operator, not by this setting.
   static void resetAddress(AppLocalizations l, {File? configFile}) {
     if (kIsWeb) return;
-    if (Platform.environment['PAPERAGENT_URL'] case final String override
+    if (Platform.environment['DAYLEX_URL'] case final String override
         when override.isNotEmpty) {
       throw AgentConfigException(l.serverAddressEnvironmentOverride);
     }
@@ -279,7 +278,7 @@ const uploadAttempts = 9;
 Duration uploadRetryDelay(int attempt) =>
     Duration(seconds: attempt >= 7 ? 60 : 1 << (attempt - 1));
 
-/// [AgentClient] for the self-hosted agent server (`paper_agent_server`).
+/// [AgentClient] for the self-hosted agent server (`daylex_server`).
 ///
 /// A run is one `POST /v1/agent/runs` whose response is NDJSON, one event per
 /// line, kept open while the app executes tool calls. Cancelling the stream
@@ -294,7 +293,7 @@ class HttpAgentClient implements AgentClient, DocumentReviewer {
 
   // The lawyer sees the product, never which model or which server runs it.
   @override
-  String get displayName => 'PaperAgent';
+  String get displayName => 'Daylex';
 
   @override
   bool get isMock => false;

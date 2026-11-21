@@ -3,8 +3,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/agent/data/http_agent_client.dart';
-import 'package:paper_agent/features/agent/domain/agent_protocol.dart';
+import 'package:daylex/features/agent/data/http_agent_client.dart';
+import 'package:daylex/features/agent/domain/agent_protocol.dart';
 
 import 'test_app.dart';
 

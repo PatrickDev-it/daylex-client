@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/document/export/html_writer.dart';
-import 'package:paper_agent/features/document/export/md_writer.dart';
-import 'package:paper_agent/features/document/export/rtf_writer.dart';
-import 'package:paper_agent/features/document/export/txt_writer.dart';
+import 'package:daylex/features/document/export/html_writer.dart';
+import 'package:daylex/features/document/export/md_writer.dart';
+import 'package:daylex/features/document/export/rtf_writer.dart';
+import 'package:daylex/features/document/export/txt_writer.dart';
 
 import 'export_fixture.dart';
 import 'export_readers.dart';

@@ -881,7 +881,7 @@ abstract class AppLocalizations {
   /// No description provided for @serverAddressEnvironmentOverride.
   ///
   /// In it, this message translates to:
-  /// **'L\'indirizzo del servizio è impostato dall\'ambiente PAPERAGENT_URL: chiedi all\'amministratore di aggiornarlo.'**
+  /// **'L\'indirizzo del servizio è impostato dall\'ambiente DAYLEX_URL: chiedi all\'amministratore di aggiornarlo.'**
   String get serverAddressEnvironmentOverride;
 
   /// No description provided for @settingsAccessKeyUnverified.
@@ -2417,7 +2417,7 @@ abstract class AppLocalizations {
   /// No description provided for @connectionLocalOff.
   ///
   /// In it, this message translates to:
-  /// **'Il collegamento a PaperAgent non è attivo su questo computer: avvialo e riprova.'**
+  /// **'Il collegamento a Daylex non è attivo su questo computer: avvialo e riprova.'**
   String get connectionLocalOff;
 
   /// No description provided for @connectionUnreachable.
@@ -2615,7 +2615,7 @@ abstract class AppLocalizations {
   /// No description provided for @storeNoticeNewer.
   ///
   /// In it, this message translates to:
-  /// **'Questi dati sono stati salvati da una versione più recente di PaperAgent: puoi consultarli, ma le modifiche non verranno salvate finché non aggiorni l\'app.'**
+  /// **'Questi dati sono stati salvati da una versione più recente di Daylex: puoi consultarli, ma le modifiche non verranno salvate finché non aggiorni l\'app.'**
   String get storeNoticeNewer;
 
   /// No description provided for @storeNoticeRestored.
@@ -2633,7 +2633,7 @@ abstract class AppLocalizations {
   /// No description provided for @storeNoticeUnreadable.
   ///
   /// In it, this message translates to:
-  /// **'Non riesco a leggere una parte del lavoro salvato ({reason}): forse è aperta in un altro programma. Ti mostro quello che ho letto, ma non salvo le modifiche finché non riapri PaperAgent.'**
+  /// **'Non riesco a leggere una parte del lavoro salvato ({reason}): forse è aperta in un altro programma. Ti mostro quello che ho letto, ma non salvo le modifiche finché non riapri Daylex.'**
   String storeNoticeUnreadable(String reason);
 
   /// No description provided for @storeNoticeRecovered.

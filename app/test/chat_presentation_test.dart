@@ -7,15 +7,15 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/core/theme/app_theme.dart';
-import 'package:paper_agent/features/agent/agent_controller.dart';
-import 'package:paper_agent/features/agent/chat_cards.dart';
-import 'package:paper_agent/features/agent/data/mock_agent_client.dart';
-import 'package:paper_agent/features/agent/domain/agent_protocol.dart';
-import 'package:paper_agent/features/agent/presentation/ui_components.dart';
-import 'package:paper_agent/features/workspace/workspace_state.dart';
-import 'package:paper_agent/l10n/l10n.dart';
-import 'package:paper_agent/ui/chat/chat_view.dart';
+import 'package:daylex/core/theme/app_theme.dart';
+import 'package:daylex/features/agent/agent_controller.dart';
+import 'package:daylex/features/agent/chat_cards.dart';
+import 'package:daylex/features/agent/data/mock_agent_client.dart';
+import 'package:daylex/features/agent/domain/agent_protocol.dart';
+import 'package:daylex/features/agent/presentation/ui_components.dart';
+import 'package:daylex/features/workspace/workspace_state.dart';
+import 'package:daylex/l10n/l10n.dart';
+import 'package:daylex/ui/chat/chat_view.dart';
 
 import 'test_app.dart';
 

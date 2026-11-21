@@ -4,8 +4,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/document/render/pdf_renderer.dart';
-import 'package:paper_agent/features/document/render/pdfa.dart';
+import 'package:daylex/features/document/render/pdf_renderer.dart';
+import 'package:daylex/features/document/render/pdfa.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -52,7 +52,7 @@ void main() {
     for (final entry in samples.entries) {
       final info = _info(entry.value);
       final xmp = _xmp(entry.value);
-      expect(info['Creator'], 'PaperAgent', reason: entry.key);
+      expect(info['Creator'], 'Daylex', reason: entry.key);
       expect(_xmpValue(xmp, 'xmp:CreatorTool'), info['Creator']);
       expect(_xmpValue(xmp, 'pdf:Producer'), info['Producer']);
       expect(
@@ -298,7 +298,7 @@ Future<Uint8List> _portraitAndLandscape() {
   final pdf = newPdfaDocument(
     title: 'Pagine miste',
     author: 'Avv. Maria Rossi',
-    application: 'PaperAgent',
+    application: 'Daylex',
     colorProfile: File('assets/icc/sRGB2014.icc').readAsBytesSync(),
     theme: pw.ThemeData.withFont(
       base: font('Inter-Regular.ttf'),

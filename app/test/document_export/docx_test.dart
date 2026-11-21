@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/document/export/docx_writer.dart';
+import 'package:daylex/features/document/export/docx_writer.dart';
 import 'package:xml/xml.dart';
 
 import 'export_fixture.dart';

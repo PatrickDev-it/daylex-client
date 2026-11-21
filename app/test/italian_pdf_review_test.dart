@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/document/model/document.dart';
-import 'package:paper_agent/features/document/render/pdf_renderer.dart';
+import 'package:daylex/features/document/model/document.dart';
+import 'package:daylex/features/document/render/pdf_renderer.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

@@ -11,14 +11,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:paper_agent/core/platform/http_transport_web.dart' as transport;
-import 'package:paper_agent/features/access/desktop_credentials.dart';
-import 'package:paper_agent/features/agent/agent_controller.dart';
-import 'package:paper_agent/features/agent/data/http_agent_client.dart';
-import 'package:paper_agent/features/document/data/doc_templates.dart';
-import 'package:paper_agent/features/document/render/pdf_renderer.dart';
-import 'package:paper_agent/features/storage/local_store.dart';
-import 'package:paper_agent/ui/settings/settings_view.dart';
+import 'package:daylex/core/platform/http_transport_web.dart' as transport;
+import 'package:daylex/features/access/desktop_credentials.dart';
+import 'package:daylex/features/agent/agent_controller.dart';
+import 'package:daylex/features/agent/data/http_agent_client.dart';
+import 'package:daylex/features/document/data/doc_templates.dart';
+import 'package:daylex/features/document/render/pdf_renderer.dart';
+import 'package:daylex/features/storage/local_store.dart';
+import 'package:daylex/ui/settings/settings_view.dart';
 
 import 'test_app.dart';
 

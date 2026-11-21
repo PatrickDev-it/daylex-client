@@ -350,7 +350,7 @@
   "settingsResetConnectionAction": "Ripristina",
   "settingsResetConnectionHelp": "Usa il servizio predefinito dell'app mantenendo la chiave di accesso.",
   "settingsResetConnectionDone": "Connessione ripristinata. La chiave di accesso è stata mantenuta.",
-  "serverAddressEnvironmentOverride": "L'indirizzo del servizio è impostato dall'ambiente PAPERAGENT_URL: chiedi all'amministratore di aggiornarlo.",
+  "serverAddressEnvironmentOverride": "L'indirizzo del servizio è impostato dall'ambiente DAYLEX_URL: chiedi all'amministratore di aggiornarlo.",
   "settingsAccessKeyUnverified": "Chiave salvata, ma per ora non posso verificarla. {reason}",
   "@settingsAccessKeyUnverified": {
     "placeholders": {
@@ -1230,7 +1230,7 @@
   },
   "serverKeyRejected": "Il servizio non riconosce questa chiave: controlla di averla copiata per intero, o chiedine una nuova.",
   "serverUserFolderMissing": "Non trovo la cartella utente in cui salvare la chiave.",
-  "connectionLocalOff": "Il collegamento a PaperAgent non è attivo su questo computer: avvialo e riprova.",
+  "connectionLocalOff": "Il collegamento a Daylex non è attivo su questo computer: avvialo e riprova.",
   "connectionUnreachable": "Non riesco a raggiungere il servizio: controlla la connessione a internet e riprova.",
   "connectionTls": "Il collegamento sicuro con il servizio non è riuscito: controlla che data e ora del computer siano giuste, poi riprova.",
   "connectionTimeout": "Il servizio non ha risposto in tempo: riprova tra un momento.",
@@ -1391,7 +1391,7 @@
       }
     }
   },
-  "storeNoticeNewer": "Questi dati sono stati salvati da una versione più recente di PaperAgent: puoi consultarli, ma le modifiche non verranno salvate finché non aggiorni l'app.",
+  "storeNoticeNewer": "Questi dati sono stati salvati da una versione più recente di Daylex: puoi consultarli, ma le modifiche non verranno salvate finché non aggiorni l'app.",
   "storeNoticeRestored": "L’indice del lavoro salvato era danneggiato: ho ripristinato l’ultimo salvataggio valido. L’originale è rimasto nella cartella dati.",
   "storeNoticeSaveFailed": "Non riesco a salvare il lavoro sul disco ({reason}). Le modifiche restano aperte: riprovo alla prossima modifica.",
   "@storeNoticeSaveFailed": {
@@ -1401,7 +1401,7 @@
       }
     }
   },
-  "storeNoticeUnreadable": "Non riesco a leggere una parte del lavoro salvato ({reason}): forse è aperta in un altro programma. Ti mostro quello che ho letto, ma non salvo le modifiche finché non riapri PaperAgent.",
+  "storeNoticeUnreadable": "Non riesco a leggere una parte del lavoro salvato ({reason}): forse è aperta in un altro programma. Ti mostro quello che ho letto, ma non salvo le modifiche finché non riapri Daylex.",
   "@storeNoticeUnreadable": {
     "placeholders": {
       "reason": {

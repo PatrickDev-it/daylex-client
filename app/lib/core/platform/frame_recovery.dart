@@ -23,7 +23,7 @@ class FrameRecovery extends StatefulWidget {
   const FrameRecovery({super.key, required this.child, this.log});
 
   /// The native runners send `visible` here, with the reason, when the window may be back unannounced.
-  static const channel = MethodChannel('paper_agent/window');
+  static const channel = MethodChannel('daylex/window');
 
   /// How long a frame may take to reach the screen before the log says it never did.
   static const frameDeadline = Duration(seconds: 5);

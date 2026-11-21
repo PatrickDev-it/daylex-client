@@ -2,16 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/agent/domain/agent_protocol.dart';
-import 'package:paper_agent/features/agent/domain/document_tools.dart';
-import 'package:paper_agent/features/document/export/document_export.dart';
-import 'package:paper_agent/features/document/model/document.dart';
-import 'package:paper_agent/features/document/model/operations.dart';
-import 'package:paper_agent/features/document/render/page_fit.dart';
-import 'package:paper_agent/features/document/service/document_service.dart';
+import 'package:daylex/features/agent/domain/agent_protocol.dart';
+import 'package:daylex/features/agent/domain/document_tools.dart';
+import 'package:daylex/features/document/export/document_export.dart';
+import 'package:daylex/features/document/model/document.dart';
+import 'package:daylex/features/document/model/operations.dart';
+import 'package:daylex/features/document/render/page_fit.dart';
+import 'package:daylex/features/document/service/document_service.dart';
 
 /// The contract shared with the server: what the executor does with each
-/// tool call. The server's Python twin (paperagent_server/docsim.py) runs the
+/// tool call. The server's Python twin (daylex_server/docsim.py) runs the
 /// same cases, so the two cannot drift apart unnoticed.
 ///
 /// The app is the reference: after changing the executor on purpose, rewrite

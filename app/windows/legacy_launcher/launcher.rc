@@ -1,0 +1,26 @@
+#include <winres.h>
+
+// The app's icon: the shortcut an older install made shows it.
+101 ICON "..\\runner\\resources\\app_icon.ico"
+
+// Task Manager shows the app's name for the moment this program runs.
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,0
+ PRODUCTVERSION 1,0,0,0
+ FILEOS VOS__WINDOWS32
+ FILETYPE VFT_APP
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904e4"
+        BEGIN
+            VALUE "CompanyName", "Daylex" "\0"
+            VALUE "FileDescription", "Daylex" "\0"
+            VALUE "ProductName", "Daylex" "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END

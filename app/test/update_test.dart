@@ -7,15 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/update/installer.dart';
-import 'package:paper_agent/features/update/release.dart';
-import 'package:paper_agent/features/update/update_controller.dart';
-import 'package:paper_agent/core/theme/app_theme.dart';
-import 'package:paper_agent/features/update/update_source.dart';
-import 'package:paper_agent/l10n/l10n.dart';
-import 'package:paper_agent/ui/app_actions.dart';
-import 'package:paper_agent/ui/sidebar/update_button.dart';
-import 'package:paper_agent/ui/update/update_screen.dart';
+import 'package:daylex/features/update/installer.dart';
+import 'package:daylex/features/update/release.dart';
+import 'package:daylex/features/update/update_controller.dart';
+import 'package:daylex/core/theme/app_theme.dart';
+import 'package:daylex/features/update/update_source.dart';
+import 'package:daylex/l10n/l10n.dart';
+import 'package:daylex/ui/app_actions.dart';
+import 'package:daylex/ui/sidebar/update_button.dart';
+import 'package:daylex/ui/update/update_screen.dart';
 
 import 'test_app.dart';
 

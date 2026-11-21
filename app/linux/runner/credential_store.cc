@@ -47,6 +47,6 @@ static void on_call(FlMethodChannel*, FlMethodCall* call, gpointer) {
 void register_credential_store(FlBinaryMessenger* messenger) {
   g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
   g_autoptr(FlMethodChannel) channel = fl_method_channel_new(messenger,
-      "paper_agent/window", FL_METHOD_CODEC(codec));
+      "daylex/window", FL_METHOD_CODEC(codec));
   fl_method_channel_set_method_call_handler(channel, on_call, nullptr, nullptr);
 }

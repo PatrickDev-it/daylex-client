@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/core/platform/retired_whatsapp.dart';
+import 'package:daylex/core/platform/retired_whatsapp.dart';
 
 void main() {
   late Directory home;

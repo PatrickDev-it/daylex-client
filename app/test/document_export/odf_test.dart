@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/document/export/ods_writer.dart';
-import 'package:paper_agent/features/document/export/odt_writer.dart';
+import 'package:daylex/features/document/export/ods_writer.dart';
+import 'package:daylex/features/document/export/odt_writer.dart';
 import 'package:xml/xml.dart';
 
 import 'export_fixture.dart';

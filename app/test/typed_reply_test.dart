@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/ui/chat/chat_view.dart';
-import 'package:paper_agent/ui/chat/components/typed_reply.dart';
+import 'package:daylex/ui/chat/chat_view.dart';
+import 'package:daylex/ui/chat/components/typed_reply.dart';
 
 import 'test_app.dart';
 

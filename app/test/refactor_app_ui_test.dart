@@ -3,14 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/ui/chat/components/action_cards.dart';
-import 'package:paper_agent/ui/chat/components/document_cards.dart';
-import 'package:paper_agent/ui/chat/components/legal_cards.dart';
-import 'package:paper_agent/ui/chat/components/progress_cards.dart';
+import 'package:daylex/ui/chat/components/action_cards.dart';
+import 'package:daylex/ui/chat/components/document_cards.dart';
+import 'package:daylex/ui/chat/components/legal_cards.dart';
+import 'package:daylex/ui/chat/components/progress_cards.dart';
 
 import 'test_app.dart';
 
-import 'package:paper_agent/ui/chat/components/card_props.dart';
+import 'package:daylex/ui/chat/components/card_props.dart';
 
 /// Every `.dart` file under lib/ui with its text, for the "one definition" guards.
 Map<String, String> _uiSources() => {

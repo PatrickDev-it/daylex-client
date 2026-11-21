@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/access/desktop_credentials.dart';
-import 'package:paper_agent/features/access/service_status.dart';
-import 'package:paper_agent/l10n/app_localizations_it.dart';
+import 'package:daylex/features/access/desktop_credentials.dart';
+import 'package:daylex/features/access/service_status.dart';
+import 'package:daylex/l10n/app_localizations_it.dart';
 
 class _Vault implements CredentialVault {
   final values = <String, String>{};

@@ -485,7 +485,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get serverAddressEnvironmentOverride =>
-      'The server address is set by PAPERAGENT_URL: ask your administrator to update it.';
+      'The server address is set by DAYLEX_URL: ask your administrator to update it.';
 
   @override
   String settingsAccessKeyUnverified(String reason) {
@@ -1482,7 +1482,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connectionLocalOff =>
-      'The PaperAgent connection is not running on this computer: start it and try again.';
+      'The Daylex connection is not running on this computer: start it and try again.';
 
   @override
   String get connectionUnreachable =>
@@ -1621,7 +1621,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get storeNoticeNewer =>
-      'This data was saved by a newer version of PaperAgent: you can read it, but changes will not be saved until you update the app.';
+      'This data was saved by a newer version of Daylex: you can read it, but changes will not be saved until you update the app.';
 
   @override
   String get storeNoticeRestored =>
@@ -1634,7 +1634,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String storeNoticeUnreadable(String reason) {
-    return 'Cannot read part of your saved work ($reason): another program may have it open. I show what I could read, but changes are not saved until you reopen PaperAgent.';
+    return 'Cannot read part of your saved work ($reason): another program may have it open. I show what I could read, but changes are not saved until you reopen Daylex.';
   }
 
   @override

@@ -2,7 +2,7 @@ import 'dart:io' show ZLibCodec;
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart' show getCrc32;
-import 'package:paper_agent/features/document/model/document.dart';
+import 'package:daylex/features/document/model/document.dart';
 
 /// Characters that break a naive writer: XML and HTML metacharacters, quotes, accents, an emoji (two UTF-16 units),
 /// and control characters no format can carry.

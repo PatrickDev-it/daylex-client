@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/ui/document/outline_editor.dart';
+import 'package:daylex/ui/document/outline_editor.dart';
 
 import 'test_app.dart';
 

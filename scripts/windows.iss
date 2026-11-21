@@ -21,12 +21,12 @@ Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
 CloseApplications=yes
-CloseApplicationsFilter=paper_agent.exe
+CloseApplicationsFilter=Daylex.exe,paper_agent.exe
 RestartApplications=no
-UninstallDisplayIcon={app}\paper_agent.exe
+UninstallDisplayIcon={app}\Daylex.exe
 [Files]
 Source: "..\app\build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 [Icons]
-Name: "{autoprograms}\Daylex"; Filename: "{app}\paper_agent.exe"; WorkingDir: "{app}"
+Name: "{autoprograms}\Daylex"; Filename: "{app}\Daylex.exe"; WorkingDir: "{app}"
 [Run]
-Filename: "{app}\paper_agent.exe"; Description: "Avvia Daylex"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\Daylex.exe"; Description: "Avvia Daylex"; Flags: nowait postinstall skipifsilent

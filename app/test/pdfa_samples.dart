@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:paper_agent/features/document/data/doc_templates.dart';
-import 'package:paper_agent/features/document/model/document.dart';
+import 'package:daylex/features/document/data/doc_templates.dart';
+import 'package:daylex/features/document/model/document.dart';
 
 /// The documents the PDF/A-1b checks render: one per thing that has gone wrong in a PDF/A file before.
 /// Shared by `pdfa_test.dart` (structure, in the suite) and the veraPDF run (`PDFA_SAMPLES_DIR`).

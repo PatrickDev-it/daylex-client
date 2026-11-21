@@ -1,18 +1,18 @@
-// Against the real agent server. Skipped unless PAPERAGENT_LIVE=1 and the app's own server
+// Against the real agent server. Skipped unless DAYLEX_LIVE=1 and the app's own server
 // configuration loads (see README.md; e.g. through `ssh -N -L 8787:127.0.0.1:8787 gpu`):
 //
-//   $env:PAPERAGENT_LIVE=1; flutter test test/live_agent_test.dart
+//   $env:DAYLEX_LIVE=1; flutter test test/live_agent_test.dart
 import 'dart:io';
 import 'dart:convert';
 import 'dart:ui' show Locale;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/l10n/app_localizations.dart';
-import 'package:paper_agent/features/agent/agent_controller.dart';
-import 'package:paper_agent/features/agent/data/http_agent_client.dart';
-import 'package:paper_agent/features/document/model/document.dart';
-import 'package:paper_agent/features/workspace/workspace_state.dart';
+import 'package:daylex/l10n/app_localizations.dart';
+import 'package:daylex/features/agent/agent_controller.dart';
+import 'package:daylex/features/agent/data/http_agent_client.dart';
+import 'package:daylex/features/document/model/document.dart';
+import 'package:daylex/features/workspace/workspace_state.dart';
 
 import 'demo_fixture.dart';
 
@@ -31,7 +31,7 @@ void main() {
   } on AgentConfigException catch (e) {
     problem = e.message;
   }
-  final live = Platform.environment['PAPERAGENT_LIVE'] == '1' && config != null;
+  final live = Platform.environment['DAYLEX_LIVE'] == '1' && config != null;
 
   test(
     'the real agent edits the demo document end to end',
@@ -160,7 +160,7 @@ void main() {
     },
     skip: live
         ? false
-        : 'set PAPERAGENT_LIVE=1 and configure the server${problem == null ? '' : ': $problem'}',
+        : 'set DAYLEX_LIVE=1 and configure the server${problem == null ? '' : ': $problem'}',
     timeout: const Timeout(Duration(minutes: 2)),
   );
 }

@@ -72,7 +72,7 @@ class PdfRenderer {
     final pdf = newPdfaDocument(
       title: doc.title,
       author: doc.metadata.author,
-      application: 'PaperAgent',
+      application: 'Daylex',
       colorProfile: fonts.colorProfile,
       theme: pw.ThemeData.withFont(base: f.regular, bold: f.bold),
     );
@@ -343,7 +343,7 @@ class _PageBuilder {
             children: [
               pw.Text(
                 (doc.theme.brandName.isEmpty
-                        ? 'PaperAgent'
+                        ? 'Daylex'
                         : doc.theme.brandName)
                     .toUpperCase(),
                 style: s.text(

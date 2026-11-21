@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:paper_agent/features/access/desktop_credentials.dart';
+import 'package:daylex/features/access/desktop_credentials.dart';
 
 class MemoryVault implements CredentialVault {
   final values = <String, String>{};

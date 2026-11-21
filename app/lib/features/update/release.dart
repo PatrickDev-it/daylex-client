@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:cryptography/cryptography.dart';
 
 /// The name this computer's releases are published under (`<channel>/<platform>.json`, written by
-/// paper_agent_server/scripts/release.py): null where the app does not update itself.
+/// scripts/sign-release.py): null where the app does not update itself.
 String? get updatePlatform => Platform.isWindows
     ? 'windows'
     : Platform.isMacOS

@@ -119,10 +119,10 @@ class LocalStore {
     return LocalStore(Directory(dataPath()));
   }
 
-  /// Where the lawyer's work is kept: `data` in the platform's per-user app data folder, or `PAPERAGENT_DATA`.
+  /// Where the lawyer's work is kept: `data` in the platform's per-user app data folder, or `DAYLEX_DATA`.
   static String dataPath() {
     final env = Platform.environment;
-    final custom = env['PAPERAGENT_DATA'];
+    final custom = env['DAYLEX_DATA'];
     return custom != null && custom.isNotEmpty ? custom : '${appDataDir(env)}${Platform.pathSeparator}data';
   }
 
@@ -178,7 +178,7 @@ class LocalStore {
 
   /// [relative] could not be read, or set aside, for [e]: nothing more is written, so it is never written over.
   void _hold(String relative, FileSystemException e) {
-    debugPrint('PaperAgent: cannot read $relative now: $e');
+    debugPrint('Daylex: cannot read $relative now: $e');
     _held = true;
     notice.value = UnreadableNotice(e.osError?.message ?? e.message);
   }
@@ -308,7 +308,7 @@ class LocalStore {
 
   /// A save that failed: the lawyer hears of it once, not at every keystroke.
   void saveFailed(FileSystemException e) {
-    debugPrint('PaperAgent: could not save: $e');
+    debugPrint('Daylex: could not save: $e');
     notice.value = SaveFailedNotice(e.osError?.message ?? e.message);
   }
 }

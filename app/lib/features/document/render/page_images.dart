@@ -33,7 +33,7 @@ class SnapshotStore {
       try {
         disk.writeSnapshot(id, doc.toJson());
       } on FileSystemException catch (e) {
-        debugPrint('PaperAgent: could not save version $id: $e');
+        debugPrint('Daylex: could not save version $id: $e');
       }
     }
     return id;

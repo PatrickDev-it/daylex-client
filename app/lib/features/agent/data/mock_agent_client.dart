@@ -10,7 +10,7 @@ import '../domain/document_tools.dart';
 /// It recognises a handful of intents with keyword rules and answers with the
 /// same event stream (text deltas + tool calls) the real server sends, so
 /// the whole UI → tools → document → PDF pipeline can be exercised without a
-/// model. Only tests and `PAPERAGENT_MOCK=1` use it; a lawyer never gets its answers.
+/// model. Only tests and `DAYLEX_MOCK=1` use it; a lawyer never gets its answers.
 class MockAgentClient implements AgentClient {
   MockAgentClient({this.speed = 1.0});
 
