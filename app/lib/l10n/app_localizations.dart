@@ -188,66 +188,6 @@ abstract class AppLocalizations {
   /// **'Impostazioni'**
   String get settings;
 
-  /// No description provided for @whatsappTitle.
-  ///
-  /// In it, this message translates to:
-  /// **'WhatsApp'**
-  String get whatsappTitle;
-
-  /// No description provided for @whatsappConnect.
-  ///
-  /// In it, this message translates to:
-  /// **'Collega WhatsApp'**
-  String get whatsappConnect;
-
-  /// No description provided for @whatsappConnected.
-  ///
-  /// In it, this message translates to:
-  /// **'Collegato'**
-  String get whatsappConnected;
-
-  /// No description provided for @whatsappWaiting.
-  ///
-  /// In it, this message translates to:
-  /// **'In attesa del collegamento'**
-  String get whatsappWaiting;
-
-  /// No description provided for @whatsappScanQr.
-  ///
-  /// In it, this message translates to:
-  /// **'Scansiona il QR da WhatsApp > Dispositivi collegati'**
-  String get whatsappScanQr;
-
-  /// No description provided for @whatsappUnavailable.
-  ///
-  /// In it, this message translates to:
-  /// **'WhatsApp non disponibile'**
-  String get whatsappUnavailable;
-
-  /// No description provided for @whatsappHelp.
-  ///
-  /// In it, this message translates to:
-  /// **'Messaggi di testo e appuntamenti tramite l\'agente, con sessione salvata su questo computer.'**
-  String get whatsappHelp;
-
-  /// No description provided for @whatsappCheckStatus.
-  ///
-  /// In it, this message translates to:
-  /// **'Verifico WhatsApp'**
-  String get whatsappCheckStatus;
-
-  /// No description provided for @whatsappSearchContact.
-  ///
-  /// In it, this message translates to:
-  /// **'Cerco un contatto WhatsApp'**
-  String get whatsappSearchContact;
-
-  /// No description provided for @whatsappSendText.
-  ///
-  /// In it, this message translates to:
-  /// **'Invio un messaggio WhatsApp'**
-  String get whatsappSendText;
-
   /// No description provided for @pageCount.
   ///
   /// In it, this message translates to:
@@ -1685,7 +1625,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatDropFormats.
   ///
   /// In it, this message translates to:
-  /// **'PDF, .p7m firmati, DOCX, TXT e scansioni · più documenti o un\'intera cartella'**
+  /// **'PDF, Word, Excel, PEC ed e-mail, ZIP, .p7m firmati e scansioni · più documenti o un\'intera cartella'**
   String get chatDropFormats;
 
   /// No description provided for @composerHint.
@@ -2665,6 +2605,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Esporto il PDF'**
   String get toolExportPdf;
+
+  /// No description provided for @toolExportFile.
+  ///
+  /// In it, this message translates to:
+  /// **'Esporto in {format}'**
+  String toolExportFile(String format);
 
   /// No description provided for @storeNoticeNewer.
   ///

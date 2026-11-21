@@ -1,3 +1,4 @@
+import '../../document/export/document_export.dart';
 import '../../document/model/document.dart';
 import '../../document/service/document_diff.dart';
 import '../domain/agent_protocol.dart';
@@ -6,7 +7,7 @@ import '../domain/document_tools.dart';
 /// Rich components the conversation can render, keyed by name.
 ///
 /// The same names are used by the model server (`ui` events and
-/// ```` ```ui:<name> ```` fences) and by [presentToolResult]. Props are plain
+/// ```` ```ui:<name> ```` fences, within [fromAgent]) and by [presentToolResult]. Props are plain
 /// JSON; page numbers are 1-based; `snapshot` ids point into the app's
 /// snapshot store so a card keeps showing the version it was made for. The
 /// cards the server sends are named, and their props shaped, in the
@@ -79,6 +80,11 @@ abstract final class UiComponents {
     matrix,
   };
 
+  /// What the server's `ui` events and the ```` ```ui:<name> ```` fences of the model's text may show: every
+  /// card but the two only the app makes from its own work — an export card opens a file on this computer, an
+  /// approval card answers a question the app asked.
+  static final fromAgent = all.difference({exportResult, approval});
+
   /// Components that show a document and get a snapshot when the agent
   /// leaves it out.
   static const documentBound = {pdfPage, documentCard, documentOutline};
@@ -126,14 +132,17 @@ List<UiComponent> presentToolResult({
           'snapshot': snapshot(after),
         }),
       ];
-    case ToolNames.exportPdf:
+    case ToolNames.exportPdf || ToolNames.exportFile:
       final path = result.data?['path'];
       if (path == null || after == null) return const [];
+      final pdf = call.name == ToolNames.exportPdf;
       return [
         UiComponent(UiComponents.exportResult, {
           'path': path,
           'documentId': after.id,
-          'pages': after.pages.length,
+          // A PDF's pages are the preview's; another format lays out its own.
+          if (pdf) 'pages': after.pages.length,
+          'format': pdf ? ExportFormat.pdf.extension : call.arguments['format'],
         }),
       ];
     case ToolNames.addPage:

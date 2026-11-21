@@ -44,10 +44,6 @@ def package(platform):
                 f"(Get-Item -LiteralPath '{executable}').VersionInfo.ProductVersion"], text=True).strip()
             if built != f'{name}+{build}':
                 raise ValueError('Windows binary version does not match release')
-        bridge = bundle / 'whatsapp_bridge'
-        shutil.copytree(APP / 'whatsapp_bridge', bridge, dirs_exist_ok=True,
-                        ignore=shutil.ignore_patterns('.cache', '*.log'))
-        shutil.copy2(shutil.which('node'), bridge / ('node.exe' if platform == 'windows' else 'node'))
         if platform == 'linux':
             shutil.copy2(ROOT / 'scripts/install-linux.sh', bundle / 'install.sh')
             (bundle / 'install.sh').chmod(0o755)

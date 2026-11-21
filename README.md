@@ -8,8 +8,7 @@ No backend implementation, production data, access tokens or signing keys are in
 Flutter 3.47.9, Dart 3.13.7 and Node 22.21.1. `toolchain.json` pins the Flutter source commit and Dart
 version used by every CI job. Run `python scripts/flutter_toolchain.py` to install this isolated SDK;
 add its printed `bin` directory to PATH (or select that SDK in the editor). This leaves other SDKs intact.
-From `app/`, run `flutter pub get --enforce-lockfile`,
-then `npm ci --omit=dev --ignore-scripts` in `whatsapp_bridge/`. Run `flutter run -d windows`, `macos` or `linux`.
+From `app/`, run `flutter pub get --enforce-lockfile`, then `flutter run -d windows`, `macos` or `linux`.
 Linux requires GTK 3, libsecret and a running Secret Service keyring. Credential storage fails closed when
 the keyring is unavailable; credentials are never persisted in plaintext.
 Run `python scripts/analyze.py` from the repository root for the same strict analysis as CI.
@@ -20,7 +19,7 @@ process crashed. Warnings and informational diagnostics remain fatal; no analysi
 
 Daylex primarily serves desktop PCs and large screens. Tablet use is secondary; phone-first redesign is
 not a product goal. The complementary PWA should preserve document editing, agent chat, preview and PDF
-export. WhatsApp remains a desktop-only integration and is intentionally unsupported on the web.
+export.
 
 ## iOS distribution assessment (9 November 2026)
 

@@ -4,14 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../core/theme/app_theme.dart';
 import '../../features/agent/agent_controller.dart';
 import '../../features/agent/data/http_agent_client.dart';
 import '../../features/agent/domain/document_tools.dart';
 import '../../features/agent/presentation/ui_components.dart';
-import '../../features/agent/whatsapp_bridge.dart';
 import '../../features/update/update_controller.dart';
 import '../../features/workspace/ui_state.dart';
 import '../../l10n/labels.dart';
@@ -33,9 +31,8 @@ class SettingsView extends ConsumerWidget {
     final ui = ref.watch(uiProvider);
     final client = ref.watch(agentClientProvider);
     final update = ref.watch(updateProvider);
-    final whatsapp = ref.watch(whatsappProvider);
     final approval = [
-      for (final t in documentToolSpecs)
+      for (final t in appToolSpecs)
         if (t.requiresApproval) describeToolCall(l, t.name, const {}),
     ];
 
@@ -209,44 +206,6 @@ class SettingsView extends ConsumerWidget {
                           last: true,
                         ),
                       ]),
-                      if (!kIsWeb) ListenableBuilder(
-                        listenable: whatsapp,
-                        builder: (context, _) => section(l.whatsappTitle, [
-                          row(
-                            l.whatsappTitle,
-                            whatsapp.ready
-                                ? Pill(
-                                    l.whatsappConnected,
-                                    icon: LucideIcons.circleCheck,
-                                  )
-                                : OutlinedButton(
-                                    onPressed: () => unawaited(
-                                      whatsapp.start().catchError(
-                                        (Object _) {},
-                                      ),
-                                    ),
-                                    child: Text(l.whatsappConnect),
-                                  ),
-                            help: whatsapp.error ?? l.whatsappHelp,
-                            last: whatsapp.qr == null,
-                          ),
-                          if (whatsapp.qr case final qr?)
-                            Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                children: [
-                                  Text(l.whatsappScanQr),
-                                  const SizedBox(height: 12),
-                                  QrImageView(
-                                    data: qr,
-                                    size: 220,
-                                    backgroundColor: Colors.white,
-                                  ),
-                                ],
-                              ),
-                            ),
-                        ]),
-                      ),
                       if (!kIsWeb) section(l.settingsUpdates, [
                         row(
                           l.settingsVersion,

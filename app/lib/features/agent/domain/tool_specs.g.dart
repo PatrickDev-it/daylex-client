@@ -454,50 +454,28 @@ const _toolsJson = r'''
     "mutates": false
   },
   {
-    "name": "whatsapp_status",
-    "description": "Verifica se WhatsApp è collegato sul computer dell'utente. Se manca il login, l'app mostra un QR.",
-    "parameters": {
-      "type": "object",
-      "properties": {},
-      "required": []
-    },
-    "requiresApproval": false,
-    "mutates": false
-  },
-  {
-    "name": "whatsapp_find_contact",
-    "description": "Cerca un contatto WhatsApp per nome o numero. Prima di inviare, usa l'ID restituito; se ci sono più persone, chiedi quale scegliere.",
+    "name": "export_file",
+    "description": "Esporta il documento in un file Word (docx), Excel (xlsx), LibreOffice (odt, ods), rtf, csv, testo (txt), Markdown (md) o pagina web (html). Per il PDF usa export_pdf. xlsx, ods e csv contengono le tabelle del documento; un documento senza tabelle vi va come testo.",
     "parameters": {
       "type": "object",
       "properties": {
-        "query": {
+        "format": {
           "type": "string",
-          "description": "almeno due caratteri del nome o numero"
+          "enum": [
+            "docx",
+            "odt",
+            "rtf",
+            "txt",
+            "md",
+            "html",
+            "xlsx",
+            "ods",
+            "csv"
+          ]
         }
       },
       "required": [
-        "query"
-      ]
-    },
-    "requiresApproval": false,
-    "mutates": false
-  },
-  {
-    "name": "whatsapp_send_message",
-    "description": "Invia solo testo a un contatto trovato con whatsapp_find_contact in questa sessione dell'app. Usa l'ID esatto, mai un numero inventato. Comunica l'invio solo se il risultato conferma il successo.",
-    "parameters": {
-      "type": "object",
-      "properties": {
-        "contactId": {
-          "type": "string"
-        },
-        "message": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "contactId",
-        "message"
+        "format"
       ]
     },
     "requiresApproval": false,

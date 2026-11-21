@@ -27,16 +27,6 @@
   "newDocument": "Nuovo documento",
   "exportPdf": "Esporta PDF",
   "settings": "Impostazioni",
-  "whatsappTitle": "WhatsApp",
-  "whatsappConnect": "Collega WhatsApp",
-  "whatsappConnected": "Collegato",
-  "whatsappWaiting": "In attesa del collegamento",
-  "whatsappScanQr": "Scansiona il QR da WhatsApp > Dispositivi collegati",
-  "whatsappUnavailable": "WhatsApp non disponibile",
-  "whatsappHelp": "Messaggi di testo e appuntamenti tramite l'agente, con sessione salvata su questo computer.",
-  "whatsappCheckStatus": "Verifico WhatsApp",
-  "whatsappSearchContact": "Cerco un contatto WhatsApp",
-  "whatsappSendText": "Invio un messaggio WhatsApp",
   "pageCount": "{count, plural, =1{1 pagina} other{{count} pagine}}",
   "@pageCount": {
     "placeholders": {
@@ -752,7 +742,7 @@
     }
   },
   "chatDropTitle": "Rilascia i documenti per aggiungerli a questa conversazione",
-  "chatDropFormats": "PDF, .p7m firmati, DOCX, TXT e scansioni · più documenti o un'intera cartella",
+  "chatDropFormats": "PDF, Word, Excel, PEC ed e-mail, ZIP, .p7m firmati e scansioni · più documenti o un'intera cartella",
   "composerHint": "Chiedi una modifica o descrivi un documento…",
   "composerAttach": "Allega documenti o immagini",
   "composerSend": "Invia  ·  Invio",
@@ -1393,6 +1383,14 @@
   "toolSetTheme": "Aggiorno il tema",
   "toolUpdateMetadata": "Aggiorno i dati",
   "toolExportPdf": "Esporto il PDF",
+  "toolExportFile": "Esporto in {format}",
+  "@toolExportFile": {
+    "placeholders": {
+      "format": {
+        "type": "String"
+      }
+    }
+  },
   "storeNoticeNewer": "Questi dati sono stati salvati da una versione più recente di PaperAgent: puoi consultarli, ma le modifiche non verranno salvate finché non aggiorni l'app.",
   "storeNoticeRestored": "L’indice del lavoro salvato era danneggiato: ho ripristinato l’ultimo salvataggio valido. L’originale è rimasto nella cartella dati.",
   "storeNoticeSaveFailed": "Non riesco a salvare il lavoro sul disco ({reason}). Le modifiche restano aperte: riprovo alla prossima modifica.",

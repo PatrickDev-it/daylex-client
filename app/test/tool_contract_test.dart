@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:paper_agent/features/agent/domain/agent_protocol.dart';
 import 'package:paper_agent/features/agent/domain/document_tools.dart';
+import 'package:paper_agent/features/document/export/document_export.dart';
 import 'package:paper_agent/features/document/model/document.dart';
 import 'package:paper_agent/features/document/model/operations.dart';
 import 'package:paper_agent/features/document/render/page_fit.dart';
@@ -32,7 +33,7 @@ class _Host implements ToolHost {
   void openNewDocument(PaperDocument doc) => activeDocument = doc;
 
   @override
-  Future<String?> exportActiveDocument() async => null;
+  Future<String?> exportActiveDocument({ExportFormat format = ExportFormat.pdf}) async => null;
 
   @override
   Future<FittedDocument> fitPages(PaperDocument doc) async => FittedDocument(doc);

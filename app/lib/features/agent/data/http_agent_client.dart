@@ -271,6 +271,14 @@ String describeFailure(AppLocalizations l, Object e) => switch (e) {
 /// closing, and the lawyer would otherwise wait forever.
 const streamIdleLimit = Duration(minutes: 3);
 
+/// How many times one step of an upload is tried while the server is busy or the network drops it: about three
+/// minutes of waits in all, beyond the minute the server itself waits for room before it answers busy.
+const uploadAttempts = 9;
+
+/// The wait after the failed try [attempt] of a step of an upload: 1, 2, 4… seconds, at most a minute.
+Duration uploadRetryDelay(int attempt) =>
+    Duration(seconds: attempt >= 7 ? 60 : 1 << (attempt - 1));
+
 /// [AgentClient] for the self-hosted agent server (`paper_agent_server`).
 ///
 /// A run is one `POST /v1/agent/runs` whose response is NDJSON, one event per
@@ -340,6 +348,8 @@ class HttpAgentClient implements AgentClient, DocumentReviewer {
 
   Uri _endpoint(String path) => config.url.resolve(path);
 
+  /// A JSON request, its length declared: the server refuses one too large before reading it, and keeps for it
+  /// only that much of the memory every caller shares.
   Future<HttpClientRequest> _post(
     String path,
     Object body, {
@@ -348,7 +358,9 @@ class HttpAgentClient implements AgentClient, DocumentReviewer {
     final request = await _http.postUrl(_endpoint(path));
     _authorize(request, config.token).headers.contentType = ContentType.json;
     if (sourceLinks) request.headers.set('X-Source-Links-Version', '1');
-    request.add(utf8.encode(jsonEncode(body)));
+    final data = utf8.encode(jsonEncode(body));
+    request.contentLength = data.length;
+    request.add(data);
     return request;
   }
 
@@ -456,21 +468,29 @@ class HttpAgentClient implements AgentClient, DocumentReviewer {
     await _answer(request);
   }
 
+  /// A file on disk goes in chunks of [uploadChunkBytes], up to [maxFileBytes]: a scanned court file of
+  /// gigabytes is never whole in memory, here or on the server. A file already in memory, or a server without the
+  /// chunked routes, sends it whole, up to [maxInlineFileBytes].
   @override
   Future<AttachmentCard?> uploadAttachment(
     String sessionId,
     AgentAttachment attachment,
   ) async {
-    if (attachment.localPath != null &&
-        await File(attachment.localPath!).length() > maxFileBytes) {
+    final path = attachment.localPath;
+    final size = path == null
+        ? attachment.bytes.length
+        : await File(path).length();
+    if (size > maxFileBytes) {
       throw const FileSystemException('Il file supera il limite consentito.');
     }
-    final bytes = attachment.localPath == null
-        ? attachment.bytes
-        : await File(attachment.localPath!).readAsBytes();
-    if (bytes.length > maxFileBytes) {
+    if (path != null && size > 0) {
+      final card = await _uploadInChunks(sessionId, attachment, File(path), size);
+      if (card != null) return card;
+    }
+    if (size > maxInlineFileBytes) {
       throw const FileSystemException('Il file supera il limite consentito.');
     }
+    final bytes = path == null ? attachment.bytes : await File(path).readAsBytes();
     final request = await _post(_sessionPath(sessionId, '/attachments'), {
       'name': attachment.name,
       'mimeType': attachment.mimeType,
@@ -478,6 +498,96 @@ class HttpAgentClient implements AgentClient, DocumentReviewer {
     });
     final body = await _answer(request);
     return AttachmentCard.fromJson(jsonDecode(body) as Map<String, dynamic>);
+  }
+
+  /// [file] sent a chunk at a time, each resumed from what the server says arrived; then read into the case file.
+  /// Null from a server that has no chunked routes yet.
+  Future<AttachmentCard?> _uploadInChunks(
+    String sessionId,
+    AgentAttachment attachment,
+    File file,
+    int size,
+  ) async {
+    final uploads = _sessionPath(sessionId, '/uploads');
+    final (status, begun) = await _retrying(
+      () => _send(
+        'POST',
+        uploads,
+        json: {'name': attachment.name, 'mimeType': attachment.mimeType, 'size': size},
+      ),
+    );
+    if (status == HttpStatus.notFound) return null;
+    final start = _expect(status, begun, const {HttpStatus.ok});
+    final upload = '$uploads/${start['id']}';
+    final chunk = (start['chunkBytes'] as num?)?.toInt() ?? uploadChunkBytes;
+    var offset = (start['received'] as num?)?.toInt() ?? 0;
+    final input = await file.open();
+    try {
+      while (offset < size) {
+        await input.setPosition(offset);
+        final data = await input.read(size - offset < chunk ? size - offset : chunk);
+        if (data.isEmpty) {
+          throw const FileSystemException('Il file è cambiato durante l\'invio.');
+        }
+        final (status, body) = await _retrying(
+          () => _send('PUT', upload, query: {'offset': '$offset'}, bytes: data),
+        );
+        // 409: a chunk whose answer was lost arrived after all; the server says from where to go on.
+        offset = (_expect(status, body, const {HttpStatus.ok, HttpStatus.conflict})['received'] as num)
+            .toInt();
+      }
+    } finally {
+      await input.close();
+    }
+    final (done, card) = await _retrying(() => _send('POST', '$upload/complete'));
+    return AttachmentCard.fromJson(_expect(done, card, const {HttpStatus.ok}));
+  }
+
+  /// One request of an upload, its length declared: its status and its body.
+  Future<(int, String)> _send(
+    String method,
+    String path, {
+    Map<String, String>? query,
+    Object? json,
+    List<int> bytes = const [],
+  }) async {
+    final request = _authorize(
+      await _http.openUrl(method, _endpoint(path).replace(queryParameters: query)),
+      config.token,
+    );
+    final data = json == null ? bytes : utf8.encode(jsonEncode(json));
+    request.headers.contentType = json == null ? ContentType.binary : ContentType.json;
+    request.contentLength = data.length;
+    request.add(data);
+    final response = await request.close();
+    return (response.statusCode, await utf8.decodeStream(response));
+  }
+
+  /// [send] again while the server is busy (429, 503: every caller shares its memory and its reading queue) or
+  /// the network drops it, waiting longer each time; the last answer or error otherwise.
+  static Future<(int, String)> _retrying(
+    Future<(int, String)> Function() send, {
+    int attempts = uploadAttempts,
+  }) async {
+    for (var attempt = 1; ; attempt++) {
+      try {
+        final answer = await send();
+        final busy = answer.$1 == HttpStatus.tooManyRequests ||
+            answer.$1 == HttpStatus.serviceUnavailable;
+        if (!busy || attempt >= attempts) return answer;
+      } on IOException {
+        if (attempt >= attempts) rethrow;
+      }
+      await Future<void>.delayed(uploadRetryDelay(attempt));
+    }
+  }
+
+  /// The JSON of an answer whose status is one of [ok]; the server's own words otherwise.
+  Map<String, dynamic> _expect(int status, String body, Set<int> ok) {
+    if (!ok.contains(status)) {
+      throw HttpException(_serverDetail(l10n(), body, status));
+    }
+    return jsonDecode(body) as Map<String, dynamic>;
   }
 
   @override
@@ -511,8 +621,9 @@ class HttpAgentClient implements AgentClient, DocumentReviewer {
     Uint8List? pdf;
     if (includeOriginal && data['hasOriginal'] == true) {
       try {
+        // That page of the original alone: a court file of gigabytes is never downloaded to show one page.
         final fileUri = _endpoint(_sessionPath(sessionId, '/source/file'))
-            .replace(queryParameters: {'name': name});
+            .replace(queryParameters: {'name': name, 'page': '$page'});
         final fileRequest = _authorize(
           await _http.getUrl(fileUri),
           config.token,

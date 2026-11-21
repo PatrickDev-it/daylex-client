@@ -300,11 +300,12 @@ void main() {
           'Bearer test-key',
         );
         expect(request.uri.queryParameters['name'], 'quietanza #1 & copia.pdf');
+        // The original too is asked for that page alone.
+        expect(request.uri.queryParameters['page'], '2');
         paths.add(request.uri.path);
         if (request.uri.path.endsWith('/file')) {
           request.response.add(utf8.encode('%PDF-test'));
         } else {
-          expect(request.uri.queryParameters['page'], '2');
           request.response.write(
             jsonEncode({
               'name': 'quietanza #1 & copia.pdf',

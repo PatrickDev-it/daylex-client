@@ -5,19 +5,8 @@ import 'package:flutter/foundation.dart';
 
 import 'domain/agent_protocol.dart';
 
-/// What the case file reads, by extension: documents, signed copies (.p7m) and scans.
-const _mimeByType = {
-  'pdf': 'application/pdf',
-  'p7m': 'application/pkcs7-mime',
-  'docx':
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'txt': 'text/plain',
-  'png': 'image/png',
-  'jpg': 'image/jpeg',
-  'jpeg': 'image/jpeg',
-};
-
-final attachableTypes = List<String>.unmodifiable(_mimeByType.keys);
+/// What the case file takes, by extension: the server's own list ([attachableMediaTypes], rfc/051).
+final attachableTypes = List<String>.unmodifiable(attachableMediaTypes.keys);
 
 /// What follows the last dot of [name], lower case; empty when the name has no dot (it has no extension).
 String _typeOf(String name) {
@@ -45,7 +34,8 @@ class LeftOut {
   /// A type the case file does not read.
   final List<String> wrongType;
 
-  /// Past the [maxAttachmentBytes] the chat holds at once, with what it already holds.
+  /// Past [maxFileBytes] (sent from disk) or [maxInlineFileBytes] (held in memory), or past the
+  /// [maxAttachmentBytes] the chat holds at once, with what it already holds.
   final List<String> tooLarge;
 
   /// The system would not give them (open in another program, no permission, gone), files or folders.
@@ -69,7 +59,7 @@ Future<(List<AgentAttachment>, LeftOut)> readAttachable(
   final unreadable = <String>[];
   for (final f in expandFolders(files, onUnreadable: unreadable.add)) {
     final name = _nameOf(f);
-    if (!_mimeByType.containsKey(_typeOf(name))) {
+    if (!attachableMediaTypes.containsKey(_typeOf(name))) {
       wrongType.add(name);
       continue;
     }
@@ -89,14 +79,14 @@ Future<(List<AgentAttachment>, LeftOut)> readAttachable(
         );
         continue;
       }
-      // The size first: a file past the room is never read into memory.
+      // The size first: a file past the room is never read into memory. Held in memory, it travels whole.
       final size = await f.length();
-      if (picked.length >= maxFiles || size > room || size > maxFileBytes) {
+      if (picked.length >= maxFiles || size > room || size > maxInlineFileBytes) {
         tooLarge.add(name);
         continue;
       }
       final bytes = await f.readAsBytes();
-      if (bytes.length > room || bytes.length > maxFileBytes) {
+      if (bytes.length > room || bytes.length > maxInlineFileBytes) {
         tooLarge.add(name); // it grew since
         continue;
       }
@@ -145,4 +135,4 @@ Iterable<XFile> expandFolders(
 }
 
 String mimeFor(String name) =>
-    _mimeByType[_typeOf(name)] ?? 'application/octet-stream';
+    attachableMediaTypes[_typeOf(name)] ?? 'application/octet-stream';

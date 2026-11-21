@@ -50,6 +50,9 @@ class HttpClientRequest {
   final _bytes = <int>[];
   final _abort = Completer<void>();
   bool followRedirects = true;
+
+  /// Unused: Fetch declares the length of the body itself. Kept so call sites stay shared with dart:io.
+  int contentLength = -1;
   void add(List<int> bytes) => _bytes.addAll(bytes);
   void write(Object value) => add(utf8.encode('$value'));
   void abort([Object? error, StackTrace? stackTrace]) {

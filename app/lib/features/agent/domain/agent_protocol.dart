@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import '../../../l10n/l10n.dart';
+import '../../document/export/document_export.dart';
 import '../../document/model/document.dart';
 
 part 'agent_protocol.g.dart';
@@ -72,6 +73,7 @@ class SourceDocument {
   final int page;
   final int pages;
   final String text;
+  /// The original of [page] alone, a PDF of one page; null when the document has no PDF original.
   final Uint8List? pdfBytes;
   final String unit;
 }
@@ -212,8 +214,17 @@ class AgentRequest {
     'currentPage': currentPage,
     'attachments': [for (final a in attachments) a.toJson()],
     'history': [for (final t in history) t.toJson()],
+    'exportFormats': exportFileFormats.keys.toList(),
   };
 }
+
+/// The formats `export_file` asks for that this app writes, by the name the call uses (rfc/051): every
+/// [ExportFormat] but the PDF, which `export_pdf` draws. Every run declares them, so the server never asks this app
+/// for a file it cannot write.
+final exportFileFormats = {
+  for (final format in ExportFormat.values)
+    if (format != ExportFormat.pdf) format.extension: format,
+};
 
 /// Events streamed back by the agent.
 sealed class AgentEvent {

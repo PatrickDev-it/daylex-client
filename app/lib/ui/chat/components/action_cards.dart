@@ -9,6 +9,7 @@ import '../../../core/platform/files.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../features/agent/agent_controller.dart';
 import '../../../features/agent/presentation/ui_components.dart';
+import '../../../features/workspace/pdf_export.dart';
 import '../../../l10n/l10n.dart';
 import '../../app_actions.dart';
 import '../../common/widgets.dart';
@@ -16,22 +17,28 @@ import 'agent_markdown.dart';
 import 'card_chrome.dart';
 import 'card_props.dart';
 
-/// `export_result`: the exported PDF with shortcuts to open it.
-class ExportCard extends StatelessWidget {
+/// `export_result`: the exported file, PDF or another format, with shortcuts to open it.
+class ExportCard extends ConsumerWidget {
   const ExportCard({super.key, required this.props});
 
   final Map<String, dynamic> props;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final tokens = AppTokens.of(context);
     final text = Theme.of(context).textTheme;
     final l = context.l10n;
     final path = propString(props['path']) ?? '';
     final name = path.split(RegExp(r'[\\/]')).last;
-    final file = kIsWeb ? null : File(path);
+    // Only a file this app wrote is looked at: any other path is never touched — on Windows merely checking a
+    // `\\host\share` path hands the lawyer's network credentials to that host.
+    final file = !kIsWeb && ref.watch(exportedFilesProvider).contains(path)
+        ? File(path)
+        : null;
     final size = file != null && file.existsSync() ? file.lengthSync() : null;
     final pages = propIntOrNull(props['pages']);
+    final format = propString(props['format']) ?? 'pdf';
+    final badge = format == 'pdf' ? tokens.danger : tokens.sourceLink;
 
     return CardWidth(
       maxWidth: CardWidth.compact,
@@ -45,15 +52,15 @@ class ExportCard extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               padding: const EdgeInsets.only(bottom: 6),
               decoration: BoxDecoration(
-                color: tokens.danger.withValues(alpha: AppTheme.tintSoft),
+                color: badge.withValues(alpha: AppTheme.tintSoft),
                 borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                 border: Border.all(
-                  color: tokens.danger.withValues(alpha: AppTheme.tintBorder),
+                  color: badge.withValues(alpha: AppTheme.tintBorder),
                 ),
               ),
               child: Text(
-                'PDF',
-                style: AppText.of(context).badge.copyWith(color: tokens.danger),
+                format.toUpperCase(),
+                style: AppText.of(context).badge.copyWith(color: badge),
               ),
             ),
             const SizedBox(width: 12),

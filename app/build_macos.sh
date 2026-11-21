@@ -56,11 +56,6 @@ flutter config --enable-macos-desktop >/dev/null
 
 step "dipendenze"
 flutter pub get --enforce-lockfile
-if ! command -v node >/dev/null || ! command -v npm >/dev/null; then
-  echo "Serve Node.js per il connettore WhatsApp. Installalo e rilancia lo script."
-  exit 1
-fi
-(cd whatsapp_bridge && npm ci --omit=dev --ignore-scripts)
 
 step "build (qualche minuto la prima volta)"
 if ! flutter build macos --release --no-pub; then
@@ -73,23 +68,6 @@ if ! flutter build macos --release --no-pub; then
   exit 1
 fi
 built="build/macos/Build/Products/Release/${app}.app"
-bridge_resources="${built}/Contents/Resources/whatsapp_bridge"
-node_helper="${built}/Contents/Helpers/daylex-whatsapp-node"
-rm -rf "$bridge_resources"
-mkdir -p "$bridge_resources" "${built}/Contents/Helpers"
-cp whatsapp_bridge/bridge.js whatsapp_bridge/package.json whatsapp_bridge/package-lock.json "$bridge_resources/"
-cp -R whatsapp_bridge/node_modules "$bridge_resources/"
-cp "$(command -v node)" "$node_helper"
-bash tool/check_macos_runtime.sh "$node_helper"
-
-app_archs="$(lipo -archs "${built}/Contents/MacOS/${app}")"
-node_archs="$(lipo -archs "$node_helper")"
-for arch in $app_archs; do
-  if [[ " $node_archs " != *" $arch "* ]]; then
-    echo "Il Node incluso supporta [$node_archs], ma Daylex richiede anche $arch. Usa un Node universale."
-    exit 1
-  fi
-done
 
 step "firma interna e verifica"
 # Apple richiede di firmare ogni componente annidato prima dell'app che lo contiene.

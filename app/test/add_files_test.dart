@@ -28,7 +28,7 @@ void main() {
       await File('${dir.path}/b_decreto.pdf').writeAsBytes([1]);
       await File('${dir.path}/a_ricorso.pdf.p7m').writeAsBytes([2]);
       await File('${sub.path}/perizia.docx').writeAsBytes([3]);
-      await File('${dir.path}/foglio.xlsx').writeAsBytes([4]);
+      await File('${dir.path}/archivio.rar').writeAsBytes([4]);
       final note = await File('${Directory.systemTemp.path}/pa_note.txt')
           .writeAsBytes([5]);
       addTearDown(note.delete);
@@ -52,7 +52,7 @@ void main() {
         'b_decreto.pdf',
         'pa_note.txt',
       ]);
-      expect(left.wrongType, ['foglio.xlsx']);
+      expect(left.wrongType, ['archivio.rar']);
       expect(left.tooLarge, isEmpty);
       expect(left.unreadable, isEmpty);
     },
@@ -118,31 +118,34 @@ void main() {
     },
   );
 
-  test('the chat holds no more than maxAttachmentBytes, counting what it already holds', () async {
+  test('a file on disk past what the chat holds in memory goes in chunks; one held in memory travels whole', () async {
     final first = await write('primo.pdf', 1);
     final container = ProviderContainer();
     addTearDown(container.dispose);
     final agent = container.read(agentProvider.notifier);
     await agent.addFiles(AgentController.draftId, [XFile(first.path)]);
 
-    // Exactly the room the chat has left is still too much by the one byte it already holds.
-    final big = File('${dir.path}/grande.pdf');
-    final raf = await big.open(mode: FileMode.write);
-    await raf.truncate(maxAttachmentBytes);
-    await raf.close();
-    final left = await agent.addFiles(AgentController.draftId, [
-      XFile(big.path),
-    ]);
+    // A scanned court file larger than everything the chat may hold in memory: sent from disk, never read here.
+    Future<File> sized(String name, int size) async {
+      final file = File('${dir.path}/$name');
+      final raf = await file.open(mode: FileMode.write);
+      await raf.truncate(size);
+      await raf.close();
+      return file;
+    }
 
-    expect(left.tooLarge, ['grande.pdf']);
-    expect(
-      container
-          .read(agentProvider)
-          .of(AgentController.draftId)
-          .attachments
-          .map((a) => a.name),
-      ['primo.pdf'],
-    );
+    final big = await sized('grande.pdf', maxAttachmentBytes);
+    expect((await agent.addFiles(AgentController.draftId, [XFile(big.path)])).isEmpty, isTrue);
+    final held = container.read(agentProvider).of(AgentController.draftId).attachments;
+    expect(held.map((a) => a.name), ['primo.pdf', 'grande.pdf']);
+    expect(held.last.bytes, isEmpty);
+    expect(held.last.localPath, big.path);
+
+    // In memory (the web, a file with no path) it goes base64 inside one request, so at most maxInlineFileBytes.
+    final inline = await sized('in-memoria.pdf', maxInlineFileBytes + 1);
+    final (picked, left) = await readAttachable([XFile(inline.path)]);
+    expect(picked, isEmpty);
+    expect(left.tooLarge, ['in-memoria.pdf']);
   });
 
   testWidgets('what was left out is told in one message, one line per reason', (
@@ -157,7 +160,7 @@ void main() {
     showLeftOut(
       key.currentState,
       l,
-      const LeftOut(wrongType: ['foglio.xlsx'], unreadable: ['bloccato.pdf']),
+      const LeftOut(wrongType: ['archivio.rar'], unreadable: ['bloccato.pdf']),
     );
     await tester.pump();
 
@@ -165,7 +168,7 @@ void main() {
       find.descendant(of: find.byType(SnackBar), matching: find.byType(Text)),
     );
     expect(text.data!.split('\n'), hasLength(2));
-    expect(text.data, contains('foglio.xlsx'));
+    expect(text.data, contains('archivio.rar'));
     expect(text.data, contains('bloccato.pdf'));
   });
 }

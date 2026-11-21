@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
+import '../document/export/document_export.dart';
 import '../document/model/document.dart';
 import '../document/model/operations.dart';
 import '../document/render/page_fit.dart';
@@ -42,9 +43,13 @@ class ThreadToolHost implements ToolHost {
       _ref.read(pageFitProvider)(doc);
 
   @override
-  Future<String?> exportActiveDocument() async {
+  Future<String?> exportActiveDocument({
+    ExportFormat format = ExportFormat.pdf,
+  }) async {
     final doc = activeDocument;
-    return doc == null ? null : _ref.read(exportServiceProvider).export(doc);
+    return doc == null
+        ? null
+        : _ref.read(exportServiceProvider).export(doc, format: format);
   }
 
   @override

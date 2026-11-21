@@ -18,7 +18,7 @@ Daylex combines document drafting, conversational assistance, editing, preview a
 
 ## Capabilities and Constraints
 
-Windows, macOS and Linux downloads are published automatically. A companion browser app is available at /app/. WhatsApp is desktop-only. Access is supplied by the studio's administrator; there is no verified public signup, price, free trial or sales contact to invent. Browser access needs its own credential; browser documents are local and do not automatically synchronize with desktop documents. AI services require connectivity. Current desktop packages are preview releases; installation can require explicit OS confirmation.
+Windows, macOS and Linux downloads are published automatically. A companion browser app is available at /app/. Access is supplied by the studio's administrator; there is no verified public signup, price, free trial or sales contact to invent. Browser access needs its own credential; browser documents are local and do not automatically synchronize with desktop documents. AI services require connectivity. Current desktop packages are preview releases; installation can require explicit OS confirmation.
 
 ## Brand Commitments
 

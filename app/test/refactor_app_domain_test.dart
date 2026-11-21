@@ -8,6 +8,7 @@ import 'package:paper_agent/features/agent/domain/document_tools.dart';
 import 'package:paper_agent/features/agent/presentation/ui_components.dart';
 import 'package:paper_agent/features/agent/session_state.dart';
 import 'package:paper_agent/features/document/data/doc_templates.dart';
+import 'package:paper_agent/features/document/export/document_export.dart';
 import 'package:paper_agent/features/document/model/document.dart';
 import 'package:paper_agent/features/document/model/operations.dart';
 import 'package:paper_agent/features/document/render/page_fit.dart';
@@ -28,7 +29,7 @@ class _Host implements ToolHost {
   void openNewDocument(PaperDocument doc) => activeDocument = doc;
 
   @override
-  Future<String?> exportActiveDocument() async => null;
+  Future<String?> exportActiveDocument({ExportFormat format = ExportFormat.pdf}) async => null;
 
   @override
   Future<FittedDocument> fitPages(PaperDocument doc) async => FittedDocument(doc);
@@ -45,25 +46,17 @@ Map<String, String> _libSources() => {
 
 void main() {
   group('attachment types', () {
-    test('the case file reads these types, in this order', () {
-      expect(attachableTypes, ['pdf', 'p7m', 'docx', 'txt', 'png', 'jpg', 'jpeg']);
+    test('the case file takes the types the server reads, in its order', () {
+      expect(attachableTypes, attachableMediaTypes.keys.toList());
+      expect(attachableTypes, containsAll(['pdf', 'p7m', 'docx', 'xlsx', 'eml', 'msg', 'zip', 'txt', 'jpg']));
     });
 
-    test('every readable type has a mime type, the rest are octet-stream', () {
-      const expected = {
-        'pdf': 'application/pdf',
-        'p7m': 'application/pkcs7-mime',
-        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'txt': 'text/plain',
-        'png': 'image/png',
-        'jpg': 'image/jpeg',
-        'jpeg': 'image/jpeg',
-      };
-      for (final type in attachableTypes) {
-        expect(mimeFor('file.$type'), expected[type], reason: type);
-        expect(mimeFor('FILE.${type.toUpperCase()}'), expected[type], reason: type);
+    test('every type the server reads has its mime type, the rest are octet-stream', () {
+      for (final MapEntry(key: type, value: mime) in attachableMediaTypes.entries) {
+        expect(mimeFor('file.$type'), mime, reason: type);
+        expect(mimeFor('FILE.${type.toUpperCase()}'), mime, reason: type);
       }
-      expect(mimeFor('archive.zip'), 'application/octet-stream');
+      expect(mimeFor('archive.rar'), 'application/octet-stream');
       expect(mimeFor('noextension'), 'application/octet-stream');
     });
   });
@@ -111,7 +104,7 @@ void main() {
 
   group('names shared with the server and the UI', () {
     test('every tool of the registry has a name and a handler, and no other does', () {
-      final specs = {for (final t in documentToolSpecs) t.name};
+      final specs = {for (final t in appToolSpecs) t.name};
       expect(ToolNames.all, specs);
       expect(DocumentToolExecutor(_Host()).handledTools, specs);
     });

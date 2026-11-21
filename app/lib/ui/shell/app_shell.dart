@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_theme.dart';
-import '../../features/agent/whatsapp_bridge.dart';
 import '../../features/workspace/chat_thread.dart';
 import '../access/activity_region.dart';
 import '../../features/workspace/ui_state.dart';
@@ -15,7 +14,6 @@ import '../common/widgets.dart';
 import '../panel/side_panel.dart';
 import '../settings/settings_view.dart';
 import '../sidebar/app_sidebar.dart';
-import '../whatsapp/pairing_overlay.dart';
 
 /// Sidebar (projects and chats) · agent chat · side panel with tabs.
 class AppShell extends ConsumerWidget {
@@ -32,86 +30,77 @@ class AppShell extends ConsumerWidget {
     ref.watch(reviewAllDocumentsProvider);
     final ui = ref.watch(uiProvider);
     final thread = ref.watch(activeThreadProvider);
-    final whatsapp = ref.watch(whatsappProvider);
 
     return Scaffold(
-      body: ListenableBuilder(
-        listenable: whatsapp,
-        builder: (context, _) => Stack(
-          fit: StackFit.expand,
-          children: [
-            FileDrop(
-              child: LayoutBuilder(
-                builder: (context, c) {
-                  final sidebar =
-                      ui.sidebarOpen && c.maxWidth >= sidebarBreakpoint
-                      ? AppSidebar.width
-                      : 0.0;
-                  final showPanel =
-                      ui.panelOpen &&
-                      ui.section == AppSection.chat &&
-                      thread != null &&
-                      c.maxWidth - sidebar >=
-                          minCenterWidth + UiNotifier.minPanelWidth;
-                  final panel = showPanel
-                      ? ui.panelWidth.clamp(
-                          UiNotifier.minPanelWidth,
-                          c.maxWidth - sidebar - minCenterWidth,
-                        )
-                      : 0.0;
+      body: SizedBox.expand(
+        child: FileDrop(
+          child: LayoutBuilder(
+            builder: (context, c) {
+              final sidebar =
+                  ui.sidebarOpen && c.maxWidth >= sidebarBreakpoint
+                  ? AppSidebar.width
+                  : 0.0;
+              final showPanel =
+                  ui.panelOpen &&
+                  ui.section == AppSection.chat &&
+                  thread != null &&
+                  c.maxWidth - sidebar >=
+                      minCenterWidth + UiNotifier.minPanelWidth;
+              final panel = showPanel
+                  ? ui.panelWidth.clamp(
+                      UiNotifier.minPanelWidth,
+                      c.maxWidth - sidebar - minCenterWidth,
+                    )
+                  : 0.0;
 
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _Slide(width: sidebar, child: const AppSidebar()),
-                      if (sidebar > 0) const VerticalDivider(width: 1),
-                      Expanded(
-                        child: ActivityRegion(
-                          area: ui.section.name,
-                          child: AnimatedSwitcher(
-                            duration: AppTheme.normal,
-                            switchInCurve: Curves.easeOut,
-                            child: KeyedSubtree(
-                              key: ValueKey(
-                                ui.section == AppSection.settings
-                                    ? 'settings'
-                                    : thread?.id ?? 'new',
-                              ),
-                              child: switch ((ui.section, thread)) {
-                                (AppSection.settings, _) =>
-                                  const SettingsView(),
-                                (AppSection.chat, null) => const NewChatView(),
-                                (AppSection.chat, final t?) => ChatView(
-                                  thread: t,
-                                ),
-                              },
-                            ),
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _Slide(width: sidebar, child: const AppSidebar()),
+                  if (sidebar > 0) const VerticalDivider(width: 1),
+                  Expanded(
+                    child: ActivityRegion(
+                      area: ui.section.name,
+                      child: AnimatedSwitcher(
+                        duration: AppTheme.normal,
+                        switchInCurve: Curves.easeOut,
+                        child: KeyedSubtree(
+                          key: ValueKey(
+                            ui.section == AppSection.settings
+                                ? 'settings'
+                                : thread?.id ?? 'new',
                           ),
-                        ),
-                      ),
-                      if (panel > 0) const _ResizeHandle(),
-                      _Slide(
-                        width: panel,
-                        alignRight: true,
-                        child: ActivityRegion(
-                          area: switch (thread?.activeTab?.kind) {
-                            PanelTabKind.preview => 'document',
-                            PanelTabKind.review => 'review',
-                            PanelTabKind.library => 'library',
-                            PanelTabKind.source => 'sources',
-                            _ => 'chat',
+                          child: switch ((ui.section, thread)) {
+                            (AppSection.settings, _) =>
+                              const SettingsView(),
+                            (AppSection.chat, null) => const NewChatView(),
+                            (AppSection.chat, final t?) => ChatView(
+                              thread: t,
+                            ),
                           },
-                          child: const SidePanel(),
                         ),
                       ),
-                    ],
-                  );
-                },
-              ),
-            ),
-            if (whatsapp.showPairing && !whatsapp.ready)
-              WhatsappPairingOverlay(bridge: whatsapp),
-          ],
+                    ),
+                  ),
+                  if (panel > 0) const _ResizeHandle(),
+                  _Slide(
+                    width: panel,
+                    alignRight: true,
+                    child: ActivityRegion(
+                      area: switch (thread?.activeTab?.kind) {
+                        PanelTabKind.preview => 'document',
+                        PanelTabKind.review => 'review',
+                        PanelTabKind.library => 'library',
+                        PanelTabKind.source => 'sources',
+                        _ => 'chat',
+                      },
+                      child: const SidePanel(),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
