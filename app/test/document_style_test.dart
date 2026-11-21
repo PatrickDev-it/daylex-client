@@ -60,14 +60,12 @@ void main() {
       });
     }
 
-    test('set_style names the bases and the orientations, the server the page fields the page reads', () {
+    test('set_style names the bases, the server the page fields the page reads', () {
       final style = properties(ToolNames.setStyle);
       expect((style['base'] as Map)['enum'], [for (final b in StyleBase.values) b.name]);
-      final orientation = properties(ToolNames.setStyle, ['page'])['orientation'] as Map;
-      expect(orientation['enum'], [for (final o in PageOrientation.values) o.name]);
       final page = styleFieldSpecs['page']!;
       expect(page.keys, ['orientation', for (final side in PageSetup.sides) 'margins.$side', 'header', 'footer']);
-      expect(page['orientation'], orientation);
+      expect((page['orientation'] as Map)['enum'], [for (final o in PageOrientation.values) o.name]);
       for (final MapEntry(:key, :value) in page.entries.where((e) => e.key != 'orientation')) {
         final (min, max) = ((value as Map)['minimum'] as num, value['maximum'] as num);
         Object patch(num v) => key.startsWith('margins.')

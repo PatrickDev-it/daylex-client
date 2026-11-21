@@ -425,36 +425,7 @@ const _toolsJson = r'''
         },
         "page": {
           "type": "object",
-          "properties": {
-            "orientation": {
-              "type": "string",
-              "enum": [
-                "portrait",
-                "landscape"
-              ]
-            },
-            "margins": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "number",
-                "minimum": 0,
-                "maximum": 10
-              },
-              "description": "cm, per lato: top, right, bottom, left; laterali = left e right, verticali = top e bottom"
-            },
-            "header": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 5,
-              "description": "distanza dell'intestazione dal bordo, cm"
-            },
-            "footer": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 5,
-              "description": "distanza del piè di pagina dal bordo, cm"
-            }
-          }
+          "description": "campi: orientation: portrait|landscape; margins: {lato: 0-10 cm} per top, right, bottom, left (laterali = left e right, verticali = top e bottom); header: 0-5 (distanza dell'intestazione dal bordo, cm); footer: 0-5 (distanza del piè di pagina dal bordo, cm)"
         },
         "styles": {
           "type": "object",
