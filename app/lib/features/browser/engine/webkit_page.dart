@@ -60,9 +60,17 @@ class WebKitPage extends ScriptedPage {
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: _decide,
+          // WebKit hands the start over only after asking for the address, so it can come after the failure: a load
+          // that failed stays failed. The address is empty until the page answers: the one asked for stays.
           onPageStarted: (url) {
-            _refusedHost = null;
-            current = current.copyWith(url: Uri.tryParse(url), loading: true, problem: () => null, icon: () => null);
+            if (_failed == _decided) return;
+            final uri = Uri.tryParse(url);
+            current = current.copyWith(
+              url: uri != null && uri.hasScheme ? uri : null,
+              loading: true,
+              problem: () => null,
+              icon: () => null,
+            );
           },
           // The page script has no "before the page's own" slot here: it goes in as early as the page lets it.
           onProgress: (_) => unawaited(_install()),
@@ -86,13 +94,17 @@ class WebKitPage extends ScriptedPage {
           },
           onWebResourceError: (e) {
             if (e.isForMainFrame == false) return;
+            final domain = e is WebKitWebResourceError ? e.domain : null;
             final problem = webKitProblem(
               e.errorCode,
-              domain: e is WebKitWebResourceError ? e.domain : null,
+              domain: domain,
               url: Uri.tryParse(e.url ?? ''),
               refusedHost: _refusedHost,
             );
-            if (problem != null) current = current.copyWith(loading: false, problem: () => problem);
+            if (problem == null) return;
+            debugPrint('Daylex browser: the page did not load: $domain ${e.errorCode} ${e.description}');
+            _failed = _decided;
+            current = current.copyWith(loading: false, problem: () => problem);
           },
           // A certificate that is not valid is never accepted (rfc/052 §9). WebKit reports the refused load only as
           // cancelled: the site that presented it is kept to tell the two apart.
@@ -124,8 +136,12 @@ class WebKitPage extends ScriptedPage {
   final _controller = WebViewController(onPermissionRequest: (request) => request.deny());
   final String _script;
 
-  /// The site whose certificate this load refused, until the next load starts.
+  /// The site whose certificate this load refused, until the next load is let through.
   String? _refusedHost;
+
+  /// The loads of the page itself let through so far, and the one that failed last.
+  var _decided = 0;
+  var _failed = -1;
 
   Future<void> _install() async {
     try {
@@ -139,16 +155,26 @@ class WebKitPage extends ScriptedPage {
   NavigationDecision _decide(NavigationRequest request) {
     final uri = Uri.tryParse(request.url);
     if (uri == null) return NavigationDecision.prevent;
-    if (uri.scheme == 'about' || uri.scheme == 'blob') return NavigationDecision.navigate;
+    if (uri.scheme == 'about' || uri.scheme == 'blob') return _let(request);
     switch (navigationFor(uri)) {
       case Navigation.web:
-        return NavigationDecision.navigate;
+        return _let(request);
       case Navigation.system:
         unawaited(launchUrl(uri, mode: LaunchMode.externalApplication));
         return NavigationDecision.prevent;
       case Navigation.refused:
         return NavigationDecision.prevent;
     }
+  }
+
+  /// A load let through: for the page itself, a new one, with no certificate refused yet. WebKit asks before the
+  /// load starts, so this always comes before what the load reports.
+  NavigationDecision _let(NavigationRequest request) {
+    if (request.isMainFrame) {
+      _decided++;
+      _refusedHost = null;
+    }
+    return NavigationDecision.navigate;
   }
 
   @override

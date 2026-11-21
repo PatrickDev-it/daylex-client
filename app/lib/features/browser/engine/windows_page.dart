@@ -120,7 +120,9 @@ class WindowsPage extends ScriptedPage {
       ),
       _controller.onLoadError.listen((status) {
         final problem = _problemOf(status);
-        if (problem != null) current = current.copyWith(problem: () => problem);
+        if (problem == null) return;
+        debugPrint('Daylex browser: the page did not load: $status');
+        current = current.copyWith(problem: () => problem);
       }),
       _controller.webMessage.listen(onMessage, onError: (Object _) {}),
       _controller.onDownloadEvent.listen((d) {
