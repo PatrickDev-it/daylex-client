@@ -5,8 +5,9 @@ import 'package:daylex/features/agent/domain/document_tools.dart';
 import 'package:daylex/features/document/model/document.dart';
 import 'package:daylex/features/document/model/inline.dart';
 
-/// The style of rfc/055: what the agent may set (the tools' schema, generated from the server) and what the app
-/// reads (style.dart) are two declarations of one rule, so each value the schema names is tried against the app.
+/// The style of rfc/055: what the agent may set (the tools' schema and the fields of a style and of the page, generated
+/// from the server) and what the app reads (style.dart) are two declarations of one rule, so each value the server
+/// names is tried against the app.
 void main() {
   Map<String, dynamic> properties(String tool, [List<String> path = const []]) {
     var node = toolSpec(tool)!.parameters;
@@ -19,9 +20,9 @@ void main() {
   final refused = throwsA(isA<StyleException>());
 
   group('the tools and the style read the same values', () {
-    final fields = properties(ToolNames.formatBlock, ['style']);
+    final fields = styleFieldSpecs['block']!;
 
-    test('format_block names the fields the style reads, in its order', () {
+    test('the server names the fields the style reads, in its order', () {
       expect(fields.keys, blockStyleFields);
     });
 
@@ -59,20 +60,21 @@ void main() {
       });
     }
 
-    test('set_style names the bases, the orientations and the margins the page reads', () {
+    test('set_style names the bases and the orientations, the server the page fields the page reads', () {
       final style = properties(ToolNames.setStyle);
       expect((style['base'] as Map)['enum'], [for (final b in StyleBase.values) b.name]);
-      final page = properties(ToolNames.setStyle, ['page']);
-      expect((page['orientation'] as Map)['enum'], [for (final o in PageOrientation.values) o.name]);
-      final margins = properties(ToolNames.setStyle, ['page', 'margins']);
-      expect(margins.keys, PageSetup.sides);
-      for (final MapEntry(:key, :value) in {...margins, 'header': page['header'], 'footer': page['footer']}.entries) {
+      final orientation = properties(ToolNames.setStyle, ['page'])['orientation'] as Map;
+      expect(orientation['enum'], [for (final o in PageOrientation.values) o.name]);
+      final page = styleFieldSpecs['page']!;
+      expect(page.keys, ['orientation', for (final side in PageSetup.sides) 'margins.$side', 'header', 'footer']);
+      expect(page['orientation'], orientation);
+      for (final MapEntry(:key, :value) in page.entries.where((e) => e.key != 'orientation')) {
         final (min, max) = ((value as Map)['minimum'] as num, value['maximum'] as num);
-        Object patch(num v) => key == 'header' || key == 'footer'
-            ? {key: v}
-            : {
-                'margins': {key: v},
-              };
+        Object patch(num v) => key.startsWith('margins.')
+            ? {
+                'margins': {key.substring('margins.'.length): v},
+              }
+            : {key: v};
         expect(PageSetup.empty.patch(patch(max)).isEmpty, isFalse);
         expect(PageSetup.empty.patch(patch(min)).isEmpty, isFalse);
         expect(() => PageSetup.empty.patch(patch(max + 0.01)), refused, reason: key);

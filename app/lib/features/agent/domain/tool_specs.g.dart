@@ -435,29 +435,12 @@ const _toolsJson = r'''
             },
             "margins": {
               "type": "object",
-              "description": "cm",
-              "properties": {
-                "top": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 10
-                },
-                "right": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 10
-                },
-                "bottom": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 10
-                },
-                "left": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 10
-                }
-              }
+              "additionalProperties": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 10
+              },
+              "description": "cm, per lato: top, right, bottom, left; laterali = left e right, verticali = top e bottom"
             },
             "header": {
               "type": "number",
@@ -578,134 +561,7 @@ const _toolsJson = r'''
         },
         "style": {
           "type": "object",
-          "properties": {
-            "font": {
-              "type": "string",
-              "enum": [
-                "times",
-                "arial",
-                "courier",
-                "calibri",
-                "garamond",
-                "inter"
-              ]
-            },
-            "size": {
-              "type": "number",
-              "minimum": 6,
-              "maximum": 72,
-              "description": "pt"
-            },
-            "bold": {
-              "type": "boolean"
-            },
-            "italic": {
-              "type": "boolean"
-            },
-            "underline": {
-              "type": "boolean"
-            },
-            "caps": {
-              "type": "boolean"
-            },
-            "color": {
-              "type": "string",
-              "description": "#RRGGBB, \"accent\", \"accent/NN\" (l'accento al NN%, da 1 a 100) o \"none\""
-            },
-            "background": {
-              "type": "string",
-              "description": "#RRGGBB, \"accent\", \"accent/NN\" (l'accento al NN%, da 1 a 100) o \"none\""
-            },
-            "align": {
-              "type": "string",
-              "enum": [
-                "left",
-                "center",
-                "right",
-                "justify"
-              ]
-            },
-            "lineHeight": {
-              "type": "number",
-              "minimum": 0.8,
-              "maximum": 3,
-              "description": "1 singola, 1.5 una riga e mezza"
-            },
-            "spaceBefore": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 72,
-              "description": "pt"
-            },
-            "spaceAfter": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 72,
-              "description": "pt"
-            },
-            "indent": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 10,
-              "description": "rientro, cm"
-            },
-            "firstLineIndent": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 5,
-              "description": "rientro della prima riga, cm"
-            },
-            "border": {
-              "type": "string",
-              "enum": [
-                "none",
-                "left",
-                "top",
-                "bottom",
-                "box"
-              ]
-            },
-            "borderColor": {
-              "type": "string",
-              "description": "#RRGGBB, \"accent\", \"accent/NN\" (l'accento al NN%, da 1 a 100) o \"none\""
-            },
-            "borderWidth": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 6,
-              "description": "pt"
-            },
-            "padding": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 72,
-              "description": "pt, tra il bordo e il testo"
-            },
-            "marker": {
-              "type": "string",
-              "enum": [
-                "disc",
-                "dash",
-                "number",
-                "letter",
-                "none"
-              ],
-              "description": "elenchi: •, –, 1., a), nessuno"
-            },
-            "grid": {
-              "type": "string",
-              "enum": [
-                "rows",
-                "all",
-                "none"
-              ],
-              "description": "tabelle: linee tra le righe, ovunque, nessuna"
-            },
-            "stripe": {
-              "type": "string",
-              "description": "tabelle, righe alterne: #RRGGBB, \"accent\", \"accent/NN\" (l'accento al NN%, da 1 a 100) o \"none\""
-            }
-          }
+          "description": "campi: font: times|arial|courier|calibri|garamond|inter; size: 6-72 (pt); bold, italic, underline, caps: true|false; color, background: #RRGGBB, \"accent\", \"accent/NN\" (l'accento al NN%, da 1 a 100) o \"none\"; align: left|center|right|justify; lineHeight: 0.8-3 (1 singola, 1.5 una riga e mezza); spaceBefore, spaceAfter: 0-72 (pt); indent: 0-10 (rientro, cm); firstLineIndent: 0-5 (rientro della prima riga, cm); border: none|left|top|bottom|box; borderColor: #RRGGBB, \"accent\", \"accent/NN\" (l'accento al NN%, da 1 a 100) o \"none\"; borderWidth: 0-6 (pt); padding: 0-72 (pt, tra il bordo e il testo); marker: disc|dash|number|letter|none (elenchi: •, –, 1., a), nessuno); grid: rows|all|none (tabelle: linee tra le righe, ovunque, nessuna); stripe: tabelle, righe alterne: #RRGGBB, \"accent\", \"accent/NN\" (l'accento al NN%, da 1 a 100) o \"none\""
         }
       },
       "required": [
@@ -789,4 +645,178 @@ const _toolsJson = r'''
     "mutates": false
   }
 ]
+''';
+
+const _styleFieldsJson = r'''
+{
+  "block": {
+    "font": {
+      "type": "string",
+      "enum": [
+        "times",
+        "arial",
+        "courier",
+        "calibri",
+        "garamond",
+        "inter"
+      ]
+    },
+    "size": {
+      "type": "number",
+      "minimum": 6,
+      "maximum": 72,
+      "description": "pt"
+    },
+    "bold": {
+      "type": "boolean"
+    },
+    "italic": {
+      "type": "boolean"
+    },
+    "underline": {
+      "type": "boolean"
+    },
+    "caps": {
+      "type": "boolean"
+    },
+    "color": {
+      "type": "string",
+      "description": "#RRGGBB, \"accent\", \"accent/NN\" (l'accento al NN%, da 1 a 100) o \"none\""
+    },
+    "background": {
+      "type": "string",
+      "description": "#RRGGBB, \"accent\", \"accent/NN\" (l'accento al NN%, da 1 a 100) o \"none\""
+    },
+    "align": {
+      "type": "string",
+      "enum": [
+        "left",
+        "center",
+        "right",
+        "justify"
+      ]
+    },
+    "lineHeight": {
+      "type": "number",
+      "minimum": 0.8,
+      "maximum": 3,
+      "description": "1 singola, 1.5 una riga e mezza"
+    },
+    "spaceBefore": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 72,
+      "description": "pt"
+    },
+    "spaceAfter": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 72,
+      "description": "pt"
+    },
+    "indent": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10,
+      "description": "rientro, cm"
+    },
+    "firstLineIndent": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "rientro della prima riga, cm"
+    },
+    "border": {
+      "type": "string",
+      "enum": [
+        "none",
+        "left",
+        "top",
+        "bottom",
+        "box"
+      ]
+    },
+    "borderColor": {
+      "type": "string",
+      "description": "#RRGGBB, \"accent\", \"accent/NN\" (l'accento al NN%, da 1 a 100) o \"none\""
+    },
+    "borderWidth": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 6,
+      "description": "pt"
+    },
+    "padding": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 72,
+      "description": "pt, tra il bordo e il testo"
+    },
+    "marker": {
+      "type": "string",
+      "enum": [
+        "disc",
+        "dash",
+        "number",
+        "letter",
+        "none"
+      ],
+      "description": "elenchi: •, –, 1., a), nessuno"
+    },
+    "grid": {
+      "type": "string",
+      "enum": [
+        "rows",
+        "all",
+        "none"
+      ],
+      "description": "tabelle: linee tra le righe, ovunque, nessuna"
+    },
+    "stripe": {
+      "type": "string",
+      "description": "tabelle, righe alterne: #RRGGBB, \"accent\", \"accent/NN\" (l'accento al NN%, da 1 a 100) o \"none\""
+    }
+  },
+  "page": {
+    "orientation": {
+      "type": "string",
+      "enum": [
+        "portrait",
+        "landscape"
+      ]
+    },
+    "margins.top": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "margins.right": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "margins.bottom": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "margins.left": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "header": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "distanza dell'intestazione dal bordo, cm"
+    },
+    "footer": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "distanza del piè di pagina dal bordo, cm"
+    }
+  }
+}
 ''';

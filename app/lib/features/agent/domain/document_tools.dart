@@ -59,6 +59,16 @@ final appToolSpecs = [
     ToolSpec.fromJson((spec as Map).cast<String, dynamic>()),
 ];
 
+/// The fields of a block's style and of the page (rfc/055), each with its
+/// schema, as the server's registry declares them; a margin is
+/// `margins.<side>`. The tools name them in prose: declared as properties,
+/// they would fix the order the model can write them in.
+final Map<String, Map<String, dynamic>> styleFieldSpecs = {
+  for (final MapEntry(:key, :value)
+      in (jsonDecode(_styleFieldsJson) as Map).entries)
+    key as String: (value as Map).cast<String, dynamic>(),
+};
+
 /// What the executor needs from the app. Implemented by the agent controller
 /// on top of the workspace state, so tools never reach into widgets.
 abstract interface class ToolHost {
