@@ -42,10 +42,14 @@ class DaylexApp extends ConsumerWidget {
       themeAnimationDuration: AppTheme.slow,
       builder: (context, child) => FrameRecovery(
         child: _SaveOnExit(
-          child: _DesktopChrome(child: _StorageNotice(child: UpdateGate(child: child!))),
+          child: _DesktopChrome(
+            child: AccessGate(
+              child: _StorageNotice(child: UpdateGate(child: child!)),
+            ),
+          ),
         ),
       ),
-      home: const AccessGate(child: AppShell()),
+      home: const AppShell(),
     );
   }
 }

@@ -41,51 +41,102 @@ class AccessGate extends ConsumerWidget {
           );
         }
         final l = context.l10n;
-        return Column(
+        final waiting = service.checkedAt == null && !service.offline;
+        final blocked = service.maintenance || waiting;
+        return Stack(
+          fit: StackFit.expand,
           children: [
-            if (service.maintenance || service.offline)
-              MaterialBanner(
-                leading: const Icon(LucideIcons.info),
-                content: Text(
-                  service.offline ? l.serviceOffline : l.serviceMaintenance,
+            Offstage(
+              offstage: blocked,
+              child: ExcludeFocus(
+                excluding: blocked,
+                child: TickerMode(
+                  enabled: !blocked,
+                  child: Column(
+                    children: [
+                      if (service.offline)
+                        MaterialBanner(
+                          leading: const Icon(LucideIcons.info),
+                          content: Text(l.serviceOfflineHelp),
+                          actions: [
+                            TextButton(
+                              onPressed: service.checking
+                                  ? null
+                                  : service.check,
+                              child: Text(l.serviceRetry),
+                            ),
+                          ],
+                        ),
+                      Expanded(key: const ValueKey('workspace'), child: child),
+                    ],
+                  ),
                 ),
-                actions: [
-                  TextButton(
-                    onPressed: () => showDialog<void>(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text(
-                          service.offline
-                              ? l.serviceOffline
-                              : l.serviceMaintenance,
-                        ),
-                        content: Text(
-                          service.offline
-                              ? l.serviceOfflineHelp
-                              : service.message.isEmpty
-                              ? l.serviceMaintenanceHelp
-                              : service.message,
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text(l.gotIt),
-                          ),
-                        ],
-                      ),
-                    ),
-                    child: Text(l.serviceDetails),
-                  ),
-                  TextButton(
-                    onPressed: service.checking ? null : service.check,
-                    child: Text(l.serviceRetry),
-                  ),
-                ],
               ),
-            Expanded(key: const ValueKey('workspace'), child: child),
+            ),
+            if (blocked) _ServicePause(service: service, waiting: waiting),
           ],
         );
       },
+    );
+  }
+}
+
+/// Covers the navigator as well as the workspace; drafts remain mounted offstage.
+class _ServicePause extends StatelessWidget {
+  const _ServicePause({required this.service, required this.waiting});
+  final ServiceStatus service;
+  final bool waiting;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(32),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 480),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const DaylexMark(size: 40),
+                  const SizedBox(height: 24),
+                  Semantics(
+                    header: true,
+                    liveRegion: true,
+                    child: Text(
+                      waiting
+                          ? l.settingsAccessKeyChecking
+                          : l.serviceMaintenance,
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                  ),
+                  if (!waiting) ...[
+                    const SizedBox(height: 16),
+                    Text(
+                      service.message.isEmpty
+                          ? l.serviceMaintenanceHelp
+                          : service.message,
+                    ),
+                  ],
+                  if (service.offline) ...[
+                    const SizedBox(height: 16),
+                    Text(l.serviceOfflineHelp),
+                  ],
+                  const SizedBox(height: 24),
+                  FilledButton.icon(
+                    onPressed: service.checking ? null : service.check,
+                    icon: const Icon(LucideIcons.refreshCw),
+                    label: Text(l.serviceRetry),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
